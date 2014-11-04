@@ -14,7 +14,7 @@ import copy
 import pygraphviz
 import os
 import operator
-import demand
+import dem
 import customGraph
 
 ####################################################################
@@ -178,7 +178,7 @@ for iteration in range(number_of_demands):
 	G_updated=copy.deepcopy(G_prune)
 
 	# instantiate a demand
-	d=demand.demand(G.nodes(),bw_variants,lat_variants)
+	d=dem.demand(G.nodes(),bw_variants,lat_variants)
 	#d.make_choice_concrete(2,3)
 	d.make_choice()
 
