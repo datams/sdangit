@@ -22,8 +22,9 @@ import customGraph
 ####################################################################
 
 plot_enable			= True
-number_of_demands		= 25
+number_of_demands		= 1
 path_selection_criterion	= 'lat'
+graph_type			= 'srg'
 bw_variants			= [1]
 lat_variants			= [4]
 
@@ -149,7 +150,7 @@ def select_path(paths_pack, criterion):
 ####################################################################
 
 # instantiate a graph
-G=customGraph.make('eight')
+G=customGraph.make(graph_type)
 
 # delete pngs and clear terminal
 os.system('rm *.png')
