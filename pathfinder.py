@@ -22,11 +22,11 @@ import customGraph
 ####################################################################
 
 plot_enable			= True
-number_of_demands		= 1
+number_of_demands		= 10
 path_selection_criterion	= 'lat'
 graph_type			= 'srg'
 bw_variants			= [1]
-lat_variants			= [4]
+lat_variants			= [20]
 
 
 ####################################################################
@@ -195,7 +195,6 @@ for iteration in range(number_of_demands):
 		selected_path = select_path(paths_pack, path_selection_criterion)
 		# store found paths in dictionary book
 		path_book[(d.get_source(),d.get_target())]=paths_pack
-		print 'path_book:\n'+str(path_book)
 		# update graph
 		G_updated=update_edges(G_updated, selected_path, d.get_bw())
 		# plot the chosen path
@@ -209,7 +208,8 @@ for iteration in range(number_of_demands):
 	plot_counter+=1
 
 acceptance_rate = float(acceptance_counter)/float(number_of_demands)
-print '\nAllocated demands: '+str(acceptance_counter)
+print 'path_book:\n'+str(path_book)
+print '\n\nAllocated demands: '+str(acceptance_counter)
 print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 print 'Total demands: '+str(number_of_demands)
 print 'Acceptance rate: '+str(acceptance_rate*100)+'%'

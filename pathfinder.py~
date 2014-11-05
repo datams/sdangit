@@ -22,11 +22,11 @@ import customGraph
 ####################################################################
 
 plot_enable			= True
-number_of_demands		= 1
+number_of_demands		= 10
 path_selection_criterion	= 'lat'
-graph_type			= 'eight'
+graph_type			= 'srg'
 bw_variants			= [1]
-lat_variants			= [4]
+lat_variants			= [20]
 
 
 ####################################################################
