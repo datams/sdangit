@@ -93,7 +93,7 @@ for iteration in range(number_of_demands):
 
 print 'path_book:\n'+str(path_book)
 
-print '\n\nLink utilization: '+str(link_util(G,G_updated))
+print '\n\nLink utilization: '+str(gf.link_util(G,G_updated))
 print '\nAllocated demands: '+str(acceptance_counter)
 print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 print 'Total demands: '+str(number_of_demands)

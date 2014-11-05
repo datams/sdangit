@@ -91,17 +91,21 @@ for iteration in range(number_of_demands):
 
 	plot_counter+=1
 
-acceptance_rate = float(acceptance_counter)/float(number_of_demands)
 print 'path_book:\n'+str(path_book)
-print '\n\nAllocated demands: '+str(acceptance_counter)
+
+print '\n\nLink utilization: '+str(link_util(G,G_updated))
+print '\nAllocated demands: '+str(acceptance_counter)
 print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 print 'Total demands: '+str(number_of_demands)
+acceptance_rate = float(acceptance_counter)/float(number_of_demands)
 print 'Acceptance rate: '+str(acceptance_rate*100)+'%'
-
 
 # plot 
 os.system('convert '+plot_pngs+' +append topo.png')
 os.system('rm '+plot_pngs)
 if plot_enable:
 	os.system('eog topo.png')
+
+
+
 

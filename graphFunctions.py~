@@ -69,6 +69,33 @@ def prune_bw(G, bandwidth):
 				print 'removed edge: '+str(n)+','+str(nbr)
 	return G
 
+# returns link utilization
+def link_util(G,F):
+
+	orig_bw=[]
+	for n,nbrs in G.adjacency_iter():
+		for nbr,eattr in nbrs.items():
+		        orig_bw.append(eattr['bw'])
+
+	end_bw=[]
+	for n,nbrs in F.adjacency_iter():
+		for nbr,eattr in nbrs.items():
+		        end_bw.append(eattr['bw'])
+
+	usage=[]
+	for i in end_bw:
+		if end_bw[i]!=orig_bw[i]:
+			available_bw=float(orig_bw[i])
+			used_bw=float(orig_bw[i])-float(end_bw[i])
+			partial_util=float(used_bw)/float(available_bw)
+			usage.append(partial_util)
+	if len(usage)>0:
+		utilization=sum(usage)/len(usage)
+	else:
+		utilization=0
+	
+	return  utilization
+
 # returns updated graph based on path allocation
 def update_edges(G, path, bwreq):
 	path=n2e_list(path)
