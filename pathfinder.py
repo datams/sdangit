@@ -78,8 +78,14 @@ for j in range(repeats):
 		G_prune=G_updated
 		G_updated=copy.deepcopy(G_prune)
 
-		# instantiate a demand
+		# get the demand out of the list
 		d=demand_list[iteration]
+
+		print '\nDemand: '
+		print 'Path to find: '+str(d.source)+' ==> '+str(d.target)
+		print "bw req: "+str(d.bw)
+		print "lat req: "+str(d.lat)
+
 
 		# pruning
 		G_prune=gf.prune_bw(G_prune, d.get_bw())
@@ -91,6 +97,7 @@ for j in range(repeats):
 		if paths_pack!=[] and paths_pack!=None:
 			# store found paths in dictionary book
 			path_book[(d.get_source(),d.get_target())]=paths_pack
+			d.set_paths_pack(paths_pack)
 			# path selection
 			selected_path = gf.select_path(paths_pack, path_selection_criterion)
 			# store selected path in dictionary book
@@ -105,17 +112,21 @@ for j in range(repeats):
 			# count the allocation
 			acceptance_counter+=1
 		else:
-			print 'no path found,..  looking now at previous allocations\n'
+			print 'no path found, looking now at previous allocations..\n'
 			path_pack_in_empty_graph=gf.shortest_p(G,d.get_source(),d.get_target(),d.get_lat())
 			if path_pack_in_empty_graph == []:
 				print 'there is really no path for this demand'
 			else:
-				print 'The best path in empty graph would be:'
+				print 'The best path in the empty graph would be:'
 				sel= gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
 				print sel
-				print 'and this would have the following intersections: '
-				gf.check_setintersection(sel, selected_paths_book.values())
-			
+				print 'which would have the following intersections: '
+				intersect_dict=gf.check_setintersection(sel, selected_paths_book.values())
+				print intersect_dict
+				print '\nalthough the worst one is: '+str(intersect_dict[max(intersect_dict)])
+				worst_intersect = intersect_dict[max(intersect_dict)]
+				print 'therefore please consider rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
+
 			if plot_enable:
 				plot_pngs+=gf.plot_graphviz(G_updated,d,None,plot_counter)+' '
 
@@ -131,7 +142,7 @@ for j in range(repeats):
 	print 'Total demands: '+str(number_of_demands)
 	acceptance_rate = float(acceptance_counter)/float(number_of_demands)
 	print 'Acceptance rate: '+str(acceptance_rate*100)+'%'
-	print 'selected path book:'+str(selected_paths_book)
+	print 'selected path book:\n'+str(selected_paths_book)
 
 	# plot
 	if plot_enable:

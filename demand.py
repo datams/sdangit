@@ -19,6 +19,7 @@ class demand:
 	self.lat_variants = lat_variants
 	self.x=False
 	self.path=[]
+	self.paths_pack=[]
     def set_source(self, s):
         self.source=s
     def get_source(self):
@@ -43,6 +44,8 @@ class demand:
 	self.path=path2set
     def get_path(self):
 	return path
+    def set_paths_pack(self,pack2set):
+	self.paths_pack=pack2set
 
     # random choice of two distinct graph nodes as source / target
     def make_choice(self):
@@ -53,10 +56,6 @@ class demand:
 	source_index = temp_n.index(self.source)
 	temp_n.pop(source_index)
 	self.target = random.choice(temp_n)
-	print '\nDemand: '
-	print 'Path to find: '+str(self.source)+' ==> '+str(self.target)
-	print "bw req: "+str(self.bw)
-	print "lat req: "+str(self.lat)
 
     # sets user source and target according to user definition
     def make_choice_concrete(self,x,y):
@@ -64,7 +63,3 @@ class demand:
 	self.lat=random.choice(self.lat_variants)
 	self.source = x
 	self.target = y
-	print '\nDemand: '
-	print 'Path to find: '+str(self.source)+' ==> '+str(self.target)
-	print "bw req.: "+str(self.bw)
-	print "lat req: "+str(self.lat)

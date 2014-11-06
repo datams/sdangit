@@ -163,11 +163,12 @@ def cmpT(tuple1, tuple2):
 
 # check 1 path vs. a set of paths of having same edges
 def check_setintersection(path, pathset):
+	intersect_list={}
 	for i in range(len(pathset)):
 		degree = check_intersect(path,pathset[i])
 		if degree>0:
-			print 'degree '+str(degree)+' with '+str(pathset[i])
-
+			intersect_list[degree]=pathset[i]
+	return intersect_list
 
 # check 2 paths on having some of the same edges
 def check_intersect(path1, path2):

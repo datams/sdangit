@@ -145,13 +145,13 @@ def select_path(paths_pack, criterion):
 		min_lat=selected_path[1]
 		selected_path=selected_path[0]
 		# print 'min_lat_path:\n'+str(selected_path)
-	return selected_path
 
 	if criterion=='hops':
 		selected_path = min(paths_pack, key=operator.itemgetter(2))
 		min_hop=selected_path[2]
 		selected_path=selected_path[0]
 		# print 'min_hops_path:\n'+str(selected_path)
+
 	return selected_path
 
 # compare tuple on equality (disregarding order)
@@ -163,11 +163,12 @@ def cmpT(tuple1, tuple2):
 
 # check 1 path vs. a set of paths of having same edges
 def check_setintersection(path, pathset):
+	intersect_list=[]
 	for i in range(len(pathset)):
 		degree = check_intersect(path,pathset[i])
 		if degree>0:
-			print 'degree '+str(degree)+' with '+str(pathset[i])
-
+			intersect_list.append((pathset[i],degree))
+	return intersect_list
 
 # check 2 paths on having some of the same edges
 def check_intersect(path1, path2):
