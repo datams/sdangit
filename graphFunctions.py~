@@ -144,24 +144,35 @@ def select_path(paths_pack, criterion):
 		selected_path = min(paths_pack, key=operator.itemgetter(1))
 		min_lat=selected_path[1]
 		selected_path=selected_path[0]
-		print 'selected_path:\n'+str(selected_path)
+		# print 'min_lat_path:\n'+str(selected_path)
+	return selected_path
+
 	if criterion=='hops':
 		selected_path = min(paths_pack, key=operator.itemgetter(2))
 		min_hop=selected_path[2]
 		selected_path=selected_path[0]
-		print 'min_hops_path:\n'+str(selected_path)
+		# print 'min_hops_path:\n'+str(selected_path)
 	return selected_path
 
 # compare tuple on equality (disregarding order)
-def cmpT(tuple1, tuple2): 
+def cmpT(tuple1, tuple2):
 	if sorted(tuple1) == sorted(tuple2):
 		return 1
 	else:
 		return 0
 
-# check paths on having some of the same edges
-def check_intersect(path1, path2):
+# check 1 path vs. a set of paths of having same edges
+def check_setintersection(path, pathset):
+	for i in range(len(pathset)):
+		degree = check_intersect(path,pathset[i])
+		if degree>0:
+			print 'degree '+str(degree)+' with '+str(pathset[i])
 
+
+# check 2 paths on having some of the same edges
+def check_intersect(path1, path2):
+	path1=n2e_list(path1)
+	path2=n2e_list(path2)
 	if len(path1)>len(path2):
 		long_path=path1
 		short_path=path2
@@ -176,3 +187,12 @@ def check_intersect(path1, path2):
 			degree+=cmpT(edge, path2[i])
 
 	return degree
+
+# converts a path pack to a path list
+def pack2p(path_pack):
+	return [x[0] for x in path_pack]
+
+
+# prints variable with it's name
+def pv(text,var):
+	print text+' : '+str(var)

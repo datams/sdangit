@@ -24,11 +24,11 @@ import graphFunctions as gf
 
 repeats				= 1
 plot_enable			= True
-number_of_demands		= 6
-path_selection_criterion	= 'hops'
+number_of_demands		= 8
+path_selection_criterion	= 'lat'
 graph_type			= 'eight'
 bw_variants			= [1]
-lat_variants			= [2]
+lat_variants			= [10]
 
 ####################################################################
 ######################## main program ##############################
@@ -97,16 +97,28 @@ for j in range(repeats):
 			# count the allocation
 			acceptance_counter+=1
 		else:
-			print 'no path found'
+			print 'no path found,..  looking now at previous allocations\n'
+			path_pack_in_empty_graph=gf.shortest_p(G,d.get_source(),d.get_target(),d.get_lat())
+			if path_pack_in_empty_graph == []:
+				print 'there is really no path for this demand'
+			else:
+				print 'The best path in empty graph would be:'
+				sel= gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
+				print sel
+				print 'and this would have the following intersections: '
+				gf.check_setintersection(sel, selected_paths_book.values())
+			
 			if plot_enable:
 				plot_pngs+=gf.plot_graphviz(G_updated,d,None,plot_counter)+' '
 
 		plot_counter+=1
 
-	print 'path_book:\n'+str(path_book)
-
-	print '\n\nLink utilization: '+str(gf.link_util(G,G_updated))
-	print '\nAllocated demands: '+str(acceptance_counter)
+		
+	# print out result stats
+	print '\n\n\n%%%%% END STATS %%%%%'
+	#print 'path_book:\n'+str(path_book)
+	print 'Link utilization: '+str(gf.link_util(G,G_updated))
+	print 'Allocated demands: '+str(acceptance_counter)
 	print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 	print 'Total demands: '+str(number_of_demands)
 	acceptance_rate = float(acceptance_counter)/float(number_of_demands)
