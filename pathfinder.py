@@ -105,7 +105,7 @@ print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 print 'Total demands: '+str(number_of_demands)
 acceptance_rate = float(acceptance_counter)/float(number_of_demands)
 print 'Acceptance rate: '+str(acceptance_rate*100)+'%'
-print 'selected paths:'+str(selected_paths_book)
+print 'selected path book:'+str(selected_paths_book)
 
 # plot 
 os.system('convert '+plot_pngs+' +append topo.png')
