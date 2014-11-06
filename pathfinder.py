@@ -22,13 +22,13 @@ import graphFunctions as gf
 ########################## parameters ##############################
 ####################################################################
 
-repeats				= 50
-plot_enable			= False
-number_of_demands		= 10
-path_selection_criterion	= 'hops'
-graph_type			= 'srg'
+repeats				= 1
+plot_enable			= True
+number_of_demands		= 6
+path_selection_criterion	= 'lat'
+graph_type			= 'eight'
 bw_variants			= [1]
-lat_variants			= [10]
+lat_variants			= [2]
 
 ####################################################################
 ######################## main program ##############################

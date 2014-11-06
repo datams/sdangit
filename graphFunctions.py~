@@ -137,6 +137,7 @@ def plot_graphviz(G,demand,path,k):
 	A.draw(topo_name)
 	return topo_name
 
+# select a path out of a path_pack based on criterion lat or hops
 def select_path(paths_pack, criterion):
 	# take minimum lat path or minimum hop path
 	if criterion=='lat':
@@ -151,4 +152,27 @@ def select_path(paths_pack, criterion):
 		print 'min_hops_path:\n'+str(selected_path)
 	return selected_path
 
+# compare tuple on equality (disregarding order)
+def cmpT(tuple1, tuple2): 
+	if sorted(tuple1) == sorted(tuple2):
+		return 1
+	else:
+		return 0
 
+# check paths on having some of the same edges
+def check_intersect(path1, path2):
+
+	if len(path1)>len(path2):
+		long_path=path1
+		short_path=path2
+
+	if len(path2)>len(path1):
+		long_path=path2
+		short_path=path1
+
+	degree=0
+	for edge in path1:
+		for i in range(len(path2)):
+			degree+=cmpT(edge, path2[i])
+
+	return degree
