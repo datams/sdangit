@@ -40,8 +40,9 @@ G=customGraph.make(graph_type)
 os.system('rm *.png')
 print chr(27) + "[2J"
 
-# dict for all paths found ever
+# dict for all paths found and selected ever
 path_book={}
+selected_paths_book={}
 
 # dict for all paths found ever
 path_book={}
@@ -83,6 +84,7 @@ for iteration in range(number_of_demands):
 		selected_path = gf.select_path(paths_pack, path_selection_criterion)
 		# store found paths in dictionary book
 		path_book[(d.get_source(),d.get_target())]=paths_pack
+		selected_paths_book[(d.get_source(),d.get_target())]=selected_path
 		# update graph
 		G_updated=gf.update_edges(G_updated, selected_path, d.get_bw())
 		# plot the chosen path
@@ -103,6 +105,7 @@ print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 print 'Total demands: '+str(number_of_demands)
 acceptance_rate = float(acceptance_counter)/float(number_of_demands)
 print 'Acceptance rate: '+str(acceptance_rate*100)+'%'
+print 'selected paths:'+str(selected_paths_book)
 
 # plot 
 os.system('convert '+plot_pngs+' +append topo.png')
