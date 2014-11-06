@@ -43,6 +43,9 @@ print chr(27) + "[2J"
 # dict for all paths found ever
 path_book={}
 
+# dict for all paths found ever
+path_book={}
+
 # get working copy of graph
 G_updated=copy.deepcopy(G)
 
@@ -64,6 +67,7 @@ for iteration in range(number_of_demands):
 
 	# instantiate a demand
 	d=demand.demand(G.nodes(),bw_variants,lat_variants)
+
 	#d.make_choice_concrete(2,3)
 	d.make_choice()
 
