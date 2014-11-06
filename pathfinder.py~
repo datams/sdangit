@@ -14,7 +14,7 @@ import copy
 import pygraphviz
 import os
 import operator
-import demand
+import demand as dem
 import customGraph
 import graphFunctions as gf
 
@@ -62,6 +62,14 @@ for j in range(repeats):
 	plot_pngs+=gf.plot_graphviz(G_updated,None,None,plot_counter)+' '
 	plot_counter+=1
 	acceptance_counter=0
+	
+	# create all demands
+	demand_list=[]
+	for k in range(number_of_demands):
+		temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
+		temp_dem.make_choice()
+		demand_list.append(temp_dem)
+		#d.make_choice_concrete(2,3)
 
 	for iteration in range(number_of_demands):
 		print '\n \n########### \n'+str(iteration)+'th iteration'
@@ -71,10 +79,7 @@ for j in range(repeats):
 		G_updated=copy.deepcopy(G_prune)
 
 		# instantiate a demand
-		d=demand.demand(G.nodes(),bw_variants,lat_variants)
-
-		#d.make_choice_concrete(2,3)
-		d.make_choice()
+		d=demand_list[iteration]
 
 		# pruning
 		G_prune=gf.prune_bw(G_prune, d.get_bw())
@@ -84,12 +89,14 @@ for j in range(repeats):
 		print '\nPaths (with lat.) found: \n'+str(paths_pack)
 
 		if paths_pack!=[] and paths_pack!=None:
-			# path selection
-			selected_path = gf.select_path(paths_pack, path_selection_criterion)
 			# store found paths in dictionary book
 			path_book[(d.get_source(),d.get_target())]=paths_pack
+			# path selection
+			selected_path = gf.select_path(paths_pack, path_selection_criterion)
+			# store selected path in dictionary book
 			selected_paths_book[(d.get_source(),d.get_target())]=selected_path
 			# update graph
+			d.set_path(selected_path)
 			G_updated=gf.update_edges(G_updated, selected_path, d.get_bw())
 			# plot the chosen path
 			if plot_enable:
