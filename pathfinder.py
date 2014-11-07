@@ -55,8 +55,11 @@ for j in range(repeats):
 	plot_pngs=''
 
 	# plot original graph
-	[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, plot_enable)
-		
+	[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, 1, plot_enable)
+
+	# counters	
+	number_of_reroutings=0
+
 	# create all demands
 	d_list=[]
 	demand_dict={}
@@ -75,39 +78,49 @@ for j in range(repeats):
 
 		# plot the chosen path
 		if sel_path!=[]:
-			[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, plot_enable)
+			[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
 		else:
 			print 'no path found, looking now at previous allocations..\n'
 			path_pack_in_empty_graph=gf.shortest_p(G,d_list[i].get_source(),d_list[i].get_target(),d_list[i].get_lat())
 			if path_pack_in_empty_graph == []:
 				print 'there is really no path for this demand, no chance!'
 			else:
+				# demand cannot be allocated, what could be done?
+				# plot hard demand
+				[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
 				print 'The best path in the empty graph would be:'
+				# determine optimal path				
 				optimal_path = gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
 				print optimal_path
+				# find intersections of optimal path with previous allocations				
 				print 'which would have all the following intersections: '
 				intersect_dict=gf.check_setintersection(optimal_path, sel_paths_book.values())
 				print intersect_dict
 				if intersect_dict!={}:
-					# produces a png of the plot
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, plot_enable)
+					# find worst intersection
 					print 'although the worst one is: '+str(intersect_dict[max(intersect_dict)])
 					worst_intersect = intersect_dict[max(intersect_dict)]
-					print 'therefore please consider rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
+					# find intersection demand
+					print 'therefore rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
 					to_reroute=demand_dict[worst_intersect[0],worst_intersect[-1]]
-					print 'which would be demand nr: '+str(to_reroute)
-					print 'now unallocating'
+					# plot un-allocated graph
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, 2, plot_enable)
+					# un-allocate
 					[G_updated, sel_paths_book] = gf.unalloc(G_updated, d_list[to_reroute], sel_paths_book)
-					# produces a png of the plot
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, plot_enable)
+					# plot un-allocated graph
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, 2, plot_enable)
+					# allocate current demand
+					number_of_reroutings+=1
 					print 'allocate current demand'
 					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, sel_paths_book)
+					# plot allocated path
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
+					# allocate old demand again
 					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[to_reroute],path_selection_criterion, sel_paths_book)
-					# produces a png of the plot
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, plot_enable)
+					# plot old path
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, 1, plot_enable)
 					
 					
-
 		i+=1
 		if i==number_of_demands:
 			break
@@ -117,6 +130,7 @@ for j in range(repeats):
 	acceptance_counter = sum([d.x for d in d_list])
 	print 'Allocated demands: '+str(acceptance_counter)
 	print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
+	print 'Rerouted demands: '+str(number_of_reroutings)
 	print 'Total demands: '+str(number_of_demands)
 	acceptance_rate = float(acceptance_counter)/float(number_of_demands)
 	print 'Acceptance rate: '+str(acceptance_rate*100)+'%'

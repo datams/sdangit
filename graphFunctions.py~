@@ -170,9 +170,9 @@ def plot_graphviz(G,demand,k):
 	# colorize source and target
 	if demand!=None:
 		n=A.get_node(demand.get_source())
-		n.attr['color']='red'
-		n=A.get_node(demand.get_target())
 		n.attr['color']='green'
+		n=A.get_node(demand.get_target())
+		n.attr['color']='red'
 		path=demand.get_path()
 
 	# colorize path
@@ -190,10 +190,11 @@ def plot_graphviz(G,demand,k):
 	return topo_name
 
 # produces a png of the plot
-def ppng(G_updated, d, plot_pngs, plot_counter):
-	plot_pngs+=plot_graphviz(G_updated,d,plot_counter)+' '
-	plot_counter+=1
-	return [plot_pngs, plot_counter]
+def ppng(G_updated, d, plot_pngs, plot_counter, enable):
+	if enable:
+		plot_pngs+=plot_graphviz(G_updated,d,plot_counter)+' '
+		plot_counter+=1
+		return [plot_pngs, plot_counter]
 
 # select a path out of a path_pack based on criterion lat or hops
 def select_path(paths_pack, criterion):
