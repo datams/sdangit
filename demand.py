@@ -17,7 +17,7 @@ class demand:
 	self.lat = None
 	self.bw_variants = bw_variants
 	self.lat_variants = lat_variants
-	self.x=False
+	self.x=0
 	self.path=[]
 	self.paths_pack=[]
     def set_source(self, s):
@@ -37,9 +37,9 @@ class demand:
     def get_lat(self):
 	return self.lat
     def set_allocated(self):
-	self.x=True
+	self.x=1
     def set_unallocated(self):
-	self.x=False
+	self.x=0
     def set_path(self,path2set):
 	self.path=path2set
     def get_path(self):

@@ -28,7 +28,7 @@ number_of_demands		= 8
 path_selection_criterion	= 'lat'
 graph_type			= 'eight'
 bw_variants			= [1]
-lat_variants			= [10]
+lat_variants			= [4]
 
 ####################################################################
 ######################## main program ##############################
@@ -44,12 +44,8 @@ print chr(27) + "[2J"
 acceptance_rate_pool=[]
 for j in range(repeats):
 
-	# dict for all paths found and selected ever
-	path_book={}
+	# dict for all selected paths
 	selected_paths_book={}
-
-	# dict for all paths found ever
-	path_book={}
 
 	# get working copy of graph
 	G_updated=copy.deepcopy(G)
@@ -61,8 +57,7 @@ for j in range(repeats):
 	# plot original graph
 	plot_pngs+=gf.plot_graphviz(G_updated,None,None,plot_counter)+' '
 	plot_counter+=1
-	acceptance_counter=0
-	
+		
 	# create all demands
 	d_list=[]
 	demand_dict={}
@@ -72,46 +67,16 @@ for j in range(repeats):
 		d_list.append(temp_dem)
 		demand_dict[(temp_dem.get_source(),temp_dem.get_target())]=k
 
-	
 	i = 0
 	while(True):
 		print '\n \n########### \n'+str(i)+'th iteration'
-	
-		# copy of graph for pruning and updating
-		G_prune=G_updated
-		G_updated=copy.deepcopy(G_prune)
 
-		print '\nDemand: '
-		print 'Path to find: '+str(d_list[i].source)+' ==> '+str(d_list[i].target)
-		print "bw req: "+str(d_list[i].bw)
-		print "lat req: "+str(d_list[i].lat)
-
-		# pruning
-		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
-
-		# path finding
-		paths_pack = gf.shortest_p(G_prune,d_list[i].get_source(),d_list[i].get_target(),d_list[i].get_lat())
-		print '\nPaths (with lat.) found: \n'+str(paths_pack)
-
-		if paths_pack!=[] and paths_pack!=None:
-			# store found paths in dictionary book
-			path_book[(d_list[i].get_source(),d_list[i].get_target())]=paths_pack
-			# store found paths in demand
-			d_list[i].set_paths_pack(paths_pack)
-			# path selection
-			selected_path = gf.select_path(paths_pack, path_selection_criterion)
-			# store selected path in dictionary book
-			selected_paths_book[(d_list[i].get_source(),d_list[i].get_target())]=selected_path
-			# store selected path in demand
-			d_list[i].set_allocated()
-			d_list[i].set_path(selected_path)
-			# update graph
-			G_updated=gf.update_edges(G_updated, selected_path, d_list[i].get_bw())
-			# plot the chosen path
-			if plot_enable:
-				plot_pngs+=gf.plot_graphviz(G_updated,d_list[i],selected_path,plot_counter)+' '
-			# count the allocation
-			acceptance_counter+=1
+		# allocate path in graph	
+		[G_updated, paths_pack, selected_path, selected_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, selected_paths_book)
+		
+		# plot the chosen path
+		if plot_enable and selected_path!=[]:
+			plot_pngs+=gf.plot_graphviz(G_updated,d_list[i],selected_path,plot_counter)+' '
 		else:
 			print 'no path found, looking now at previous allocations..\n'
 			path_pack_in_empty_graph=gf.shortest_p(G,d_list[i].get_source(),d_list[i].get_target(),d_list[i].get_lat())
@@ -121,14 +86,15 @@ for j in range(repeats):
 				print 'The best path in the empty graph would be:'
 				optimal_path = gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
 				print optimal_path
-				print 'which would have the following intersections: '
+				print 'which would have all the following intersections: '
 				intersect_dict=gf.check_setintersection(optimal_path, selected_paths_book.values())
 				print intersect_dict
-				print '\nalthough the worst one is: '+str(intersect_dict[max(intersect_dict)])
-				worst_intersect = intersect_dict[max(intersect_dict)]
-				print 'therefore please consider rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
-				to_reroute=demand_dict[worst_intersect[0],worst_intersect[-1]]
-				print 'which would be demand nr: '+str(to_reroute)
+				if intersect_dict!={}:
+					print 'although the worst one is: '+str(intersect_dict[max(intersect_dict)])
+					worst_intersect = intersect_dict[max(intersect_dict)]
+					print 'therefore please consider rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
+					to_reroute=demand_dict[worst_intersect[0],worst_intersect[-1]]
+					print 'which would be demand nr: '+str(to_reroute)
 				# nehme den betroffenen demand, setze ihn auf unallocated
 				# update den graphen mit minus bw
 				# alloziere den neuen demand?
@@ -144,7 +110,7 @@ for j in range(repeats):
 		
 	# print out result stats
 	print '\n\n\n%%%%% END STATS %%%%%'
-	#print 'path_book:\n'+str(path_book)
+	acceptance_counter = sum([d.x for d in d_list])
 	print 'Allocated demands: '+str(acceptance_counter)
 	print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 	print 'Total demands: '+str(number_of_demands)

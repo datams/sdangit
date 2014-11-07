@@ -13,6 +13,45 @@ import operator
 ########################## functions ###############################
 ####################################################################
 
+# allocates a paths
+def alloc(G, d, path_selection_criterion, selected_paths_book):
+	# copy of graph for pruning and updating
+	G_prune=copy.deepcopy(G)
+	G_updated=copy.deepcopy(G)
+
+	path_pack=[]
+	selected_path=[]
+
+	print '\nDemand: '
+	print 'Path to find: '+str(d.source)+' ==> '+str(d.target)
+	print "bw req: "+str(d.bw)
+	print "lat req: "+str(d.lat)
+
+	# pruning
+	G_prune=prune_bw(G_prune, d.get_bw())
+
+	# path finding
+	paths_pack = shortest_p(G_prune,d.get_source(),d.get_target(),d.get_lat())
+	print '\nPaths (with lat.) found: \n'+str(paths_pack)
+
+	if paths_pack!=[] and paths_pack!=None:
+		# store found paths in demand
+		d.set_paths_pack(paths_pack)
+		# path selection
+		selected_path = select_path(paths_pack, path_selection_criterion)
+		# store selected path in demand
+		d.set_allocated()
+		d.set_path(selected_path)
+		# update graph
+		G_updated=update_edges(G_updated, selected_path, d.get_bw())
+		alloc_counter=1	
+		# store selected path in dictionary book
+		selected_paths_book[(d.get_source(),d.get_target())]=selected_path
+
+
+	return [G_updated, paths_pack, selected_path, selected_paths_book]
+
+
 # returns shortest paths that fit lat req.
 def shortest_p(G,s,t,lat):
 	if nx.has_path(G,s,t)==True:
@@ -66,7 +105,7 @@ def prune_bw(G, bandwidth):
 			bw=eattr['bw']
 			if bw<bandwidth:
 				G.remove_edge(n,nbr)
-				print 'removed edge: '+str(n)+','+str(nbr)
+				print 'prune edge: '+str(n)+','+str(nbr)
 	return G
 
 # returns link utilization
@@ -83,7 +122,7 @@ def link_util(G,F):
 		        end_bw.append(eattr['bw'])
 
 	usage=[]
-	for i in end_bw:
+	for i in range(len(end_bw)):
 		if end_bw[i]!=orig_bw[i]:
 			available_bw=float(orig_bw[i])
 			used_bw=float(orig_bw[i])-float(end_bw[i])
