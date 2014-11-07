@@ -127,10 +127,12 @@ for j in range(repeats):
 				print '\nalthough the worst one is: '+str(intersect_dict[max(intersect_dict)])
 				worst_intersect = intersect_dict[max(intersect_dict)]
 				print 'therefore please consider rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
+				to_reroute=demand_dict[worst_intersect[0],worst_intersect[-1]]
+				print 'which would be demand nr: '+str(to_reroute)
 				# nehme den betroffenen demand, setze ihn auf unallocated
 				# update den graphen mit minus bw
 				# alloziere den neuen demand?
-				# alloziere den alten demand? den kann man per demand dict wieder finden
+				# alloziere den alten demand? den kann man per demand dict wieder finden und mit i kann man steuern was behandelt wird
 			if plot_enable:
 				plot_pngs+=gf.plot_graphviz(G_updated,d_list[i],None,plot_counter)+' '
 

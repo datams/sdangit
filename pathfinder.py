@@ -121,12 +121,14 @@ for j in range(repeats):
 				print 'The best path in the empty graph would be:'
 				optimal_path = gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
 				print optimal_path
-				print 'which would have the following intersections: '
+				print 'which would have all the following intersections: '
 				intersect_dict=gf.check_setintersection(optimal_path, selected_paths_book.values())
 				print intersect_dict
-				print '\nalthough the worst one is: '+str(intersect_dict[max(intersect_dict)])
+				print 'although the worst one is: '+str(intersect_dict[max(intersect_dict)])
 				worst_intersect = intersect_dict[max(intersect_dict)]
 				print 'therefore please consider rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
+				to_reroute=demand_dict[worst_intersect[0],worst_intersect[-1]]
+				print 'which would be demand nr: '+str(to_reroute)
 				# nehme den betroffenen demand, setze ihn auf unallocated
 				# update den graphen mit minus bw
 				# alloziere den neuen demand?
