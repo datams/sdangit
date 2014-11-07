@@ -201,6 +201,8 @@ def ppng(G_updated, d, plot_pngs, plot_counter, colorscheme, enable):
 		plot_pngs+=plot_graphviz(G_updated,d,plot_counter,colorscheme)+' '
 		plot_counter+=1
 		return [plot_pngs, plot_counter]
+	else:
+		return [0,0]
 
 # select a path out of a path_pack based on criterion lat or hops
 def select_path(paths_pack, criterion):

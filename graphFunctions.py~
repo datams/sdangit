@@ -155,8 +155,14 @@ def update_edges(G, path, bwreq):
 	return G
 
 # plots (graphviz) graph with demand d and path p
-def plot_graphviz(G,demand,k):
+def plot_graphviz(G,demand,plot_counter,colorscheme):
 	
+	colorpool={}
+	colorpool[1]=['green','red','blue']
+	colorpool[2]=['chartreuse4','brown4','darkorange']
+	
+	colors=colorpool[colorscheme]
+
 	# get edge labels
 	for u,v,d in G.edges(data=True):
 		l = d.get('lat','')
@@ -170,9 +176,9 @@ def plot_graphviz(G,demand,k):
 	# colorize source and target
 	if demand!=None:
 		n=A.get_node(demand.get_source())
-		n.attr['color']='green'
+		n.attr['color']=colors[0]
 		n=A.get_node(demand.get_target())
-		n.attr['color']='red'
+		n.attr['color']=colors[1]
 		path=demand.get_path()
 
 	# colorize path
@@ -181,20 +187,22 @@ def plot_graphviz(G,demand,k):
 		for i in range(0,len(path_edges)):
 			edge=path_edges[i]
 			e=A.get_edge(edge[0],edge[1])
-			e.attr['color']='blue'
+			e.attr['color']=colors[2]
 
 	# plot
 	A.layout(prog='dot')
-	topo_name='topo'+str(k)+'.png'
+	topo_name='topo'+str(plot_counter)+'.png'
 	A.draw(topo_name)
 	return topo_name
 
 # produces a png of the plot
-def ppng(G_updated, d, plot_pngs, plot_counter, enable):
+def ppng(G_updated, d, plot_pngs, plot_counter, colorscheme, enable):
 	if enable:
-		plot_pngs+=plot_graphviz(G_updated,d,plot_counter)+' '
+		plot_pngs+=plot_graphviz(G_updated,d,plot_counter,colorscheme)+' '
 		plot_counter+=1
 		return [plot_pngs, plot_counter]
+	else:
+		return []
 
 # select a path out of a path_pack based on criterion lat or hops
 def select_path(paths_pack, criterion):
