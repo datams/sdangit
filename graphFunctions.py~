@@ -14,13 +14,13 @@ import operator
 ####################################################################
 
 # allocates a paths
-def alloc(G, d, path_selection_criterion, selected_paths_book):
+def alloc(G, d, path_selection_criterion, sel_paths_book):
 	# copy of graph for pruning and updating
 	G_prune=copy.deepcopy(G)
 	G_updated=copy.deepcopy(G)
 
 	path_pack=[]
-	selected_path=[]
+	sel_path=[]
 
 	print '\nDemand: '
 	print 'Path to find: '+str(d.source)+' ==> '+str(d.target)
@@ -38,19 +38,30 @@ def alloc(G, d, path_selection_criterion, selected_paths_book):
 		# store found paths in demand
 		d.set_paths_pack(paths_pack)
 		# path selection
-		selected_path = select_path(paths_pack, path_selection_criterion)
-		# store selected path in demand
+		sel_path = select_path(paths_pack, path_selection_criterion)
+		# store sel path in demand
 		d.set_allocated()
-		d.set_path(selected_path)
+		d.set_path(sel_path)
+		print 'd.path is '+str(d.path)
 		# update graph
-		G_updated=update_edges(G_updated, selected_path, d.get_bw())
-		alloc_counter=1	
-		#store selected path in dictionary book
-		selected_paths_book[(d.get_source(),d.get_target())]=selected_path
+		G_updated=update_edges(G_updated, sel_path, d.get_bw())
+		# store sel path in dictionary book
+		sel_paths_book[(d.get_source(),d.get_target())]=sel_path
 
 
-	return [G_updated, paths_pack, selected_path, selected_paths_book]
+	return [G_updated, paths_pack, sel_path, sel_paths_book]
 
+# un-allocates a paths
+def unalloc(G_updated, d, sel_paths_book):
+	# update graph
+	G_updated=update_edges(G_updated, d.get_path(), -d.get_bw())
+	# delete entry in sel path dictionary
+	sel_paths_book.pop((d.get_source(),d.get_target()))
+	# delete allocation in demand
+	d.set_unallocated()
+	d.set_path([])
+
+	return [G_updated, sel_paths_book]
 
 # returns shortest paths that fit lat req.
 def shortest_p(G,s,t,lat):
@@ -144,7 +155,7 @@ def update_edges(G, path, bwreq):
 	return G
 
 # plots (graphviz) graph with demand d and path p
-def plot_graphviz(G,demand,path,k):
+def plot_graphviz(G,demand,k):
 	
 	# get edge labels
 	for u,v,d in G.edges(data=True):
@@ -155,12 +166,14 @@ def plot_graphviz(G,demand,path,k):
 	# returns pygraphviz graph A from NetworkX graph G
 	A = nx.to_agraph(G)
 
+	path=None
 	# colorize source and target
 	if demand!=None:
 		n=A.get_node(demand.get_source())
 		n.attr['color']='red'
 		n=A.get_node(demand.get_target())
 		n.attr['color']='green'
+		path=demand.get_path()
 
 	# colorize path
 	if path!=None:
@@ -176,22 +189,28 @@ def plot_graphviz(G,demand,path,k):
 	A.draw(topo_name)
 	return topo_name
 
+# produces a png of the plot
+def ppng(G_updated, d, plot_pngs, plot_counter):
+	plot_pngs+=plot_graphviz(G_updated,d,plot_counter)+' '
+	plot_counter+=1
+	return [plot_pngs, plot_counter]
+
 # select a path out of a path_pack based on criterion lat or hops
 def select_path(paths_pack, criterion):
 	# take minimum lat path or minimum hop path
 	if criterion=='lat':
-		selected_path = min(paths_pack, key=operator.itemgetter(1))
-		min_lat=selected_path[1]
-		selected_path=selected_path[0]
-		# print 'min_lat_path:\n'+str(selected_path)
+		sel_path = min(paths_pack, key=operator.itemgetter(1))
+		min_lat=sel_path[1]
+		sel_path=sel_path[0]
+		# print 'min_lat_path:\n'+str(sel_path)
 
 	if criterion=='hops':
-		selected_path = min(paths_pack, key=operator.itemgetter(2))
-		min_hop=selected_path[2]
-		selected_path=selected_path[0]
-		# print 'min_hops_path:\n'+str(selected_path)
+		sel_path = min(paths_pack, key=operator.itemgetter(2))
+		min_hop=sel_path[2]
+		sel_path=sel_path[0]
+		# print 'min_hops_path:\n'+str(sel_path)
 
-	return selected_path
+	return sel_path
 
 # compare tuple on equality (disregarding order)
 def cmpT(tuple1, tuple2):

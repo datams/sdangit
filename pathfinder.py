@@ -44,8 +44,8 @@ print chr(27) + "[2J"
 acceptance_rate_pool=[]
 for j in range(repeats):
 
-	# dict for all selected paths
-	selected_paths_book={}
+	# dict for all sel paths
+	sel_paths_book={}
 
 	# get working copy of graph
 	G_updated=copy.deepcopy(G)
@@ -55,8 +55,8 @@ for j in range(repeats):
 	plot_pngs=''
 
 	# plot original graph
-	plot_pngs+=gf.plot_graphviz(G_updated,None,None,plot_counter)+' '
-	plot_counter+=1
+	# produces a png of the plot
+	[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, plot_enable)
 		
 	# create all demands
 	d_list=[]
@@ -72,11 +72,12 @@ for j in range(repeats):
 		print '\n \n########### \n'+str(i)+'th iteration'
 
 		# allocate path in graph	
-		[G_updated, paths_pack, selected_path, selected_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, selected_paths_book)
-		
+		[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, sel_paths_book)
+
 		# plot the chosen path
-		if plot_enable and selected_path!=[]:
-			plot_pngs+=gf.plot_graphviz(G_updated,d_list[i],selected_path,plot_counter)+' '
+		if sel_path!=[]:
+			# produces a png of the plot
+			[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, plot_enable)
 		else:
 			print 'no path found, looking now at previous allocations..\n'
 			path_pack_in_empty_graph=gf.shortest_p(G,d_list[i].get_source(),d_list[i].get_target(),d_list[i].get_lat())
@@ -87,22 +88,30 @@ for j in range(repeats):
 				optimal_path = gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
 				print optimal_path
 				print 'which would have all the following intersections: '
-				intersect_dict=gf.check_setintersection(optimal_path, selected_paths_book.values())
+				intersect_dict=gf.check_setintersection(optimal_path, sel_paths_book.values())
 				print intersect_dict
 				if intersect_dict!={}:
+					# produces a png of the plot
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, plot_enable)
 					print 'although the worst one is: '+str(intersect_dict[max(intersect_dict)])
 					worst_intersect = intersect_dict[max(intersect_dict)]
 					print 'therefore please consider rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
 					to_reroute=demand_dict[worst_intersect[0],worst_intersect[-1]]
 					print 'which would be demand nr: '+str(to_reroute)
-				# nehme den betroffenen demand, setze ihn auf unallocated
-				# update den graphen mit minus bw
-				# alloziere den neuen demand?
-				# alloziere den alten demand? den kann man per demand dict wieder finden und mit i kann man steuern was behandelt wird
-			if plot_enable:
-				plot_pngs+=gf.plot_graphviz(G_updated,d_list[i],None,plot_counter)+' '
+					print 'now unallocating'
+					[G_updated, sel_paths_book] = gf.unalloc(G_updated, d_list[to_reroute], sel_paths_book)
+					# produces a png of the plot
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, plot_enable)
+					print 'allocate current demand'
+					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, sel_paths_book)
+					if plot_enable:
+						plot_pngs+=gf.plot_graphviz(G_updated,d_list[i],plot_counter)+' '
+					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[to_reroute],path_selection_criterion, sel_paths_book)
+					# produces a png of the plot
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, plot_enable)
+					
+					
 
-		plot_counter+=1
 		i+=1
 		if i==number_of_demands:
 			break
@@ -116,7 +125,7 @@ for j in range(repeats):
 	acceptance_rate = float(acceptance_counter)/float(number_of_demands)
 	print 'Acceptance rate: '+str(acceptance_rate*100)+'%'
 	print 'Link utilization: '+str(gf.link_util(G,G_updated))
-	print 'selected path book:\n'+str(selected_paths_book)
+	print 'sel path book:\n'+str(sel_paths_book)
 
 	# plot
 	if plot_enable:

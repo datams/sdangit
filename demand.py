@@ -43,7 +43,7 @@ class demand:
     def set_path(self,path2set):
 	self.path=path2set
     def get_path(self):
-	return path
+	return self.path
     def set_paths_pack(self,pack2set):
 	self.paths_pack=pack2set
 
