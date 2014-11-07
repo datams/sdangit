@@ -55,7 +55,6 @@ for j in range(repeats):
 	plot_pngs=''
 
 	# plot original graph
-	# produces a png of the plot
 	[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, plot_enable)
 		
 	# create all demands
@@ -76,7 +75,6 @@ for j in range(repeats):
 
 		# plot the chosen path
 		if sel_path!=[]:
-			# produces a png of the plot
 			[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, plot_enable)
 		else:
 			print 'no path found, looking now at previous allocations..\n'
@@ -104,8 +102,6 @@ for j in range(repeats):
 					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, plot_enable)
 					print 'allocate current demand'
 					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, sel_paths_book)
-					if plot_enable:
-						plot_pngs+=gf.plot_graphviz(G_updated,d_list[i],plot_counter)+' '
 					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[to_reroute],path_selection_criterion, sel_paths_book)
 					# produces a png of the plot
 					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, plot_enable)
