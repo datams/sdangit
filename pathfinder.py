@@ -22,13 +22,13 @@ import graphFunctions as gf
 ########################## parameters ##############################
 ####################################################################
 
-repeats				= 500
+repeats				= 200
 plot_enable			= False
-number_of_demands		= 8
+number_of_demands		= 20
 path_selection_criterion	= 'lat'
-graph_type			= 'eight'
+graph_type			= 'srg'
 bw_variants			= [1]
-lat_variants			= [4]
+lat_variants			= [10]
 
 ####################################################################
 ######################## main program ##############################
@@ -44,6 +44,7 @@ print chr(27) + "[2J"
 # over repeats stats vars
 acceptance_rate_pool=[]
 successful_rerouting_fraction_pool=[]
+number_of_rerouting_attempts_pool=0
 
 for j in range(repeats):
 
@@ -136,6 +137,7 @@ for j in range(repeats):
 	print 'Allocated demands: '+str(acceptance_counter)
 	print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 	print 'Rerouting attempts: '+str(number_of_rerouting_attempts)
+	number_of_rerouting_attempts_pool+=number_of_rerouting_attempts
 	print 'Successful reroutings '+str(number_of_rerouting_success)
 	if number_of_rerouting_attempts>0:
 		print 'Successful rerouting fraction '+str(float(number_of_rerouting_success)/float(number_of_rerouting_attempts))
@@ -157,6 +159,7 @@ for j in range(repeats):
 	
 
 if repeats>1:
+	print '\n \n \nnumber of rerouting attempts: '+str(number_of_rerouting_attempts_pool)
 	print '\navg acceptance rate: '+str(sum(acceptance_rate_pool)/len(acceptance_rate_pool))
 	if len(successful_rerouting_fraction_pool)>0:
 		print '\navg Successful rerouting fraction: '+str(sum(successful_rerouting_fraction_pool)/len(successful_rerouting_fraction_pool))

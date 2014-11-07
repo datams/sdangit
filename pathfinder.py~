@@ -22,13 +22,13 @@ import graphFunctions as gf
 ########################## parameters ##############################
 ####################################################################
 
-repeats				= 500
+repeats				= 200
 plot_enable			= False
-number_of_demands		= 8
+number_of_demands		= 20
 path_selection_criterion	= 'lat'
-graph_type			= 'eight'
+graph_type			= 'srg'
 bw_variants			= [1]
-lat_variants			= [4]
+lat_variants			= [10]
 
 ####################################################################
 ######################## main program ##############################
@@ -44,6 +44,7 @@ print chr(27) + "[2J"
 # over repeats stats vars
 acceptance_rate_pool=[]
 successful_rerouting_fraction_pool=[]
+number_of_rerouting_attempts_pool=0
 
 for j in range(repeats):
 
@@ -102,7 +103,7 @@ for j in range(repeats):
 				print intersect_dict
 				if intersect_dict!={}:
 					# find worst intersection path
-					print 'although the worst one is: '+str(intersect_dict[max(intersect_dict)])
+					print 'although the worst one is: '+str(intersect_dict[min(intersect_dict)])
 					worst_intersect = intersect_dict[max(intersect_dict)]
 					# find according demand
 					print 'therefore rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
@@ -136,6 +137,7 @@ for j in range(repeats):
 	print 'Allocated demands: '+str(acceptance_counter)
 	print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
 	print 'Rerouting attempts: '+str(number_of_rerouting_attempts)
+	number_of_rerouting_attempts_pool+=number_of_rerouting_attempts
 	print 'Successful reroutings '+str(number_of_rerouting_success)
 	if number_of_rerouting_attempts>0:
 		print 'Successful rerouting fraction '+str(float(number_of_rerouting_success)/float(number_of_rerouting_attempts))
@@ -153,14 +155,11 @@ for j in range(repeats):
 		os.system('rm '+plot_pngs)
 		os.system('eog topo.png')
 
-
-	print 'j: '+str(j)
-
-	
 	
 	
 
 if repeats>1:
+	print '\n \n \nnumber of rerouting attempts: '+str(number_of_rerouting_attempts_pool)
 	print '\navg acceptance rate: '+str(sum(acceptance_rate_pool)/len(acceptance_rate_pool))
 	if len(successful_rerouting_fraction_pool)>0:
 		print '\navg Successful rerouting fraction: '+str(sum(successful_rerouting_fraction_pool)/len(successful_rerouting_fraction_pool))
