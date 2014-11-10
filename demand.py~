@@ -20,7 +20,7 @@ class demand:
 	self.x=0
 	self.path=[]
 	self.paths_pack=[]
-	self.priority=None
+	self.priority
 	self.group=None
     def set_source(self, s):
         self.source=s

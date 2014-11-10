@@ -16,7 +16,7 @@ def make(name):
 		G.add_edge(5,6, bw=5, lat=1)
 		return G
 	
-	elif name=='srf':
+	elif name=='srg':
 		G=nx.Graph()
 
 		# add nodes and edges to the graph
