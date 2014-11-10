@@ -20,6 +20,8 @@ class demand:
 	self.x=0
 	self.path=[]
 	self.paths_pack=[]
+	self.priority=None
+	self.group=None
     def set_source(self, s):
         self.source=s
     def get_source(self):
@@ -46,6 +48,14 @@ class demand:
 	return self.path
     def set_paths_pack(self,pack2set):
 	self.paths_pack=pack2set
+    def get_priority(self):
+	return self.priority
+    def set_priority(self,priority2set):
+	self.priority=priority2set
+    def get_group(self):
+	return self.group
+    def set_group(self,group2set):
+	self.group=group2set
 
     # random choice of two distinct graph nodes as source / target
     def make_choice(self):
