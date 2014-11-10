@@ -124,10 +124,8 @@ def link_util(G,F):
 
 	orig_bw=[]
 	for n,nbrs in G.adjacency_iter():
-		print 'n: '+str(n)+' nbrs: '+str(nbrs)
 		for nbr,eattr in nbrs.items():
 		        orig_bw.append(eattr['bw'])
-			print "eattr['bw']"+str(eattr['bw'])
 
 	end_bw=[]
 	for n,nbrs in F.adjacency_iter():

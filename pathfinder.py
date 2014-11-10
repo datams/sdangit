@@ -91,6 +91,12 @@ for j in range(repeats):
 			if path_pack_in_empty_graph == []:
 				print 'there is really no path for this demand, no chance!'
 			else:
+				# Go through path book of least intersectioning demand d_u and reroute to the shortest non-intersecting path
+				# if there is none: reroute d_u to the least intersecting one
+				# try now to allocate d_n
+				# try to allocate d_u again, if it does not succeed, revert d_u and do not allocate d_n
+
+				# Only allocate new demand d_n if the old d_u can be allocated again
 				# demand cannot be allocated, what could be done?
 				# plot hard demand
 				[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
