@@ -3,7 +3,7 @@ import matplotlib.colors as colors
 import networkx as nx
 import random
 import copy
-#import matplotlib.cm as cmx
+import pylab as pl
 #import numpy as np
 import pygraphviz
 import os
@@ -124,8 +124,10 @@ def link_util(G,F):
 
 	orig_bw=[]
 	for n,nbrs in G.adjacency_iter():
+		print 'n: '+str(n)+' nbrs: '+str(nbrs)
 		for nbr,eattr in nbrs.items():
 		        orig_bw.append(eattr['bw'])
+			print "eattr['bw']"+str(eattr['bw'])
 
 	end_bw=[]
 	for n,nbrs in F.adjacency_iter():
@@ -133,18 +135,45 @@ def link_util(G,F):
 		        end_bw.append(eattr['bw'])
 
 	usage=[]
-	for i in range(len(end_bw)):
-		if end_bw[i]!=orig_bw[i]:
+	if len(orig_bw)==len(end_bw) and len(orig_bw)>0:
+		for i in range(len(end_bw)):
 			available_bw=float(orig_bw[i])
 			used_bw=float(orig_bw[i])-float(end_bw[i])
 			partial_util=float(used_bw)/float(available_bw)
 			usage.append(partial_util)
+
 	if len(usage)>0:
 		utilization=sum(usage)/len(usage)
 	else:
 		utilization=0
-	
+
 	return  utilization
+
+
+# saves link utilization to l_util.png
+def util_histo(G, G_updated):
+	edges = G.edges()
+	d = {}
+
+	for edge in edges:
+		from_node = edge[0]
+		to_node = edge[1]
+		orig_bw = G[from_node][to_node]['bw']
+		end_bw = G_updated[from_node][to_node]['bw']
+		used_bw=float(orig_bw)-float(end_bw)
+		partial_util=float(used_bw)/float(orig_bw)
+		d[from_node, to_node] = partial_util
+
+	X = range(len(d))
+	pl.bar(X, d.values(), align='center', width=0.5, color='orange')
+	pl.xticks(X, d.keys())
+	ymax = max(d.values())*1.1
+	pl.ylim(0, ymax)
+	pl.title('Link Utilization')
+	pl.xlabel('Links')
+	pl.ylabel('Utilization')
+	pl.savefig('l_util.png')
+
 
 # returns updated graph based on path allocation
 def update_edges(G, path, bwreq):

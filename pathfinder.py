@@ -22,13 +22,14 @@ import graphFunctions as gf
 ########################## parameters ##############################
 ####################################################################
 
-repeats				= 200
-plot_enable			= False
-number_of_demands		= 20
+repeats				= 1
+plot_enable			= True
+number_of_demands		= 7
 path_selection_criterion	= 'lat'
-graph_type			= 'srg'
+graph_type			= 'eight'
 bw_variants			= [1]
-lat_variants			= [10]
+lat_variants			= [16]
+
 
 ####################################################################
 ######################## main program ##############################
@@ -42,7 +43,7 @@ os.system('rm *.png')
 print chr(27) + "[2J"
 
 # over repeats stats vars
-acceptance_rate_pool=[]
+acceptance_ratio_pool=[]
 successful_rerouting_fraction_pool=[]
 number_of_rerouting_attempts_pool=0
 
@@ -104,7 +105,7 @@ for j in range(repeats):
 				if intersect_dict!={}:
 					# find worst intersection path
 					print 'although the worst one is: '+str(intersect_dict[max(intersect_dict)])
-					worst_intersect = intersect_dict[max(intersect_dict)]
+					worst_intersect = intersect_dict[min(intersect_dict)]
 					# find according demand
 					print 'therefore rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
 					to_reroute=demand_dict[worst_intersect[0],worst_intersect[-1]]
@@ -143,10 +144,13 @@ for j in range(repeats):
 		print 'Successful rerouting fraction '+str(float(number_of_rerouting_success)/float(number_of_rerouting_attempts))
 		successful_rerouting_fraction_pool.append(float(number_of_rerouting_success)/float(number_of_rerouting_attempts))
 	print 'Total demands: '+str(number_of_demands)
-	acceptance_rate = float(acceptance_counter)/float(number_of_demands)
-	acceptance_rate_pool.append(acceptance_rate)
-	print 'Acceptance rate: '+str(acceptance_rate*100)+'%'
+	acceptance_ratio = float(acceptance_counter)/float(number_of_demands)
+	acceptance_ratio_pool.append(acceptance_ratio)
+	print 'Acceptance ratio: '+str(acceptance_ratio*100)+'%'
 	print 'Link utilization: '+str(gf.link_util(G,G_updated))
+	# saves link utilization to l_util.png
+	os.system('rm l_util.png')
+	gf.util_histo(G, G_updated)
 	print 'sel path book:\n'+str(sel_paths_book)
 
 	# plot
@@ -160,7 +164,7 @@ for j in range(repeats):
 
 if repeats>1:
 	print '\n \n \nnumber of rerouting attempts: '+str(number_of_rerouting_attempts_pool)
-	print '\navg acceptance rate: '+str(sum(acceptance_rate_pool)/len(acceptance_rate_pool))
+	print '\navg acceptance ratio: '+str(sum(acceptance_ratio_pool)/len(acceptance_ratio_pool))
 	if len(successful_rerouting_fraction_pool)>0:
 		print '\navg Successful rerouting fraction: '+str(sum(successful_rerouting_fraction_pool)/len(successful_rerouting_fraction_pool))
 	
