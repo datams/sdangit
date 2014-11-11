@@ -13,7 +13,7 @@ import operator
 ########################## functions ###############################
 ####################################################################
 
-# allocates a paths
+# finds and allocates a path
 def alloc(G, d, path_selection_criterion, sel_paths_book):
 	# copy of graph for pruning and updating
 	G_prune=copy.deepcopy(G)
@@ -48,8 +48,31 @@ def alloc(G, d, path_selection_criterion, sel_paths_book):
 		# store sel path in dictionary book
 		sel_paths_book[(d.get_source(),d.get_target())]=sel_path
 
-
 	return [G_updated, paths_pack, sel_path, sel_paths_book]
+
+# allocates an indicated path
+def alloc_p(G, d, sel_path, sel_paths_book):
+	# copy of graph updating
+	G_updated=copy.deepcopy(G)
+
+	path_pack=[]
+	sel_path=[]
+
+	print '\nDemand: '
+	print 'Path to find: '+str(d.source)+' ==> '+str(d.target)
+	print "bw req: "+str(d.bw)
+	print "lat req: "+str(d.lat)
+
+	# store sel path in demand
+	d.set_allocated()
+	d.set_path(sel_path)
+	print 'd.path is '+str(d.path)
+	# update graph
+	G_updated=update_edges(G_updated, sel_path, d.get_bw())
+	# store sel path in dictionary book
+	sel_paths_book[(d.get_source(),d.get_target())]=sel_path
+
+	return [G_updated, sel_path, sel_paths_book]
 
 # un-allocates a paths
 def unalloc(G_updated, d, sel_paths_book):

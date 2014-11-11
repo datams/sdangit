@@ -91,48 +91,56 @@ for j in range(repeats):
 			if path_pack_in_empty_graph == []:
 				print 'there is really no path for this demand, no chance!'
 			else:
-				# Go through path book of least intersectioning demand d_u and reroute to the shortest non-intersecting path
-				# if there is none: reroute d_u to the least intersecting one
-				# try now to allocate d_n
-				# try to allocate d_u again, if it does not succeed, revert d_u and do not allocate d_n
-
-				# Only allocate new demand d_n if the old d_u can be allocated again
-				# demand cannot be allocated, what could be done?
-				# plot hard demand
+				# d_n the new demand, which no path could be found for
+				# plot d_n
 				[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
+
+				# Calculate best path p_n for d_n in empty graph
 				print 'The best path in the empty graph would be:'
-				# determine optimal path				
+				# determine optimal path
 				optimal_path = gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
 				print optimal_path
+
+				# Find least intersecting demand
 				# find intersections of optimal path with previous allocations				
 				print 'which would have all the following intersections: '
 				intersect_dict=gf.check_setintersection(optimal_path, sel_paths_book.values())
 				print intersect_dict
 				if intersect_dict!={}:
-					# find worst intersection path
-					print 'although the worst one is: '+str(intersect_dict[max(intersect_dict)])
-					worst_intersect = intersect_dict[min(intersect_dict)]
+					# find critical intersection path
+					print 'although the critical one is: '+str(intersect_dict[max(intersect_dict)])
+					critical_intersect = intersect_dict[min(intersect_dict)]
 					# find according demand
-					print 'therefore rerouting the path from '+str(worst_intersect[0])+' to '+str(worst_intersect[-1])
-					to_reroute=demand_dict[worst_intersect[0],worst_intersect[-1]]
+					print 'therefore rerouting the path from '+str(critical_intersect[0])+' to '+str(critical_intersect[-1])
+					d_u=demand_dict[critical_intersect[0],critical_intersect[-1]]
+					# Look for path for d_u that does not intersect with optimal_path
+					d_u_paths=[path for (path,lat,hops) in d_list[d_u].paths_pack]
+					d_u_intersect_paths=gf.check_setintersection(optimal_path, d_u_paths)
+					# if there are multiple such paths, take the shortest p_u for d_u
+					# if there is no such paths, take the least intersecting one p_u for d_u
+					p_u = min(d_u_intersect_paths)
+					# deallocate d_u
 					# plot path to un-allocated
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, 2, plot_enable)
-					# un-allocate
-					[G_updated, sel_paths_book] = gf.unalloc(G_updated, d_list[to_reroute], sel_paths_book)
-					# plot un-allocated graph
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, 2, plot_enable)
-					# allocate current demand
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 2, plot_enable)
 					number_of_rerouting_attempts+=1
-					print 'allocate current demand'
+					# un-allocate
+					[G_updated, sel_paths_book] = gf.unalloc(G_updated, d_list[d_u], sel_paths_book)
+					# plot un-allocated graph
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 2, plot_enable)
+					# allocate d_u with new path p_u
+					print 'allocate d_u with new path p_u'
+					[G_updated, sel_path, sel_paths_book] = gf.alloc_p(G_updated, d_list[d_u], p_u, sel_paths_book)
+					# plot p_u with p_u allocated path
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 1, plot_enable)
+					# try to allocate d_n
 					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, sel_paths_book)
-					# plot current demand allocated path
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
-					print  'allocate old demand again'
-					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[to_reroute],path_selection_criterion, sel_paths_book)
 					if paths_pack!=[]:
-						number_of_rerouting_success+=1				
-					# plot old demand allocated again
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[to_reroute], plot_pngs, plot_counter, 1, plot_enable)
+						number_of_rerouting_success+=1	
+					# plot d_n
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 1, plot_enable)
+
+
+
 							
 		i+=1
 		if i==number_of_demands:
