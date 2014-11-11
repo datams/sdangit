@@ -24,9 +24,9 @@ import graphFunctions as gf
 
 repeats				= 1
 plot_enable			= True
-number_of_demands		= 7
-path_selection_criterion	= 'lat'
-graph_type			= 'eight'
+number_of_demands		= 10
+path_selection_criterion	= 'hops'
+graph_type			= 'deight'
 bw_variants			= [1]
 lat_variants			= [10]
 
@@ -65,80 +65,85 @@ for j in range(repeats):
 
 	# create all demands
 	d_list=[]
-	demand_dict={}
 	for k in range(number_of_demands):
 		temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
 		temp_dem.make_choice()
 		d_list.append(temp_dem)
-		demand_dict[(temp_dem.get_source(),temp_dem.get_target())]=k
+		print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
 
 	i = 0
 	while(True):
 		print '\n \n########### \n'+str(i)+'th iteration'
 
-		# allocate path in graph	
+		# try to find and allocate path in graph	
 		[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
 
-		# plot the chosen path
+		# if successful, plot the chosen path
 		if sel_path!=[]:
 			[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
+		
+		# otherwise look for rerouting possibilities
 		else:
-			print 'no path found, looking now at previous allocations..\n'
+			print 'No path found, looking now at previous allocations..\n'
+			# check if demand could be allocated in empty graph
 			path_pack_in_empty_graph=gf.shortest_p(G,d_list[i].get_source(),d_list[i].get_target(),d_list[i].get_lat())
+
 			if path_pack_in_empty_graph == []:
-				print 'there is really no path for this demand, no chance!'
+				# demand can never be allocated
+				print 'There is really no path for this demand, no chance!'
+
 			else:
-				# d_n the new demand, which no path could be found for
-				# plot d_n
+				# plot d_n e.g. the current demand, which no path could be found for
 				[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
 
-				# Calculate best path p_n for d_n in empty graph
-				print 'The best path in the empty graph would be:'
-				# determine optimal path
+				# calculate best path p_n for d_n in empty graph
 				optimal_path = gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
-				print optimal_path
+				print 'The best path in the empty graph would be: '+str(optimal_path)
 
-				# Find least intersecting demand
-				# find intersections of optimal path with previous allocations				
-				print 'having the following intersections: '
-				intersect_dict=gf.check_setintersection(optimal_path, gf.sel_paths(d_list).values())
-				print intersect_dict
-				if intersect_dict!={}:
+				# find the shoretst intersection path of optimal path with previous allocated paths p_u (according to d_u)			
+				shortest_intersect=gf.check_setintersect(optimal_path, gf.sel_paths(d_list).values())
+				print 'having the shortest intersection path: '+str(shortest_intersect)
+
+				# if intersections found, try to reroute
+				if shortest_intersect!=[]:
 					# find critical intersection path
-					critical_intersect = intersect_dict[min(intersect_dict)]
-					print 'although the critical one is: '+str(critical_intersect)
-					# find according demand
-					print 'therefore rerouting the path from '+str(critical_intersect[0])+' to '+str(critical_intersect[-1])
-					d_u=demand_dict[critical_intersect[0],critical_intersect[-1]]
-					# Look for path for d_u that does not intersect with optimal_path
+					print 'although the shortest_intersect path '+str(shortest_intersect[0])+' ==> '+str(shortest_intersect[-1])+' is: '+str(shortest_intersect)
+					
+					# find critical (corresponding) demand
+					for k in range(len(d_list)):
+						if d_list[k].path == shortest_intersect:			
+							d_u=k
+							break
+
+					# look for paths for d_u that do not intersect with optimal_path
 					d_u_paths=[path for (path,lat,hops) in d_list[d_u].paths_pack]
+					print 'demand number: '+str(d_u)+' to the demand from'+str(d_list[d_u].source)+' to '+str(d_list[d_u].target)
 					print 'which has the following paths stored: '+str(d_u_paths)
-					d_u_intersect_paths=gf.check_setintersection(optimal_path, d_u_paths)
-					# if there are multiple such paths, take the shortest p_u for d_u
-					# if there is no such paths, take the least intersecting one p_u for d_u
-					p_u_index = min(d_u_intersect_paths)
+					p_u=gf.check_setintersect(optimal_path, d_u_paths)
+
 					p_u=d_u_intersect_paths[p_u_index]
-					# deallocate d_u
-					# plot path to un-allocated
+					print 'the least intersecting with p_n of d_n is '+str(p_u)
+					
+					# plot path to be deallocated
 					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 2, plot_enable)
 					number_of_rerouting_attempts+=1
-					# deallocate
+					# deallocate d_u
 					[G_updated] = gf.dealloc(G_updated, d_list[d_u])
 					# plot un-allocated graph
 					[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, 2, plot_enable)
 					# allocate d_u with new path p_u
 					print 'allocate d_u with new path p_u: '+str(p_u)
 					[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], p_u)
-					# plot p_u with p_u allocated path
+					# plot d_u with p_u allocated path
 					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 1, plot_enable)
 					########### mache das folgende nur, wenn das vorher geglueckt ist!!  ##### 
+					
 					# try to allocate d_n
 					[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
 					if paths_pack!=[]:
-						number_of_rerouting_success+=1	
+						number_of_rerouting_success+=1
 					# plot d_n
 					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
-
 
 
 							
@@ -161,11 +166,10 @@ for j in range(repeats):
 	acceptance_ratio = float(acceptance_counter)/float(number_of_demands)
 	acceptance_ratio_pool.append(acceptance_ratio)
 	print 'Acceptance ratio: '+str(acceptance_ratio*100)+'%'
-	print 'Link utilization: '+str(gf.link_util(G,G_updated, plot_enable))
+	print 'Link utilization: '+str(gf.link_util(G,G_updated))
 	# saves link utilization to l_util.png
-	gf.util_histo(G, G_updated)
+	gf.util_histo(G, G_updated, plot_enable)
 	print 'sel path book:\n'+str(gf.sel_paths(d_list))
-
 
 	# plot
 	if plot_enable:
@@ -174,8 +178,7 @@ for j in range(repeats):
 		os.system('eog topo.png')
 
 	
-	
-
+# print out stats for repeats
 if repeats>1:
 	print '\n \n \nnumber of rerouting attempts: '+str(number_of_rerouting_attempts_pool)
 	print '\navg acceptance ratio: '+str(sum(acceptance_ratio_pool)/len(acceptance_ratio_pool))

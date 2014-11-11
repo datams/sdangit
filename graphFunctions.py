@@ -42,7 +42,7 @@ def alloc(G, d, path_selection_criterion):
 		# store sel path in demand
 		d.set_allocated()
 		d.set_path(sel_path)
-		print 'Allocating path '+str(d.path)
+		print 'Allocated path '+str(d.get_path())
 		# update graph
 		G_updated=update_edges(G_updated, sel_path, d.get_bw())
 
@@ -280,14 +280,16 @@ def cmpT(tuple1, tuple2):
 	else:
 		return 0
 
-# check 1 path vs. a set of paths of having same edges
-def check_setintersection(path, pathset):
-	intersect_list={}
+# check 1 path vs. a set of paths and return the shortest intersecting path
+def check_setintersect(path, pathset):
+	min_degree=None
+	shortest_intersect=[]
 	for i in range(len(pathset)):
 		degree = check_intersect(path,pathset[i])
-		if degree>0:
-			intersect_list[degree]=pathset[i]
-	return intersect_list
+		if degree<min_degree or min_degree==None:
+			shortest_intersect=pathset[i]
+			min_degree=degree
+	return shortest_intersect
 
 # check 2 paths on having some of the same edges
 def check_intersect(path1, path2):
