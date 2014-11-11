@@ -49,9 +49,6 @@ number_of_rerouting_attempts_pool=0
 
 for j in range(repeats):
 
-	# dict for all sel paths
-	sel_paths_book={}
-
 	# get working copy of graph
 	G_updated=copy.deepcopy(G)
 
@@ -80,7 +77,7 @@ for j in range(repeats):
 		print '\n \n########### \n'+str(i)+'th iteration'
 
 		# allocate path in graph	
-		[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, sel_paths_book)
+		[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
 
 		# plot the chosen path
 		if sel_path!=[]:
@@ -103,41 +100,44 @@ for j in range(repeats):
 
 				# Find least intersecting demand
 				# find intersections of optimal path with previous allocations				
-				print 'which would have all the following intersections: '
-				intersect_dict=gf.check_setintersection(optimal_path, sel_paths_book.values())
+				print 'having the following intersections: '
+				intersect_dict=gf.check_setintersection(optimal_path, gf.sel_paths(d_list).values())
 				print intersect_dict
 				if intersect_dict!={}:
 					# find critical intersection path
-					print 'although the critical one is: '+str(intersect_dict[max(intersect_dict)])
 					critical_intersect = intersect_dict[min(intersect_dict)]
+					print 'although the critical one is: '+str(critical_intersect)
 					# find according demand
 					print 'therefore rerouting the path from '+str(critical_intersect[0])+' to '+str(critical_intersect[-1])
 					d_u=demand_dict[critical_intersect[0],critical_intersect[-1]]
 					# Look for path for d_u that does not intersect with optimal_path
 					d_u_paths=[path for (path,lat,hops) in d_list[d_u].paths_pack]
+					print 'which has the following paths stored: '+str(d_u_paths)
 					d_u_intersect_paths=gf.check_setintersection(optimal_path, d_u_paths)
 					# if there are multiple such paths, take the shortest p_u for d_u
 					# if there is no such paths, take the least intersecting one p_u for d_u
-					p_u = min(d_u_intersect_paths)
+					p_u_index = min(d_u_intersect_paths)
+					p_u=d_u_intersect_paths[p_u_index]
 					# deallocate d_u
 					# plot path to un-allocated
 					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 2, plot_enable)
 					number_of_rerouting_attempts+=1
-					# un-allocate
-					[G_updated, sel_paths_book] = gf.unalloc(G_updated, d_list[d_u], sel_paths_book)
+					# deallocate
+					[G_updated] = gf.dealloc(G_updated, d_list[d_u])
 					# plot un-allocated graph
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 2, plot_enable)
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, 2, plot_enable)
 					# allocate d_u with new path p_u
-					print 'allocate d_u with new path p_u'
-					[G_updated, sel_path, sel_paths_book] = gf.alloc_p(G_updated, d_list[d_u], p_u, sel_paths_book)
+					print 'allocate d_u with new path p_u: '+str(p_u)
+					[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], p_u)
 					# plot p_u with p_u allocated path
 					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 1, plot_enable)
+					########### mache das folgende nur, wenn das vorher geglueckt ist!!  ##### 
 					# try to allocate d_n
-					[G_updated, paths_pack, sel_path, sel_paths_book]=gf.alloc(G_updated,d_list[i],path_selection_criterion, sel_paths_book)
+					[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
 					if paths_pack!=[]:
 						number_of_rerouting_success+=1	
 					# plot d_n
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 1, plot_enable)
+					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
 
 
 
@@ -163,9 +163,9 @@ for j in range(repeats):
 	print 'Acceptance ratio: '+str(acceptance_ratio*100)+'%'
 	print 'Link utilization: '+str(gf.link_util(G,G_updated))
 	# saves link utilization to l_util.png
-	os.system('rm l_util.png')
-	gf.util_histo(G, G_updated)
-	print 'sel path book:\n'+str(sel_paths_book)
+	gf.util_histo(G, G_updated, plot_enable)
+	print 'sel path book:\n'+str(gf.sel_paths(d_list))
+
 
 	# plot
 	if plot_enable:

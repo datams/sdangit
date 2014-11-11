@@ -14,7 +14,7 @@ import operator
 ####################################################################
 
 # finds and allocates a path
-def alloc(G, d, path_selection_criterion, sel_paths_book):
+def alloc(G, d, path_selection_criterion):
 	# copy of graph for pruning and updating
 	G_prune=copy.deepcopy(G)
 	G_updated=copy.deepcopy(G)
@@ -22,7 +22,7 @@ def alloc(G, d, path_selection_criterion, sel_paths_book):
 	path_pack=[]
 	sel_path=[]
 
-	print '\nDemand: '
+	print '\nFinding path for Demand: '
 	print 'Path to find: '+str(d.source)+' ==> '+str(d.target)
 	print "bw req: "+str(d.bw)
 	print "lat req: "+str(d.lat)
@@ -32,7 +32,7 @@ def alloc(G, d, path_selection_criterion, sel_paths_book):
 
 	# path finding
 	paths_pack = shortest_p(G_prune,d.get_source(),d.get_target(),d.get_lat())
-	print '\nPaths (with lat.) found: \n'+str(paths_pack)
+	print '\nPaths (holding lat.) found: \n'+str(paths_pack)
 
 	if paths_pack!=[] and paths_pack!=None:
 		# store found paths in demand
@@ -42,49 +42,41 @@ def alloc(G, d, path_selection_criterion, sel_paths_book):
 		# store sel path in demand
 		d.set_allocated()
 		d.set_path(sel_path)
-		print 'd.path is '+str(d.path)
+		print 'Allocating path '+str(d.path)
 		# update graph
 		G_updated=update_edges(G_updated, sel_path, d.get_bw())
-		# store sel path in dictionary book
-		sel_paths_book[(d.get_source(),d.get_target())]=sel_path
 
-	return [G_updated, paths_pack, sel_path, sel_paths_book]
+	return [G_updated, paths_pack, sel_path]
 
 # allocates an indicated path
-def alloc_p(G, d, sel_path, sel_paths_book):
+def alloc_p(G, d, sel_path):
 	# copy of graph updating
 	G_updated=copy.deepcopy(G)
 
-	path_pack=[]
-	sel_path=[]
-
-	print '\nDemand: '
-	print 'Path to find: '+str(d.source)+' ==> '+str(d.target)
+	print '\nAllocating Demand: '+str(d.source)+' ==> '+str(d.target)
+	print 'with given path '+str(sel_path)
 	print "bw req: "+str(d.bw)
-	print "lat req: "+str(d.lat)
+	print "lat req: "+str(d.lat)+'\n'
 
 	# store sel path in demand
 	d.set_allocated()
 	d.set_path(sel_path)
-	print 'd.path is '+str(d.path)
+	print 'd.path is '+str(d.get_path())
 	# update graph
 	G_updated=update_edges(G_updated, sel_path, d.get_bw())
-	# store sel path in dictionary book
-	sel_paths_book[(d.get_source(),d.get_target())]=sel_path
 
-	return [G_updated, sel_path, sel_paths_book]
+	return [G_updated, sel_path]
 
-# un-allocates a paths
-def unalloc(G_updated, d, sel_paths_book):
+# deallocates a paths
+def dealloc(G_updated, d):
+	print 'deallocating '+str(d.get_path())
 	# update graph
 	G_updated=update_edges(G_updated, d.get_path(), -d.get_bw())
-	# delete entry in sel path dictionary
-	sel_paths_book.pop((d.get_source(),d.get_target()))
 	# delete allocation in demand
 	d.set_unallocated()
 	d.set_path([])
 
-	return [G_updated, sel_paths_book]
+	return [G_updated]
 
 # returns shortest paths that fit lat req.
 def shortest_p(G,s,t,lat):
@@ -101,7 +93,7 @@ def shortest_p(G,s,t,lat):
 				paths_pack.append((path,path_lat,path_hops))
 		return paths_pack
 	else:
-		print 'There is no path'
+		# there is no path
 		return []
 
 # returns minimum latency in graph
@@ -142,6 +134,15 @@ def prune_bw(G, bandwidth):
 				print 'prune edge: '+str(n)+','+str(nbr)
 	return G
 
+# get all selected paths
+def sel_paths(demand_list):
+	all_sel_paths={}
+	for d in demand_list:
+		path=d.get_path()
+		if path!=[]:
+			all_sel_paths[(d.get_source(),d.get_target())]=path
+	return all_sel_paths
+
 # returns link utilization
 def link_util(G,F):
 
@@ -172,28 +173,29 @@ def link_util(G,F):
 
 
 # saves link utilization to l_util.png
-def util_histo(G, G_updated):
-	edges = G.edges()
-	d = {}
+def util_histo(G, G_updated, plot_enable):
+	if plot_enable:
+		edges = G.edges()
+		d = {}
 
-	for edge in edges:
-		from_node = edge[0]
-		to_node = edge[1]
-		orig_bw = G[from_node][to_node]['bw']
-		end_bw = G_updated[from_node][to_node]['bw']
-		used_bw=float(orig_bw)-float(end_bw)
-		partial_util=float(used_bw)/float(orig_bw)
-		d[from_node, to_node] = partial_util
+		for edge in edges:
+			from_node = edge[0]
+			to_node = edge[1]
+			orig_bw = G[from_node][to_node]['bw']
+			end_bw = G_updated[from_node][to_node]['bw']
+			used_bw=float(orig_bw)-float(end_bw)
+			partial_util=float(used_bw)/float(orig_bw)
+			d[from_node, to_node] = partial_util
 
-	X = range(len(d))
-	pl.bar(X, d.values(), align='center', width=0.5, color='orange')
-	pl.xticks(X, d.keys())
-	ymax = max(d.values())*1.1
-	pl.ylim(0, ymax)
-	pl.title('Link Utilization')
-	pl.xlabel('Links')
-	pl.ylabel('Utilization')
-	pl.savefig('l_util.png')
+		X = range(len(d))
+		pl.bar(X, d.values(), align='center', width=0.5, color='orange')
+		pl.xticks(X, d.keys())
+		ymax = max(d.values())*1.1
+		pl.ylim(0, ymax)
+		pl.title('Link Utilization')
+		pl.xlabel('Links')
+		pl.ylabel('Utilization')
+		pl.savefig('l_util.png')
 
 
 # returns updated graph based on path allocation
