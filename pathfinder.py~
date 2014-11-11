@@ -27,7 +27,7 @@ plot_enable			= True
 number_of_demands		= 10
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
-bw_variants			= [1]
+bw_variants			= [1,1.5]
 lat_variants			= [10]
 
 
@@ -106,9 +106,7 @@ for j in range(repeats):
 
 				# if intersections found, try to reroute
 				if shortest_intersect!=[]:
-					# find critical intersection path
-					print 'although the shortest_intersect path '+str(shortest_intersect[0])+' ==> '+str(shortest_intersect[-1])+' is: '+str(shortest_intersect)
-					
+
 					# find critical (corresponding) demand
 					for k in range(len(d_list)):
 						if d_list[k].path == shortest_intersect:			
@@ -117,33 +115,40 @@ for j in range(repeats):
 
 					# look for paths for d_u that do not intersect with optimal_path
 					d_u_paths=[path for (path,lat,hops) in d_list[d_u].paths_pack]
-					print 'demand number: '+str(d_u)+' to the demand from'+str(d_list[d_u].source)+' to '+str(d_list[d_u].target)
-					print 'which has the following paths stored: '+str(d_u_paths)
-					p_u=gf.check_setintersect(optimal_path, d_u_paths)
-
-					p_u=d_u_intersect_paths[p_u_index]
-					print 'the least intersecting with p_n of d_n is '+str(p_u)
+					# remove already taken path
+					d_u_paths.pop(d_u_paths.index(d_list[d_u].path))
+					if len(d_u_paths)>0:
+						print 'corresponds to demand number: '+str(d_u)+' to the demand: '+str(d_list[d_u].source)+' ==> '+str(d_list[d_u].target)
+						print 'which has the following alternative paths stored: '+str(d_u_paths)
+						p_u=gf.check_setintersect(optimal_path, d_u_paths)
+						print 'the least intersecting with p_n of d_n is '+str(p_u)
+						if p_u==[]:
+							p_u=min(d_u_paths)
+						# plot path to be deallocated
+						[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 2, plot_enable)
+						number_of_rerouting_attempts+=1
+						# store old d_u path
+						old_p_u=d_list[d_u].path
+						# deallocate d_u
+						[G_updated] = gf.dealloc(G_updated, d_list[d_u])
+						# plot un-allocated graph
+						[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, 2, plot_enable)
+						# allocate d_u with new path p_u
+						print 'allocate d_u with new path p_u: '+str(p_u)
+						[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], p_u)
+						if sel_path!=[]:
+							# plot d_u with p_u allocated path
+							[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 1, plot_enable)
+							########### mache das folgende nur, wenn das vorher geglueckt ist!!  ##### 
 					
-					# plot path to be deallocated
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 2, plot_enable)
-					number_of_rerouting_attempts+=1
-					# deallocate d_u
-					[G_updated] = gf.dealloc(G_updated, d_list[d_u])
-					# plot un-allocated graph
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, 2, plot_enable)
-					# allocate d_u with new path p_u
-					print 'allocate d_u with new path p_u: '+str(p_u)
-					[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], p_u)
-					# plot d_u with p_u allocated path
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 1, plot_enable)
-					########### mache das folgende nur, wenn das vorher geglueckt ist!!  ##### 
-					
-					# try to allocate d_n
-					[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
-					if paths_pack!=[]:
-						number_of_rerouting_success+=1
-					# plot d_n
-					[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
+							# try to allocate d_n
+							[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
+							if paths_pack!=[]:
+								number_of_rerouting_success+=1
+							# plot d_n
+							[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
+						else:
+							[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], old_p_u)
 
 
 							

@@ -50,6 +50,7 @@ def alloc(G, d, path_selection_criterion):
 
 # allocates an indicated path
 def alloc_p(G, d, sel_path):
+	sel_path=sel_path
 	# copy of graph updating
 	G_updated=copy.deepcopy(G)
 
@@ -65,6 +66,12 @@ def alloc_p(G, d, sel_path):
 	# update graph
 	G_updated=update_edges(G_updated, sel_path, d.get_bw())
 
+	if minimum_bw(G_updated)<0:	
+		sel_path=[]
+		G_updated=G
+		d.set_unallocated()
+		d.set_path([])
+		
 	return [G_updated, sel_path]
 
 # deallocates a paths
@@ -102,6 +109,16 @@ def minimum_lat(G):
 	for n,nbrs in G.adjacency_iter():
 		for nbr,eattr in nbrs.items():
 		        temp_weight=eattr['lat']
+		        if temp_weight<min_weight or min_weight==None:
+		                min_weight=temp_weight
+	return min_weight
+
+# returns minimum latency in graph
+def minimum_bw(G):
+	min_weight=None
+	for n,nbrs in G.adjacency_iter():
+		for nbr,eattr in nbrs.items():
+		        temp_weight=eattr['bw']
 		        if temp_weight<min_weight or min_weight==None:
 		                min_weight=temp_weight
 	return min_weight
@@ -286,9 +303,10 @@ def check_setintersect(path, pathset):
 	shortest_intersect=[]
 	for i in range(len(pathset)):
 		degree = check_intersect(path,pathset[i])
-		if degree<min_degree or min_degree=None:
-			shortest_intersect=pathset[i]
-			min_degree=degree
+		if degree>0:
+			if degree<min_degree or min_degree==None:
+				shortest_intersect=pathset[i]
+				min_degree=degree
 	return shortest_intersect
 
 # check 2 paths on having some of the same edges

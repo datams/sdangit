@@ -50,6 +50,7 @@ def alloc(G, d, path_selection_criterion):
 
 # allocates an indicated path
 def alloc_p(G, d, sel_path):
+	sel_path=sel_path
 	# copy of graph updating
 	G_updated=copy.deepcopy(G)
 
@@ -65,6 +66,12 @@ def alloc_p(G, d, sel_path):
 	# update graph
 	G_updated=update_edges(G_updated, sel_path, d.get_bw())
 
+	if minimum_bw(G_updated)<0:	
+		sel_path=[]
+		G_updated=G
+		d.set_unallocated()
+		d.set_path([])
+		
 	return [G_updated, sel_path]
 
 # deallocates a paths
@@ -102,6 +109,16 @@ def minimum_lat(G):
 	for n,nbrs in G.adjacency_iter():
 		for nbr,eattr in nbrs.items():
 		        temp_weight=eattr['lat']
+		        if temp_weight<min_weight or min_weight==None:
+		                min_weight=temp_weight
+	return min_weight
+
+# returns minimum latency in graph
+def minimum_bw(G):
+	min_weight=None
+	for n,nbrs in G.adjacency_iter():
+		for nbr,eattr in nbrs.items():
+		        temp_weight=eattr['bw']
 		        if temp_weight<min_weight or min_weight==None:
 		                min_weight=temp_weight
 	return min_weight
@@ -280,7 +297,7 @@ def cmpT(tuple1, tuple2):
 	else:
 		return 0
 
-# check 1 path vs. a set of paths and return the shortest intersecting path
+# check a path vs. a set of paths and return the least intersecting path
 def check_setintersect(path, pathset):
 	min_degree=None
 	shortest_intersect=[]
