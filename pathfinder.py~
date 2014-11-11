@@ -22,8 +22,8 @@ import graphFunctions as gf
 ########################## parameters ##############################
 ####################################################################
 
-repeats				= 1
-plot_enable			= True
+repeats				= 300
+plot_enable			= False
 number_of_demands		= 10
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
@@ -100,9 +100,9 @@ for j in range(repeats):
 				optimal_path = gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
 				print 'The best path in the empty graph would be: '+str(optimal_path)
 
-				# find the shoretst intersection path of optimal path with previous allocated paths p_u (according to d_u)			
-				shortest_intersect=gf.check_setintersect(optimal_path, gf.sel_paths(d_list).values())
-				print 'having the shortest intersection path: '+str(shortest_intersect)
+				# find the shoretst intersection (but it must intersect! thresh=1) path of optimal path with previous allocated paths p_u (according to d_u)			
+				shortest_intersect=gf.check_setintersect(optimal_path, gf.sel_paths(d_list).values(),1)
+				print 'having the shortest intersection path: of optimal path with previous allocated paths p_u (according to d_u) '+str(shortest_intersect)
 
 				# if intersections found, try to reroute
 				if shortest_intersect!=[]:
@@ -120,10 +120,9 @@ for j in range(repeats):
 					if len(d_u_paths)>0:
 						print 'corresponds to demand number: '+str(d_u)+' to the demand: '+str(d_list[d_u].source)+' ==> '+str(d_list[d_u].target)
 						print 'which has the following alternative paths stored: '+str(d_u_paths)
-						p_u=gf.check_setintersect(optimal_path, d_u_paths)
+						p_u=gf.check_setintersect(optimal_path, d_u_paths,0)
 						print 'the least intersecting with p_n of d_n is '+str(p_u)
-						if p_u==[]:
-							p_u=min(d_u_paths)
+
 						# plot path to be deallocated
 						[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 2, plot_enable)
 						number_of_rerouting_attempts+=1
@@ -137,18 +136,30 @@ for j in range(repeats):
 						print 'allocate d_u with new path p_u: '+str(p_u)
 						[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], p_u)
 						if sel_path!=[]:
+							print 'successful rerouting of p_u'
 							# plot d_u with p_u allocated path
-							[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 1, plot_enable)
+							[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 3, plot_enable)
 							########### mache das folgende nur, wenn das vorher geglueckt ist!!  ##### 
 					
 							# try to allocate d_n
 							[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
 							if paths_pack!=[]:
 								number_of_rerouting_success+=1
+								print 'successful routing of p_n'
+							else:
+								print 'not possible to allocate p_n'
+								print 'roll back d_u'
+								[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], old_p_u)
+								[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 3, plot_enable)
 							# plot d_n
 							[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[i], plot_pngs, plot_counter, 1, plot_enable)
 						else:
+							print 'rerouting was not possible, p_u was not allocatable'
+							print 'roll back d_u'
 							[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], old_p_u)
+							[plot_pngs, plot_counter] = gf.ppng(G_updated, d_list[d_u], plot_pngs, plot_counter, 3, plot_enable)
+				else:
+					print 'there was no rerouting alternative'
 
 
 							

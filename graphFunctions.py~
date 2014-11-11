@@ -62,7 +62,7 @@ def alloc_p(G, d, sel_path):
 	# store sel path in demand
 	d.set_allocated()
 	d.set_path(sel_path)
-	print 'd.path is '+str(d.get_path())
+
 	# update graph
 	G_updated=update_edges(G_updated, sel_path, d.get_bw())
 
@@ -229,6 +229,7 @@ def plot_graphviz(G,demand,plot_counter,colorscheme):
 	colorpool={}
 	colorpool[1]=['green','red','blue']
 	colorpool[2]=['chartreuse4','brown4','darkorange']
+	colorpool[2]=['chartreuse4','brown4','red']	
 	
 	colors=colorpool[colorscheme]
 
@@ -297,16 +298,20 @@ def cmpT(tuple1, tuple2):
 	else:
 		return 0
 
-# check 1 path vs. a set of paths and return the shortest intersecting path
-def check_setintersect(path, pathset):
+# check a path vs. a set of paths and return the shortest intersecting path,
+# that intersects more than 'threshhold'
+def check_setintersect(path, pathset, threshhold):
 	min_degree=None
+	min_length=None
 	shortest_intersect=[]
 	for i in range(len(pathset)):
 		degree = check_intersect(path,pathset[i])
-		if degree>0:
+		if degree>=threshhold:
 			if degree<min_degree or min_degree==None:
-				shortest_intersect=pathset[i]
-				min_degree=degree
+				if len(pathset[i])<min_length or min_degree==None:
+					shortest_intersect=pathset[i]
+					min_length=len(pathset[i])
+					min_degree=degree
 	return shortest_intersect
 
 # check 2 paths on having some of the same edges
