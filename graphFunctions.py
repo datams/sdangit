@@ -281,7 +281,7 @@ class plot_pool:
 		self.plot_pngs=''
 	def plot(self,G_updated, d, colorscheme, enable):
 		if enable:
-			self.plot_pngs+=plot_graphviz(G_updated,d,colorscheme)+' '
+			self.plot_pngs+=plot_graphviz(G_updated,d,self.plot_counter,colorscheme)+' '
 			self.plot_counter+=1
 			
 # select a path out of a path_pack based on criterion lat or hops

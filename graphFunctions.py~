@@ -277,8 +277,8 @@ def ppng(G_updated, d, plot_pngs, plot_counter, colorscheme, enable):
 # produces plot object with all plots in it
 class plot_pool:
 	def __init__(self):
-	self.plot_counter=0
-	self.plot_pngs=''
+		self.plot_counter=0
+		self.plot_pngs=''
 	def plot(self,G_updated, d, colorscheme, enable):
 		if enable:
 			self.plot_pngs+=plot_graphviz(G_updated,d,colorscheme)+' '
