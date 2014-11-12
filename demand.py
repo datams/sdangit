@@ -68,8 +68,8 @@ class demand:
 	self.target = random.choice(temp_n)
 
     # sets user source and target according to user definition
-    def make_choice_concrete(self,x,y):
-	self.bw=random.choice(self.bw_variants)
-	self.lat=random.choice(self.lat_variants)
+    def make_choice_concrete(self,x,y,bw,lat):
+	self.bw=bw
+	self.lat=lat
 	self.source = x
 	self.target = y

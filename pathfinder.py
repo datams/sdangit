@@ -27,7 +27,7 @@ plot_enable			= True
 number_of_demands		= 10
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
-bw_variants			= [1,1.5]
+bw_variants			= [1,1,2,3]
 lat_variants			= [10]
 
 
@@ -82,17 +82,19 @@ for j in range(repeats):
 		if sel_path!=[]:
 			plot_pool.plot(G_updated, d_list[i], 1, plot_enable)
 		
-		# otherwise look for rerouting possibilities
+		##### CONSIDER REROUTE #####
 		else:
 			print 'No path found, looking now at previous allocations..\n'
 			# check if demand could be allocated in empty graph
 			path_pack_in_empty_graph=gf.shortest_p(G,d_list[i].get_source(),d_list[i].get_target(),d_list[i].get_lat())
-
+			
+			##### D_N NOT POSSIBLE EVER #####
 			if path_pack_in_empty_graph == []:
 				# demand can never be allocated
 				print 'There is really no path for this demand, no chance!'
 
 			else:
+				#### FIND D_N TO REROUTE #####
 				# plot d_n e.g. the current demand, which no path could be found for
 				plot_pool.plot(G_updated, d_list[i], 1, plot_enable)
 
@@ -111,12 +113,13 @@ for j in range(repeats):
 					for k in range(len(d_list)):
 						if d_list[k].path == shortest_intersect:			
 							d_u=k
-							break
 
 					# look for paths for d_u that do not intersect with optimal_path
-					d_u_paths=[path for (path,lat,hops) in d_list[d_u].paths_pack]
+					d_u_paths=gf.pack2p(d_list[d_u].paths_pack)
 					# remove already taken path
 					d_u_paths.pop(d_u_paths.index(d_list[d_u].path))
+
+					#### REROUTE #####
 					if len(d_u_paths)>0:
 						print 'corresponds to demand number: '+str(d_u)+' to the demand: '+str(d_list[d_u].source)+' ==> '+str(d_list[d_u].target)
 						print 'which has the following alternative paths stored: '+str(d_u_paths)
@@ -135,11 +138,12 @@ for j in range(repeats):
 						# allocate d_u with new path p_u
 						print 'allocate d_u with new path p_u: '+str(p_u)
 						[G_updated, sel_path] = gf.alloc_p(G_updated, d_list[d_u], p_u)
+
+						# check if it was possible to allocate p_u without having negative bw
 						if sel_path!=[]:
 							print 'successful rerouting of p_u'
 							# plot d_u with p_u allocated path
 							plot_pool.plot(G_updated, d_list[d_u], 3, plot_enable)
-							########### mache das folgende nur, wenn das vorher geglueckt ist!!  ##### 
 					
 							# try to allocate d_n
 							[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
@@ -153,6 +157,7 @@ for j in range(repeats):
 								plot_pool.plot(G_updated, d_list[d_u], 3, plot_enable)
 							# plot d_n
 							plot_pool.plot(G_updated, d_list[i], 1, plot_enable)
+						#### REVERT IF NO SUCCESS #####
 						else:
 							print 'rerouting was not possible, p_u was not allocatable'
 							print 'roll back d_u'
@@ -164,7 +169,7 @@ for j in range(repeats):
 
 							
 		i+=1
-		if i==number_of_demands:
+		if i==number_of_demands or number_of_rerouting_success>0:
 			break
 	
 	# print out result stats154
@@ -188,9 +193,10 @@ for j in range(repeats):
 	print 'sel path book:\n'+str(gf.sel_paths(d_list))
 
 	# plot
+
 	if plot_enable:
 		os.system('convert ' + plot_pool.plot_pngs + ' +append topo.png')
-		os.system('rm ' + plot_pool.plot_pngs)
+		#os.system('rm ' + plot_pool.plot_pngs)
 		os.system('eog topo.png')
 
 	

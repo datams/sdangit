@@ -16,7 +16,7 @@ def make(name):
 		G.add_edge(5,6, bw=3, lat=1)
 		return G
 
-	if name=='deight':
+	elif name=='deight':
 		G=nx.Graph()
 
 		# add nodes and edges to the graph
@@ -29,6 +29,16 @@ def make(name):
 		G.add_edge(4,6, bw=4, lat=1)
 		G.add_edge(5,6, bw=4, lat=1)
 		G.add_edge(1,4, bw=4, lat=1)
+		return G
+
+	elif name=='diamond':
+		G=nx.Graph()
+
+		# add nodes and edges to the graph
+		G.add_edge(0,1, bw=1, lat=1)
+		G.add_edge(0,2, bw=1, lat=1)
+		G.add_edge(2,3, bw=1, lat=1)
+		G.add_edge(1,3, bw=1, lat=1)
 		return G
 	
 	elif name=='srg':
@@ -65,6 +75,8 @@ def make(name):
 		G.add_edge(6,11, bw=5, lat=5.41)
 		G.add_edge(6,15, bw=5, lat=3.866)
 		return G
+	else:
+		print 'entered graph type unknown'
 
 
 node2city={1: 'Basel', 2: 'Zurich', 3: 'Bern', 4: 'Lausanne', 5: 'Genf', 6: 'Lugano', 7: 'Chur', 8: 'Delemont', 9: 'Aarau', 10: 'Rapperswil', 11: 'St. Gallen', 12: 'Solothurn', 13: 'Biel', 14: 'Neuenburg', 15: 'Luzern', 16: 'Friburg', 17: 'Thun', 18: 'Martigny', 19: 'Sion', 20: 'Brig', 21: 'Locarno'}
