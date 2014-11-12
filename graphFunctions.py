@@ -274,6 +274,16 @@ def ppng(G_updated, d, plot_pngs, plot_counter, colorscheme, enable):
 	else:
 		return [0,0]
 
+# produces plot object with all plots in it
+class plot_pool:
+	def __init__(self):
+		self.plot_counter=0
+		self.plot_pngs=''
+	def plot(self,G_updated, d, colorscheme, enable):
+		if enable:
+			self.plot_pngs+=plot_graphviz(G_updated,d,colorscheme)+' '
+			self.plot_counter+=1
+			
 # select a path out of a path_pack based on criterion lat or hops
 def select_path(paths_pack, criterion):
 	# take minimum lat path or minimum hop path

@@ -22,8 +22,8 @@ import graphFunctions as gf
 ########################## parameters ##############################
 ####################################################################
 
-repeats				= 300
-plot_enable			= False
+repeats				= 1
+plot_enable			= True
 number_of_demands		= 10
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
