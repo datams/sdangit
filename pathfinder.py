@@ -26,8 +26,8 @@ repeats				= 1
 plot_enable			= True
 number_of_demands		= 10
 path_selection_criterion	= 'hops'
-graph_type			= 'deight'
-bw_variants			= [1,1,2,3]
+graph_type			= 'srg'
+bw_variants			= [5]
 lat_variants			= [10]
 
 
@@ -157,7 +157,7 @@ for j in range(repeats):
 								plot_pool.plot(G_updated, d_list[d_u], 3, plot_enable)
 							# plot d_n
 							plot_pool.plot(G_updated, d_list[i], 1, plot_enable)
-						#### REVERT IF NO SUCCESS #####
+						#### REVERT IF NO SUCCESS aber auch nur dann, wenn nicht etwa die priority hoeher ist bei d_n!! #####
 						else:
 							print 'rerouting was not possible, p_u was not allocatable'
 							print 'roll back d_u'
@@ -196,7 +196,7 @@ for j in range(repeats):
 
 	if plot_enable:
 		os.system('convert ' + plot_pool.plot_pngs + ' +append topo.png')
-		#os.system('rm ' + plot_pool.plot_pngs)
+		os.system('rm ' + plot_pool.plot_pngs)
 		os.system('eog topo.png')
 
 	
