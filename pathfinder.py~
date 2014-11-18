@@ -17,18 +17,19 @@ import operator
 import demand as dem
 import customGraph
 import graphFunctions as gf
+import lpsolv as lp
 
 ####################################################################
 ########################## parameters ##############################
 ####################################################################
 
 repeats				= 1
-plot_enable			= True
+plot_enable			= False
 number_of_demands		= 10
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
-bw_variants			= [1,1,2,3]
-lat_variants			= [10]
+bw_variants			= [1]
+lat_variants			= [0]
 
 
 ####################################################################
@@ -192,8 +193,10 @@ for j in range(repeats):
 	gf.util_histo(G, G_updated, plot_enable)
 	print 'sel path book:\n'+str(gf.sel_paths(d_list))
 
-	# plot
+	# gurobi solver
+	[result,accepted,rejected,ratio,x_sol, P_sol]=lp.solve(G,d_list)
 
+	# plot
 	if plot_enable:
 		os.system('convert ' + plot_pool.plot_pngs + ' +append topo.png')
 		os.system('rm ' + plot_pool.plot_pngs)

@@ -25,4 +25,5 @@ for k in range(number_of_demands):
 	d_list.append(temp_dem)
 
 # convert to gurobi graph
+
 [result,accepted,rejected,ratio,x_sol, P_sol] = lp.solve(H, d_list)

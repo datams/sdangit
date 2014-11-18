@@ -3,10 +3,12 @@ from gurobipy import *
 import demand as dem
 import customGraph as gc
 
-def solve(H,d_list):
+def solve(G,d_list):
+
+	# convert to a directed graph
+	H=G.to_directed()
 
 	number_of_demands=len(d_list)
-
 	H_nodes=H.nodes()
 	H_nodes=[str(n) for n in H_nodes]
 	H_edges=H.edges()
@@ -34,10 +36,10 @@ def solve(H,d_list):
 		lat_r[k]=d_list[k].lat
 
 	# 4Debug: print requests
-	'''
+	
 	for r in Requests:
 		print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' with bw_r '+str(bw_r[r])+' and lat_r '+str(lat_r[r])
-	'''
+	
 
 	##### Create optimization model #####
 	m = Model('sdan')
@@ -128,10 +130,15 @@ def solve(H,d_list):
 				temp_path.append((from_node,to_node))
 		paths[r, s[r], t[r]]=temp_path
 
+	print 'paths '+str(paths)
 	result=[]
 	for r in Requests:
 		e_list=tuplelist(paths[r, s[r], t[r]])
 		pp=[]
+		print 'r '+str(r)
+		print 's[r]: '+str(s[r])
+		print 't[r]: '+str(t[r])
+		print 'paths[r, s[r], t[r]]: '+str(paths[r, s[r], t[r]])
 		temp_edge= e_list.select(s[r],'*')[0]
 		pp.append(temp_edge[0])
 		pp.append(temp_edge[1])
