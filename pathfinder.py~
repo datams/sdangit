@@ -29,7 +29,7 @@ number_of_demands		= 10
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
 bw_variants			= [1]
-lat_variants			= [0]
+lat_variants			= [10]
 
 
 ####################################################################
@@ -70,7 +70,15 @@ for j in range(repeats):
 		temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
 		temp_dem.make_choice()
 		d_list.append(temp_dem)
+		# 4Debug: print demands
 		print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
+
+	# gurobi solver
+	print '\n\nRun Gurobi Solver \n'
+	print '########################'
+	[lp_result,lp_accepted,lp_rejected,lp_ratio,lp_x, lp_P]=lp.solve(G,d_list)
+	print '########################'
+	print '\nGurobi Solver complete\n'
 
 	i = 0
 	while(True):
@@ -173,7 +181,7 @@ for j in range(repeats):
 		if i==number_of_demands or number_of_rerouting_success>0:
 			break
 	
-	# print out result stats154
+	# print out result stats
 	print '\n\n\n%%%%% END STATS %%%%%\n'
 	acceptance_counter = sum([d.x for d in d_list])
 	print 'Allocated demands: '+str(acceptance_counter)
@@ -193,8 +201,6 @@ for j in range(repeats):
 	gf.util_histo(G, G_updated, plot_enable)
 	print 'sel path book:\n'+str(gf.sel_paths(d_list))
 
-	# gurobi solver
-	[result,accepted,rejected,ratio,x_sol, P_sol]=lp.solve(G,d_list)
 
 	# plot
 	if plot_enable:

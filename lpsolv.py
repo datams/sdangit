@@ -36,11 +36,9 @@ def solve(G,d_list):
 		lat_r[k]=d_list[k].lat
 
 	# 4Debug: print requests
+	#for r in Requests:
+		#print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' with bw_r '+str(bw_r[r])+' and lat_r '+str(lat_r[r])
 	
-	for r in Requests:
-		print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' with bw_r '+str(bw_r[r])+' and lat_r '+str(lat_r[r])
-	
-
 	##### Create optimization model #####
 	m = Model('sdan')
 
@@ -105,7 +103,6 @@ def solve(G,d_list):
 	'''
 
 	##### Produce solution vars #####
-
 	accepted=acceptance.getValue()
 	rejected=number_of_demands-accepted
 	ratio=float(accepted)/float(number_of_demands)
@@ -129,23 +126,24 @@ def solve(G,d_list):
 				to_node=str(varName[5])
 				temp_path.append((from_node,to_node))
 		paths[r, s[r], t[r]]=temp_path
-
-	print 'paths '+str(paths)
+	# 4Debug: print paths
+	# print 'paths '+str(paths)
+	
 	result=[]
 	for r in Requests:
-		e_list=tuplelist(paths[r, s[r], t[r]])
 		pp=[]
-		print 'r '+str(r)
-		print 's[r]: '+str(s[r])
-		print 't[r]: '+str(t[r])
-		print 'paths[r, s[r], t[r]]: '+str(paths[r, s[r], t[r]])
-		temp_edge= e_list.select(s[r],'*')[0]
-		pp.append(temp_edge[0])
-		pp.append(temp_edge[1])
-		for j in range(1,len(e_list)):
-			temp_edge= e_list.select(pp[j],'*')[0]
-			pp.append(temp_edge[1])
-		#print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' has path '+str([int(z) for z in pp])
-		result.append([int(z) for z in pp])
+		e_list=tuplelist(paths[r, s[r], t[r]]) # select path for request and convert to tuplelist
+		# 4Debug: print selected request with path
+		#print 'r:'+str(r)+' s[r]:'+str(s[r])+' t[r]:'+str(t[r])+' paths[r, s[r], t[r]]:'+str(paths[r, s[r], t[r]])
+		if e_list.select(s[r],'*')!=[]: # if there really is a path, continue
+			temp_edge= e_list.select(s[r],'*')[0] # take start edge
+			pp.append(temp_edge[0]) # write first node
+			pp.append(temp_edge[1]) # write second node
+			for j in range(1,len(e_list)): # write all other nodes
+				temp_edge= e_list.select(pp[j],'*')[0]
+				pp.append(temp_edge[1])
+			# 4Debug: print results (paths for demands)
+			#print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' has path '+str([int(z) for z in pp])
+			result.append([int(z) for z in pp])
 
-	return [result,accepted,rejected,ratio,x_sol, P_sol]
+	return [result,accepted,rejected,ratio,x_sol,P_sol]
