@@ -126,12 +126,11 @@ def minimum_bw(G):
 # returns a list of edges from a list of nodes
 def n2e_list(path):
 	elist=[]
-	
 	for i in range(0,len(path)-1):
-		if path[i]<path[i+1]:
-			elist.append((path[i],path[i+1]))
-		else:
-			elist.append((path[i+1],path[i]))
+		#if path[i]<path[i+1]:
+		elist.append((path[i],path[i+1]))
+		#else:
+			#elist.append((path[i+1],path[i]))
 	return elist
 
 # returns the length (in terms of latency) of a path
@@ -303,7 +302,8 @@ def select_path(paths_pack, criterion):
 
 # compare tuple on equality (disregarding order)
 def cmpT(tuple1, tuple2):
-	if sorted(tuple1) == sorted(tuple2):
+	#if sorted(tuple1) == sorted(tuple2):
+	if tuple1 == tuple2:
 		return 1
 	else:
 		return 0

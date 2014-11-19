@@ -3,10 +3,40 @@ from gurobipy import *
 import demand as dem
 import customGraph as gc
 
+# finds last occurence of el in li
+def flast(li,el):
+	l=None
+	for j in range(len(li)):
+		if li[j]==el:
+			l=j
+	return l
+
+# removes loops out of list
+def deloop(e_list):
+	de_list=[]
+	k=0
+	maxk=len(e_list)-1
+	while(True):
+		currentElement=e_list[k]
+		if e_list.count(currentElement)>1:
+			lastPos=flast(e_list,currentElement)
+			de_list.append(currentElement)
+			k=lastPos+1
+			if k>maxk:
+				break
+		else:
+			de_list.append(currentElement)
+			k+=1
+			if k>maxk:
+				break
+	return de_list
+	
+
 def solve(G,d_list):
 
 	# convert to a directed graph
-	H=G.to_directed()
+	#H=G.to_directed()
+	H=G
 
 	number_of_demands=len(d_list)
 	H_nodes=H.nodes()
@@ -144,12 +174,26 @@ def solve(G,d_list):
 			temp_edge= e_list.select(s[r],'*')[0] # take start edge
 			pp.append(temp_edge[0]) # write first node
 			pp.append(temp_edge[1]) # write second node
-			for j in range(1,len(e_list)): # write all other nodes
-				temp_edge= e_list.select(pp[j],'*')[0]
-				pp.append(temp_edge[1])
+			if temp_edge[1]!=t[r]:
+				for j in range(1,len(e_list)): # write all other nodes
+					print 'len(e_list) '+str(len(e_list))
+					print 'r: '+str(r)
+					print 's[r]: '+str(s[r])
+					print 't[r]: '+str(t[r])				
+					print 'pp[j]: '+str(pp[j])
+					print 'temp_edge: '+str(temp_edge)
+					print "e_list.select(pp[j],'*'): "+str(e_list.select(pp[j],'*'))
+					temp_edge= e_list.select(pp[j],'*')[0]
+					pp.append(temp_edge[1])
+					# for the case the path has loops and not the full paths is taken
+					# e.g. (2,3),(3,2),(2,0),(0,1),(1,4) the path could be shorter: [2,0,1,4] causing index error
+					if pp[-1]==t[r]:
+						break
 			# 4Debug: print results (paths for demands)
-			#print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' has path '+str([int(z) for z in pp])
+			# print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' has path '+str([int(z) for z in pp])
+			# there could still be loops in the path which sould be deleted			
+			pp=deloop(pp)
 			result.append([int(z) for z in pp])
-			sel_paths[(s[r],t[r])]=[int(z) for z in pp]
+			sel_paths[(int(s[r]),int(t[r]))]=[int(z) for z in pp]
 
 	return [result,sel_paths,accepted,rejected,ratio,x_sol]

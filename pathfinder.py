@@ -23,15 +23,15 @@ import lpsolv as lp
 ########################## parameters ##############################
 ####################################################################
 
-repeats				= 1
+repeats				= 800
 plot_enable			= False
-show_enable			= False
+show_enable			= True
 lp_enable			= True
 number_of_demands		= 10
 path_selection_criterion	= 'hops'
-graph_type			= 'richer1'
-bw_variants			= [1]
-lat_variants			= [10]
+graph_type			= 'deight'
+bw_variants			= [1,1,1,2,3]
+lat_variants			= [5,10,10,20]
 
 
 ####################################################################
@@ -40,6 +40,7 @@ lat_variants			= [10]
 
 # instantiate a graph
 G=customGraph.make(graph_type)
+G=G.to_directed()
 
 # clear terminal
 print chr(27) + "[2J"
@@ -211,6 +212,15 @@ for j in range(repeats):
 		print '\nGurobi accepted '+str(lp_accepted)
 		print 'Gurobi acceptance ratio '+str(lp_ratio*100)+'%'
 		print 'Gurobi sel path book:\n'+str(lp_sel_paths)+'\n'
+
+
+	# print comparison
+	print 'lp is '+str(lp_ratio*100-acceptance_ratio*100)+'% points better than greedy'
+	greedy_al=list(gf.sel_paths(d_list).keys())
+	lp_al=list(lp_sel_paths.keys())
+	for re in lp_al:
+		if not re in greedy_al:
+			print str(re)+' is not in greedy but in LP'
 
 	# plot
 	if plot_enable:
