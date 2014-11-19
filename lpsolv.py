@@ -161,7 +161,7 @@ def solve(G,d_list):
 				temp_path.append((from_node,to_node))
 		paths[r, s[r], t[r]]=temp_path
 	# 4Debug: print paths
-	print 'paths '+str(paths)
+	# print 'paths '+str(paths)
 	
 	result=[]
 	sel_paths={}

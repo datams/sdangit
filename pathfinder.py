@@ -23,8 +23,8 @@ import lpsolv as lp
 ########################## parameters ##############################
 ####################################################################
 
-repeats				= 800
-plot_enable			= False
+repeats				= 1
+plot_enable			= True
 show_enable			= True
 lp_enable			= True
 number_of_demands		= 10
@@ -59,7 +59,7 @@ for j in range(repeats):
 	G_updated=copy.deepcopy(G)
 
 	# keep track of plots
-	plot_pool=gf.plot_pool()
+	plot_pool=gf.plot_pool('topo')
 
 	# plot original graph
 	#[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, 1, plot_enable)
@@ -184,7 +184,7 @@ for j in range(repeats):
 
 							
 		i+=1
-		if i==number_of_demands or number_of_rerouting_success>0:
+		if i==number_of_demands:
 			break
 	
 	# print out result stats
@@ -222,12 +222,17 @@ for j in range(repeats):
 		if not re in greedy_al:
 			print str(re)+' is not in greedy but in LP'
 
-	# plot
+	# plot greedy
 	if plot_enable:
-		os.system('convert ' + plot_pool.plot_pngs + ' +append topo.png')
+		os.system('convert ' + plot_pool.plot_pngs + ' +append '+str(plot_pool.prefix)+'.png')
 		os.system('rm ' + plot_pool.plot_pngs)
 		if show_enable:
-			os.system('eog topo.png')
+			os.system('eog '+str(plot_pool.prefix)+'.png')
+		pass
+		lp_plot_pool=gf.plot_pool('lopo')
+		for key in sorted(lp_sel_paths):
+			lp_p=lp_sel_paths[key]
+			lp_plot_pool.plotpa(G, lp_p, 1, plot_enable)
 
 	
 # print out stats for repeats

@@ -223,7 +223,7 @@ def update_edges(G, path, bwreq):
 	return G
 
 # plots (graphviz) graph with demand d and path p
-def plot_graphviz(G,demand,plot_counter,colorscheme):
+def plot_graphviz(G,demand,plot_counter,colorscheme, prefix):
 	
 	colorpool={}
 	colorpool[1]=['green','red','blue']
@@ -260,7 +260,46 @@ def plot_graphviz(G,demand,plot_counter,colorscheme):
 
 	# plot
 	A.layout(prog='dot')
-	topo_name='topo'+str(plot_counter)+'.png'
+	topo_name=prefix+str(plot_counter)+'.png'
+	A.draw(topo_name)
+	return topo_name
+
+def plot_path(G,path,plot_counter,colorscheme, prefix):
+	
+	colorpool={}
+	colorpool[1]=['green','red','blue']
+	colorpool[2]=['chartreuse4','brown4','darkorange']
+	colorpool[3]=['chartreuse4','brown4','red']	
+	
+	colors=colorpool[colorscheme]
+
+	# get edge labels
+	for u,v,d in G.edges(data=True):
+		l = d.get('lat','')
+		b = d.get('bw','')
+		d['label'] = str(l)+' / '+str(b)
+
+	# returns pygraphviz graph A from NetworkX graph G
+	A = nx.to_agraph(G)
+
+	# colorize source and target
+	if path!=[]:
+		n=A.get_node(path[0])
+		n.attr['color']=colors[0]
+		n=A.get_node(path[-1])
+		n.attr['color']=colors[1]
+
+	# colorize path
+	if path!=None:
+		path_edges=n2e_list(path)
+		for i in range(0,len(path_edges)):
+			edge=path_edges[i]
+			e=A.get_edge(edge[0],edge[1])
+			e.attr['color']=colors[2]
+
+	# plot
+	A.layout(prog='dot')
+	topo_name=prefix+str(plot_counter)+'.png'
 	A.draw(topo_name)
 	return topo_name
 
@@ -275,12 +314,17 @@ def ppng(G_updated, d, plot_pngs, plot_counter, colorscheme, enable):
 
 # produces plot object with all plots in it
 class plot_pool:
-	def __init__(self):
+	def __init__(self,prefix):
 		self.plot_counter=0
 		self.plot_pngs=''
+		self.prefix=prefix
 	def plot(self,G_updated, d, colorscheme, enable):
 		if enable:
-			self.plot_pngs+=plot_graphviz(G_updated,d,self.plot_counter,colorscheme)+' '
+			self.plot_pngs+=plot_graphviz(G_updated,d,self.plot_counter,colorscheme, self.prefix)+' '
+			self.plot_counter+=1
+	def plotpa(self,G, path, colorscheme, enable):
+		if enable:
+			self.plot_pngs+=plot_path(G, path, self.plot_counter, colorscheme, self.prefix)+' '
 			self.plot_counter+=1
 			
 # select a path out of a path_pack based on criterion lat or hops

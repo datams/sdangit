@@ -176,15 +176,8 @@ def solve(G,d_list):
 			pp.append(temp_edge[1]) # write second node
 			if temp_edge[1]!=t[r]:
 				for j in range(1,len(e_list)): # write all other nodes
-					print 'len(e_list) '+str(len(e_list))
-					print 'r: '+str(r)
-					print 's[r]: '+str(s[r])
-					print 't[r]: '+str(t[r])				
-					print 'pp[j]: '+str(pp[j])
-					print 'temp_edge: '+str(temp_edge)
-					print "e_list.select(pp[j],'*'): "+str(e_list.select(pp[j],'*'))
-					temp_edge= e_list.select(pp[j],'*')[0]
-					pp.append(temp_edge[1])
+					temp_edge= e_list.select(pp[j],'*')[0] # select following edge
+					pp.append(temp_edge[1]) # append second node of edge (first one has already been added before)
 					# for the case the path has loops and not the full paths is taken
 					# e.g. (2,3),(3,2),(2,0),(0,1),(1,4) the path could be shorter: [2,0,1,4] causing index error
 					if pp[-1]==t[r]:
