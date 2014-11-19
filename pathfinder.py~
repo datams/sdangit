@@ -25,9 +25,11 @@ import lpsolv as lp
 
 repeats				= 1
 plot_enable			= False
+show_enable			= False
+lp_enable			= True
 number_of_demands		= 10
 path_selection_criterion	= 'hops'
-graph_type			= 'deight'
+graph_type			= 'richer1'
 bw_variants			= [1]
 lat_variants			= [10]
 
@@ -39,9 +41,11 @@ lat_variants			= [10]
 # instantiate a graph
 G=customGraph.make(graph_type)
 
-# delete pngs and clear terminal
-os.system('rm *.png')
+# clear terminal
 print chr(27) + "[2J"
+
+# delete pngs (do not do when eog always open)
+#os.system('rm *.png')
 
 # over repeats stats vars
 acceptance_ratio_pool=[]
@@ -71,14 +75,15 @@ for j in range(repeats):
 		temp_dem.make_choice()
 		d_list.append(temp_dem)
 		# 4Debug: print demands
-		print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
+		# print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
 
 	# gurobi solver
-	print '\n\nRun Gurobi Solver \n'
-	print '########################'
-	[lp_result,lp_accepted,lp_rejected,lp_ratio,lp_x, lp_P]=lp.solve(G,d_list)
-	print '########################'
-	print '\nGurobi Solver complete\n'
+	if lp_enable:
+		print '\n\nRun Gurobi Solver \n'
+		print '########################'
+		[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x,]=lp.solve(G,d_list)
+		print '########################'
+		print '\nGurobi Solver complete\n'
 
 	i = 0
 	while(True):
@@ -183,6 +188,7 @@ for j in range(repeats):
 	
 	# print out result stats
 	print '\n\n\n%%%%% END STATS %%%%%\n'
+	print 'Total demands: '+str(number_of_demands)
 	acceptance_counter = sum([d.x for d in d_list])
 	print 'Allocated demands: '+str(acceptance_counter)
 	print 'Rejected demands: '+str(number_of_demands-acceptance_counter)
@@ -192,7 +198,6 @@ for j in range(repeats):
 	if number_of_rerouting_attempts>0:
 		print 'Successful rerouting fraction '+str(float(number_of_rerouting_success)/float(number_of_rerouting_attempts))
 		successful_rerouting_fraction_pool.append(float(number_of_rerouting_success)/float(number_of_rerouting_attempts))
-	print 'Total demands: '+str(number_of_demands)
 	acceptance_ratio = float(acceptance_counter)/float(number_of_demands)
 	acceptance_ratio_pool.append(acceptance_ratio)
 	print 'Acceptance ratio: '+str(acceptance_ratio*100)+'%'
@@ -201,12 +206,18 @@ for j in range(repeats):
 	gf.util_histo(G, G_updated, plot_enable)
 	print 'sel path book:\n'+str(gf.sel_paths(d_list))
 
+	# print out gurobi stats
+	if lp_enable:
+		print '\nGurobi accepted '+str(lp_accepted)
+		print 'Gurobi acceptance ratio '+str(lp_ratio*100)+'%'
+		print 'Gurobi sel path book:\n'+str(lp_sel_paths)+'\n'
 
 	# plot
 	if plot_enable:
 		os.system('convert ' + plot_pool.plot_pngs + ' +append topo.png')
 		os.system('rm ' + plot_pool.plot_pngs)
-		os.system('eog topo.png')
+		if show_enable:
+			os.system('eog topo.png')
 
 	
 # print out stats for repeats

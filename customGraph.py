@@ -40,6 +40,33 @@ def make(name):
 		G.add_edge(2,3, bw=1, lat=1)
 		G.add_edge(1,3, bw=1, lat=1)
 		return G
+
+	elif name=='richer1':
+		G=nx.Graph()
+		# add nodes and edges to the graph
+		G.add_edge(0, 1, bw=1, lat=5)
+		G.add_edge(0, 2, bw=1, lat=5)
+		G.add_edge(2, 13, bw=1, lat=2)
+		G.add_edge(13, 14, bw=1, lat=4)
+		G.add_edge(14, 12, bw=1, lat=8)
+		G.add_edge(12, 3, bw=1, lat=4)
+		G.add_edge(3, 2, bw=1, lat=3)
+		G.add_edge(3, 1, bw=1, lat=10)
+		G.add_edge(1, 4, bw=1, lat=10)
+		G.add_edge(1, 10, bw=1, lat=8)
+		G.add_edge(10, 11, bw=1, lat=2)
+		G.add_edge(11, 8, bw=1, lat=3)
+		G.add_edge(8, 4, bw=1, lat=5)
+		G.add_edge(4, 3, bw=1, lat=11)
+		G.add_edge(4, 6, bw=1, lat=4)
+		G.add_edge(8, 9, bw=1, lat=5)
+		G.add_edge(9, 7, bw=1, lat=10)
+		G.add_edge(6, 7, bw=1, lat=6)
+		G.add_edge(6, 5, bw=1, lat=4)
+		G.add_edge(7, 5, bw=1, lat=7)
+		G.add_edge(7, 12, bw=1, lat=14)
+		G.add_edge(5, 3, bw=1, lat=5)
+		return G
 	
 	elif name=='srg':
 		G=nx.Graph()

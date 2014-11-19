@@ -108,12 +108,9 @@ def solve(G,d_list):
 	ratio=float(accepted)/float(number_of_demands)
 
 	x_sol={}
-	P_sol={}
 	for v in m.getVars():
 		if v.varName.startswith('x'):
 			x_sol[int(v.varName[1])]=float(v.x)
-		if v.varName.startswith('P') and v.x > 0:
-			P_sol[(int(v.varName[3]),int(v.varName[5]))]=float(v.x)
 
 	paths={}
 	for r in Requests:
@@ -121,15 +118,23 @@ def solve(G,d_list):
 		for v in m.getVars():
 			varName=v.varName
 			varValue=v.x
+			# get all P vars
 			if varName.startswith('P'+str(r)) and varValue==1:
-		    		from_node=str(varName[3])
-				to_node=str(varName[5])
+				P=varName
+				# find underscore position 
+				u1=P.find('_')
+				u2=P.find('_', u1+1)
+				u3=P.find('_', u2+1)
+				# get node IDs
+				from_node=str(P[u1+1:u2])
+				to_node=str(P[u2+1:])
 				temp_path.append((from_node,to_node))
 		paths[r, s[r], t[r]]=temp_path
 	# 4Debug: print paths
-	# print 'paths '+str(paths)
+	print 'paths '+str(paths)
 	
 	result=[]
+	sel_paths={}
 	for r in Requests:
 		pp=[]
 		e_list=tuplelist(paths[r, s[r], t[r]]) # select path for request and convert to tuplelist
@@ -145,5 +150,6 @@ def solve(G,d_list):
 			# 4Debug: print results (paths for demands)
 			#print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' has path '+str([int(z) for z in pp])
 			result.append([int(z) for z in pp])
+			sel_paths[(int(s[r]),int(t[r]))]=[int(z) for z in pp]
 
-	return [result,accepted,rejected,ratio,x_sol,P_sol]
+	return [result,sel_paths,accepted,rejected,ratio,x_sol]
