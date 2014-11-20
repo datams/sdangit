@@ -30,6 +30,7 @@ show_enable			= False
 gr_enable			= False
 lp_enable			= False
 cli				= True
+cli_lp				= True
 number_of_demands		= 8
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
@@ -81,14 +82,33 @@ for j in range(repeats):
 			d_list.append(temp_dem)
 			# 4Debug: print demands
 			print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
-
-	# gurobi solver
-	if lp_enable:
-		print '\n\nRun Gurobi Solver \n'
-		print '########################'
-		[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
-		print '########################'
-		print '\nGurobi Solver complete\n'
+	# cli mode	
+	if cli:
+		d_list=[]
+		i=0
+		number_of_demands=0
+		print 'Please open png file'
+		while(True):
+			print 'Please choose from nodes '+str(G.nodes())
+			while(True):
+				f=input('Please enter from node (888 for finish): ')
+				if f in G.nodes() or f==888: break
+			if f==888:
+				break
+			while(True):
+				t=input('Please enter to node: ')
+				if t in G.nodes(): break
+			bwreq=input('Please enter bw req: ')
+			latreq=input('Please enter lat req: ')
+			# create demand
+			temp_dem = dem.demand(G.nodes(),None,None)
+			temp_dem.make_choice_concrete(f,t,bwreq,latreq)
+			d_list.append(temp_dem)
+			number_of_demands+=1
+			[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\
+			gr.finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection_criterion,\
+			number_of_rerouting_attempts, number_of_rerouting_success, plot_enable)
+			i+=1
 
 	# greedy solver
 	if gr_enable:
@@ -124,35 +144,17 @@ for j in range(repeats):
 		gf.util_histo(G, G_updated, plot_enable)
 		print 'sel path book:\n'+str(gf.sel_paths(d_list))
 
-
-	if cli:
-		d_list=[]
-		i=0
-		number_of_demands=0
-		print 'Please open png file'
-		while(True):
-			print 'Please choose from nodes '+str(G.nodes())
-			while(True):
-				f=input('Please enter from node: ')
-				if f in G.nodes(): break
-			while(True):
-				t=input('Please enter to node: ')
-				if t in G.nodes(): break
-			bwreq=input('Please enter bw req: ')
-			latreq=input('Please enter lat req: ')
-			# create demand
-			temp_dem = dem.demand(G.nodes(),None,None)
-			temp_dem.make_choice_concrete(f,t,bwreq,latreq)
-			d_list.append(temp_dem)
-			number_of_demands+=1
-			[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\
-			gr.finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection_criterion,\
-			number_of_rerouting_attempts, number_of_rerouting_success, plot_enable)
-			i+=1
+	# gurobi solver
+	if lp_enable or cli_lp:
+		print '\n\nRun Gurobi Solver \n'
+		print '########################'
+		[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
+		print '########################'
+		print '\nGurobi Solver complete\n'
 		
 
 	# print out gurobi stats
-	if lp_enable:
+	if lp_enable or cli_lp:
 		print '\nGurobi accepted '+str(lp_accepted)
 		print 'Gurobi acceptance ratio '+str(lp_ratio*100)+'%'
 		print 'Gurobi sel path book:\n'+str(lp_sel_paths)+'\n'

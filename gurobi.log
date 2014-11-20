@@ -56353,3 +56353,92 @@ Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:19:08 2014
 
 Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:19:27 2014
 
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:24:58 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:27:39 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:28:25 2014
+
+Optimize a model with 25 rows, 19 columns and 69 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 18 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 7 rows, 19 columns, 45 nonzeros
+Variable types: 0 continuous, 19 integer (19 binary)
+
+Root relaxation: objective 1.000000e+00, 1 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       1.0000000    1.00000  0.00%     -    0s
+
+Explored 0 nodes (1 simplex iterations) in 0.00 seconds
+Thread count was 4 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:28:54 2014
+
+Optimize a model with 25 rows, 19 columns and 69 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 18 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 7 rows, 19 columns, 45 nonzeros
+Variable types: 0 continuous, 19 integer (19 binary)
+
+Root relaxation: objective 1.000000e+00, 1 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       1.0000000    1.00000  0.00%     -    0s
+
+Explored 0 nodes (1 simplex iterations) in 0.00 seconds
+Thread count was 4 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:35:02 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:44:46 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:45:20 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:46:42 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:46:58 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:47:28 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:47:43 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:47:59 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:48:14 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:48:16 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:48:30 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:48:34 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Thu Nov 20 16:49:59 2014
+
