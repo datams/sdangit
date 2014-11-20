@@ -240,7 +240,7 @@ def plot_graphviz(G,demand,plot_counter,colorscheme, prefix):
 
 	# returns pygraphviz graph A from NetworkX graph G
 	A = nx.to_agraph(G)
-
+	A.layout(prog='dot')
 	path=None
 	# colorize source and target
 	if demand!=None:
@@ -259,7 +259,6 @@ def plot_graphviz(G,demand,plot_counter,colorscheme, prefix):
 			e.attr['color']=colors[2]
 
 	# plot
-	A.layout(prog='dot')
 	topo_name=prefix+str(plot_counter)+'.png'
 	A.draw(topo_name)
 	return topo_name
@@ -280,7 +279,9 @@ def plot_path(G,path,plot_counter,colorscheme, prefix):
 		d['label'] = str(l)+' / '+str(b)
 
 	# returns pygraphviz graph A from NetworkX graph G
+        # Optional layout prog=['neato'|'dot'|'twopi'|'circo'|'fdp'|'nop']
 	A = nx.to_agraph(G)
+	A.layout(prog='dot')
 
 	# colorize source and target
 	if path!=None and path!=[]:
@@ -298,8 +299,6 @@ def plot_path(G,path,plot_counter,colorscheme, prefix):
 			e.attr['color']=colors[2]
 
 	# plot
-        # Optional layout prog=['neato'|'dot'|'twopi'|'circo'|'fdp'|'nop']
-	A.layout(prog='dot')
 	topo_name=prefix+str(plot_counter)+'.png'
 	A.draw(topo_name)
 	return topo_name
