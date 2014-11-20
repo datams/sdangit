@@ -25,13 +25,13 @@ import lpsolv as lp
 
 repeats				= 1
 plot_enable			= True
-show_enable			= True
+show_enable			= False
 lp_enable			= True
-number_of_demands		= 10
+number_of_demands		= 8
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
-bw_variants			= [1,1,1,2,3]
-lat_variants			= [5,10,10,20]
+bw_variants			= [1,3,5]
+lat_variants			= [1,2,4]
 
 
 ####################################################################
@@ -46,7 +46,7 @@ G=G.to_directed()
 print chr(27) + "[2J"
 
 # delete pngs (do not do when eog always open)
-#os.system('rm *.png')
+os.system('rm *.png')
 
 # over repeats stats vars
 acceptance_ratio_pool=[]
@@ -76,7 +76,7 @@ for j in range(repeats):
 		temp_dem.make_choice()
 		d_list.append(temp_dem)
 		# 4Debug: print demands
-		# print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
+		print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
 
 	# gurobi solver
 	if lp_enable:
@@ -222,19 +222,28 @@ for j in range(repeats):
 		if not re in greedy_al:
 			print str(re)+' is not in greedy but in LP'
 
-	# plot greedy
+	# plot
 	if plot_enable:
+		# plot greedy
 		os.system('convert ' + plot_pool.plot_pngs + ' +append '+str(plot_pool.prefix)+'.png')
 		os.system('rm ' + plot_pool.plot_pngs)
-		if show_enable:
-			os.system('eog '+str(plot_pool.prefix)+'.png')
-		pass
+		# plot lp
 		lp_plot_pool=gf.plot_pool('lopo')
-		for key in sorted(lp_sel_paths):
-			lp_p=lp_sel_paths[key]
-			lp_plot_pool.plotpa(G, lp_p, 1, plot_enable)
+		G_lp=copy.deepcopy(G)
+		lp_plot_pool.plotpa(G_lp, None, 1, plot_enable)
+		for key in (lp_sel_paths):
+			lp_p=lp_sel_paths[key][0]
+			lp_bw=lp_sel_paths[key][1]
+			G_lp = gf.update_edges(G_lp, lp_p, lp_bw)
+			lp_plot_pool.plotpa(G_lp, lp_p, 1, plot_enable)
+		os.system('convert ' + lp_plot_pool.plot_pngs + ' +append '+str(lp_plot_pool.prefix)+'.png')
+		os.system('rm ' + lp_plot_pool.plot_pngs)
+		os.system('convert ' + str(plot_pool.prefix)+'.png '+str(lp_plot_pool.prefix)+'.png -append total.png')
 
-	
+	# show plot	
+	if show_enable:
+			os.system('eog total.png')
+
 # print out stats for repeats
 if repeats>1:
 	print '\n \n \nnumber of rerouting attempts: '+str(number_of_rerouting_attempts_pool)

@@ -147,7 +147,7 @@ def prune_bw(G, bandwidth):
 			bw=eattr['bw']
 			if bw<bandwidth:
 				G.remove_edge(n,nbr)
-				print 'prune edge: '+str(n)+','+str(nbr)
+				#print 'prune edge: '+str(n)+','+str(nbr)
 	return G
 
 # get all selected paths
@@ -283,14 +283,14 @@ def plot_path(G,path,plot_counter,colorscheme, prefix):
 	A = nx.to_agraph(G)
 
 	# colorize source and target
-	if path!=[]:
+	if path!=None and path!=[]:
 		n=A.get_node(path[0])
 		n.attr['color']=colors[0]
 		n=A.get_node(path[-1])
 		n.attr['color']=colors[1]
 
 	# colorize path
-	if path!=None:
+	if path!=None and path!=[]:
 		path_edges=n2e_list(path)
 		for i in range(0,len(path_edges)):
 			edge=path_edges[i]
@@ -298,6 +298,7 @@ def plot_path(G,path,plot_counter,colorscheme, prefix):
 			e.attr['color']=colors[2]
 
 	# plot
+        # Optional layout prog=['neato'|'dot'|'twopi'|'circo'|'fdp'|'nop']
 	A.layout(prog='dot')
 	topo_name=prefix+str(plot_counter)+'.png'
 	A.draw(topo_name)

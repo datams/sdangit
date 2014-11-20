@@ -147,7 +147,7 @@ def prune_bw(G, bandwidth):
 			bw=eattr['bw']
 			if bw<bandwidth:
 				G.remove_edge(n,nbr)
-				print 'prune edge: '+str(n)+','+str(nbr)
+				#print 'prune edge: '+str(n)+','+str(nbr)
 	return G
 
 # get all selected paths
@@ -259,7 +259,7 @@ def plot_graphviz(G,demand,plot_counter,colorscheme, prefix):
 			e.attr['color']=colors[2]
 
 	# plot
-	A.layout(prog='dot')
+	A.layout(prog='neato')
 	topo_name=prefix+str(plot_counter)+'.png'
 	A.draw(topo_name)
 	return topo_name
@@ -282,17 +282,15 @@ def plot_path(G,path,plot_counter,colorscheme, prefix):
 	# returns pygraphviz graph A from NetworkX graph G
 	A = nx.to_agraph(G)
 
-	path=None
 	# colorize source and target
-	if path!=[]:
-		print 'path[0]: '+str(path)
+	if path!=None and path!=[]:
 		n=A.get_node(path[0])
 		n.attr['color']=colors[0]
 		n=A.get_node(path[-1])
 		n.attr['color']=colors[1]
 
 	# colorize path
-	if path!=None:
+	if path!=None and path!=[]:
 		path_edges=n2e_list(path)
 		for i in range(0,len(path_edges)):
 			edge=path_edges[i]
@@ -300,7 +298,8 @@ def plot_path(G,path,plot_counter,colorscheme, prefix):
 			e.attr['color']=colors[2]
 
 	# plot
-	A.layout(prog='dot')
+        # Optional layout prog=['neato'|'dot'|'twopi'|'circo'|'fdp'|'nop']
+	A.layout(prog='neato')
 	topo_name=prefix+str(plot_counter)+'.png'
 	A.draw(topo_name)
 	return topo_name
