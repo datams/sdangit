@@ -50,7 +50,8 @@ G=G.to_directed()
 print chr(27) + "[2J"
 
 # delete pngs (do not do when eog always open)
-os.system('rm *.png')
+if cli==False:
+	os.system('rm *.png')
 
 # over repeats stats vars
 acceptance_ratio_pool=[]
@@ -66,7 +67,6 @@ for j in range(repeats):
 	plot_pool=gf.plot_pool('topo')
 
 	# plot original graph
-	#[plot_pngs, plot_counter] = gf.ppng(G_updated, None, plot_pngs, plot_counter, 1, plot_enable)
 	plot_pool.plot(G_updated, None, 1, plot_enable)
 
 	# counters	
@@ -84,20 +84,26 @@ for j in range(repeats):
 			print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
 	# cli mode	
 	if cli:
+		os.system('eog topo0.png &')
 		d_list=[]
 		i=0
 		number_of_demands=0
 		print 'Please open png file'
+		leave=False
 		while(True):
-			print 'Please choose from nodes '+str(G.nodes())
+			print '\nPlease choose from nodes '+str(G.nodes())
 			while(True):
-				f=input('Please enter from node (888 for finish): ')
+				f=input('Please enter from node (888 for ending): ')
 				if f in G.nodes() or f==888: break
+				print 'Please enter a valid node'
 			if f==888:
+				leave=True
 				break
+			if leave==True: break
 			while(True):
 				t=input('Please enter to node: ')
 				if t in G.nodes(): break
+				print 'Please enter a valid node'
 			bwreq=input('Please enter bw req: ')
 			latreq=input('Please enter lat req: ')
 			# create demand

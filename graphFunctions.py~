@@ -74,7 +74,7 @@ def alloc_p(G, d, sel_path):
 		
 	return [G_updated, sel_path]
 
-# deallocates a paths
+# deallocates a demand
 def dealloc(G_updated, d):
 	print 'deallocating '+str(d.get_path())
 	# update graph
@@ -259,7 +259,6 @@ def plot_graphviz(G,demand,plot_counter,colorscheme, prefix):
 			e.attr['color']=colors[2]
 
 	# plot
-
 	topo_name=prefix+str(plot_counter)+'.png'
 	A.draw(topo_name)
 	return topo_name
@@ -280,8 +279,10 @@ def plot_path(G,path,plot_counter,colorscheme, prefix):
 		d['label'] = str(l)+' / '+str(b)
 
 	# returns pygraphviz graph A from NetworkX graph G
+        # Optional layout prog=['neato'|'dot'|'twopi'|'circo'|'fdp'|'nop']
 	A = nx.to_agraph(G)
 	A.layout(prog='dot')
+
 	# colorize source and target
 	if path!=None and path!=[]:
 		n=A.get_node(path[0])
@@ -298,20 +299,9 @@ def plot_path(G,path,plot_counter,colorscheme, prefix):
 			e.attr['color']=colors[2]
 
 	# plot
-        # Optional layout prog=['neato'|'dot'|'twopi'|'circo'|'fdp'|'nop']
-
 	topo_name=prefix+str(plot_counter)+'.png'
 	A.draw(topo_name)
 	return topo_name
-
-# produces a png of the plot
-def ppng(G_updated, d, plot_pngs, plot_counter, colorscheme, enable):
-	if enable:
-		plot_pngs+=plot_graphviz(G_updated,d,plot_counter,colorscheme)+' '
-		plot_counter+=1
-		return [plot_pngs, plot_counter]
-	else:
-		return [0,0]
 
 # produces plot object with all plots in it
 class plot_pool:
@@ -385,14 +375,45 @@ def check_intersect(path1, path2):
 	for edge in path1:
 		for i in range(len(path2)):
 			degree+=cmpT(edge, path2[i])
-
 	return degree
+
+# get all demands, whose path intersect with optimal path by at least one and are not blocked and would release enough bw
+def find_d_to_reroute(optimal_path, bw_req, d_list):
+	intersecting_demands_list=[]
+	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand
+		degree=check_intersect(optimal_path, d_list[i].path)
+		print 'finde degree '+str(degree)+' fuer demand nummer '+str(i)+' and bw '+str(d_list[i].bw)
+		if degree>0 and d_list[i].blocked==False and d_list[i].bw>=bw_req:
+			alt_num=len(d_list[i].get_alternative_paths())
+			intersecting_demands_list.append([i,alt_num])
+	to_reroute_index = max(intersecting_demands_list, key=operator.itemgetter(1))
+	return intersecting_demands_list[to_reroute_index][0]
 
 # converts a path pack to a path list
 def pack2p(path_pack):
-	return [x[0] for x in path_pack]
+	if len(path_pack)>0:
+		return [x[0] for x in path_pack]
+	else:
+		return []
 
 
 # prints variable with it's name
 def pv(text,var):
 	print text+' : '+str(var)
+
+
+
+
+
+# Legacy stuff
+'''
+# produces a png of the plot
+def ppng(G_updated, d, plot_pngs, plot_counter, colorscheme, enable):
+	if enable:
+		plot_pngs+=plot_graphviz(G_updated,d,plot_counter,colorscheme)+' '
+		plot_counter+=1
+		return [plot_pngs, plot_counter]
+
+	else:
+		return [0,0]
+'''
