@@ -3,6 +3,7 @@
 ####################################################################
 
 import random
+import graphFunctions as gf
 
 # demand class reflects a flow demand with source, target, bw and lat req.
 class demand:
@@ -48,7 +49,8 @@ class demand:
     def get_path(self):
 	return self.path
     def get_alternative_paths(self):
-	
+	all_paths=gf.pack2p(self.paths_pack)
+	alternative_paths=all_paths.pop(all_paths.index(self.path))
 	return alternative_paths
     def set_paths_pack(self,pack2set):
 	self.paths_pack=pack2set

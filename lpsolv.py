@@ -165,6 +165,7 @@ def solve(G,d_list):
 	
 	result=[]
 	sel_paths={}
+	counter=0
 	for r in Requests:
 		pp=[]
 		e_list=tuplelist(paths[r, s[r], t[r]]) # select path for request and convert to tuplelist
@@ -187,6 +188,7 @@ def solve(G,d_list):
 			# there could still be loops in the path which sould be deleted			
 			pp=deloop(pp)
 			result.append([int(z) for z in pp])
-			sel_paths[(int(s[r]),int(t[r]))]=[[int(z) for z in pp],bw_r[r]]
+			sel_paths[counter]=[[int(z) for z in pp],bw_r[r]]
+			counter+=1
 
 	return [result,sel_paths,accepted,rejected,ratio,x_sol]

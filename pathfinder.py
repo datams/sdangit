@@ -26,15 +26,15 @@ import greedy as gr
 
 repeats				= 1
 plot_enable			= True
-show_enable			= False
-gr_enable			= False
-lp_enable			= False
-cli				= True
-cli_lp				= True
+show_enable			= True
+gr_enable			= True
+lp_enable			= True
+cli				= False
+cli_lp				= False
 number_of_demands		= 8
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
-bw_variants			= [1,3,5]
+bw_variants			= [1,3,3,5]
 lat_variants			= [1,2,4]
 
 
@@ -50,8 +50,7 @@ G=G.to_directed()
 print chr(27) + "[2J"
 
 # delete pngs (do not do when eog always open)
-if cli==False:
-	os.system('rm *.png')
+os.system('rm *.png')
 
 # over repeats stats vars
 acceptance_ratio_pool=[]
@@ -84,13 +83,17 @@ for j in range(repeats):
 			print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
 	# cli mode	
 	if cli:
-		os.system('eog topo0.png &')
 		d_list=[]
 		i=0
 		number_of_demands=0
 		print 'Please open png file'
 		leave=False
+		if show_enable:
+			os.system('eog topo0.png &')
 		while(True):
+			print '\nAllocated demands'
+			if len(d_list)>0:
+				print gf.get_all_sel_paths(d_list)
 			print '\nPlease choose from nodes '+str(G.nodes())
 			while(True):
 				f=input('Please enter from node (888 for ending): ')
@@ -148,7 +151,7 @@ for j in range(repeats):
 		print 'Link utilization: '+str(gf.link_util(G,G_updated))
 		# saves link utilization to l_util.png
 		gf.util_histo(G, G_updated, plot_enable)
-		print 'sel path book:\n'+str(gf.sel_paths(d_list))
+		print 'sel path book:\n'+str(gf.get_all_sel_paths(d_list))
 
 	# gurobi solver
 	if lp_enable or cli_lp:
@@ -156,24 +159,22 @@ for j in range(repeats):
 		print '########################'
 		[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
 		print '########################'
-		print '\nGurobi Solver complete\n'
+		print '\nGurobi Solver complete'
 		
 
 	# print out gurobi stats
 	if lp_enable or cli_lp:
 		print '\nGurobi accepted '+str(lp_accepted)
 		print 'Gurobi acceptance ratio '+str(lp_ratio*100)+'%'
-		print 'Gurobi sel path book:\n'+str(lp_sel_paths)+'\n'
+		print 'Gurobi sel path book:\n'+str(lp_result)+'\n'
 
 	
 	# print comparison
 	if lp_enable and gr_enable:
 		print 'lp is '+str(lp_ratio*100-acceptance_ratio*100)+'% points better than greedy'
-		greedy_al=list(gf.sel_paths(d_list).keys())
-		lp_al=list(lp_sel_paths.keys())
-		for re in lp_al:
-			if not re in greedy_al:
-				print str(re)+' is not in greedy but in LP'
+		print 'greedy paths: '+str(gf.get_all_sel_paths(d_list))
+		print 'lp paths: '+str(lp_sel_paths)
+
 
 	# plot
 	if plot_enable:
