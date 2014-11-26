@@ -60,8 +60,9 @@ def alloc_p(G, d, sel_path):
 	print "lat req: "+str(d.lat)+'\n'
 
 	# store sel path in demand
-	d.set_allocated()
-	d.set_path(sel_path)
+	if d!=None:
+		d.set_allocated()
+		d.set_path(sel_path)
 
 	# update graph
 	G_updated=update_edges(G_updated, sel_path, d.get_bw())
@@ -69,8 +70,9 @@ def alloc_p(G, d, sel_path):
 	if minimum_bw(G_updated)<0:	
 		sel_path=[]
 		G_updated=G
-		d.set_unallocated()
-		d.set_path([])
+		if d!=None:
+			d.set_unallocated()
+			d.set_path([])
 		
 	return [G_updated, sel_path]
 
@@ -152,7 +154,7 @@ def prune_bw(G, bandwidth):
 	return G
 
 # get all selected paths
-def sel_paths(demand_list):
+def get_all_sel_paths(demand_list):
 	all_sel_paths={}
 	for i in range(len(demand_list)):
 		path=demand_list[i].get_path()

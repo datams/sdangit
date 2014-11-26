@@ -19,19 +19,21 @@ import customGraph
 import graphFunctions as gf
 import lpsolv as lp
 import greedy as gr
+import genetic as gen
 
 ####################################################################
 ########################## parameters ##############################
 ####################################################################
 
 repeats				= 1
-plot_enable			= True
-show_enable			= True
+plot_enable			= False
+show_enable			= False
 gr_enable			= False
 lp_enable			= False
-cli				= True
-cli_lp				= True
-number_of_demands		= 8
+cli				= False
+cli_lp				= False
+gen_enable			= True
+number_of_demands		= 3
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
 bw_variants			= [1,2,3]
@@ -73,7 +75,7 @@ for j in range(repeats):
 	number_of_rerouting_success=0
 
 	# create all demands
-	if lp_enable or gr_enable:
+	if lp_enable or gr_enable or gen_enable:
 		d_list=[]
 		for k in range(number_of_demands):
 			temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
@@ -161,6 +163,12 @@ for j in range(repeats):
 		# saves link utilization to l_util.png
 		gf.util_histo(G, G_updated, plot_enable)
 		print 'sel path book:\n'+str(gf.get_all_sel_paths(d_list))
+
+
+	if gen_enable:
+		genome=gen.evolution(G,d_list)
+		print 'This is the first genetic solution'
+		print genome
 
 	# print out gurobi stats
 	if lp_enable or cli_lp:
