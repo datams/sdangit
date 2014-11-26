@@ -27,15 +27,15 @@ import greedy as gr
 repeats				= 1
 plot_enable			= True
 show_enable			= True
-gr_enable			= True
-lp_enable			= True
-cli				= False
-cli_lp				= False
+gr_enable			= False
+lp_enable			= False
+cli				= True
+cli_lp				= True
 number_of_demands		= 8
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
-bw_variants			= [1,3,3,5]
-lat_variants			= [1,2,4]
+bw_variants			= [1,2,3]
+lat_variants			= [4,8]
 
 
 ####################################################################
@@ -133,8 +133,17 @@ for j in range(repeats):
 			if i==number_of_demands:
 				break
 	
+	# gurobi solver
+	if lp_enable or cli_lp:
+		print '\n\n---\nRun Gurobi Solver'
+		[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
+		print '\nGurobi Solver complete\n---'
+
+
+	if gr_enable:
 		# print out result stats
-		print '\n\n\n%%%%% END STATS %%%%%\n'
+		print '\n\n######### End Stats ###############'
+		print 'Greedy:'
 		print 'Total demands: '+str(number_of_demands)
 		acceptance_counter = sum([d.x for d in d_list])
 		print 'Allocated demands: '+str(acceptance_counter)
@@ -153,28 +162,22 @@ for j in range(repeats):
 		gf.util_histo(G, G_updated, plot_enable)
 		print 'sel path book:\n'+str(gf.get_all_sel_paths(d_list))
 
-	# gurobi solver
-	if lp_enable or cli_lp:
-		print '\n\nRun Gurobi Solver \n'
-		print '########################'
-		[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
-		print '########################'
-		print '\nGurobi Solver complete'
-		
-
 	# print out gurobi stats
 	if lp_enable or cli_lp:
-		print '\nGurobi accepted '+str(lp_accepted)
-		print 'Gurobi acceptance ratio '+str(lp_ratio*100)+'%'
-		print 'Gurobi sel path book:\n'+str(lp_result)+'\n'
+		print '\nGurobi:'
+		print 'Allocated demands: '+str(lp_accepted)
+		print 'Acceptance ratio '+str(lp_ratio*100)+'%'
+		print 'sel path book:\n'+str(lp_result)+'\n'
+
 
 	
 	# print comparison
 	if lp_enable and gr_enable:
+		print '\n\n######### Comparison Stats ###############'
 		print 'lp is '+str(lp_ratio*100-acceptance_ratio*100)+'% points better than greedy'
 		print 'greedy paths: '+str(gf.get_all_sel_paths(d_list))
 		print 'lp paths: '+str(lp_sel_paths)
-
+		print '\n'
 
 	# plot
 	if plot_enable:

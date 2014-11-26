@@ -50,7 +50,8 @@ class demand:
 	return self.path
     def get_alternative_paths(self):
 	all_paths=gf.pack2p(self.paths_pack)
-	alternative_paths=all_paths.pop(all_paths.index(self.path))
+	popped=all_paths.pop(all_paths.index(self.path))
+	alternative_paths=all_paths
 	return alternative_paths
     def set_paths_pack(self,pack2set):
 	self.paths_pack=pack2set

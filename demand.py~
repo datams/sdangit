@@ -21,7 +21,7 @@ class demand:
 	self.x=0
 	self.path=[]
 	self.paths_pack=[]
-	self.priority=None
+	self.priority=1
 	self.group=None
 	self.blocked=False
     def set_source(self, s):
