@@ -5,11 +5,13 @@ import graphFunctions as gf
 import random
 import copy
 
+# generates a list of level-many indices out of range(len(d_list))
 def gen_rand_index(d_list, level):
 	variants=range(len(d_list))
 	rand_index=random.sample(set(variants), level)
 	return rand_index
 
+# tries to allocate a selected path with a given bw and reports if it was possible
 def alloc_gen(G, sel_path, bw):
 	G_updated=copy.deepcopy(G)
 	G_updated=gf.update_edges(G_updated, sel_path, bw)
@@ -20,6 +22,7 @@ def alloc_gen(G, sel_path, bw):
 		G_updated=G
 	return [G_updated, success]
 
+# reports back the number of allocated paths with a given genome
 def rate(G, d_list, genome):
 	G_updated=copy.deepcopy(G)
 	counter=0
@@ -29,8 +32,10 @@ def rate(G, d_list, genome):
 			path=random.choice(gf.pack2p(possible))
 			[G_updated, success] =  alloc_gen(G_updated, path, d_list[i].bw)
 			if success == True:
-				counter+=1		
+				counter+=1
+	return counter		
 
+# mutates a genome on level-many positions if possible
 def mutate(genome,d_list,level):
 	rand_index=gen_rand_index(d_list, level)
 	for i in rand_index:
@@ -61,5 +66,4 @@ def evolution(G,d_list):
 		new_rating = rate(G, d_list, new_genome)
 		if new_rating>old_rating:
 			genome=new_genome
-
 	return genome

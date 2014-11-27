@@ -19,13 +19,24 @@ import customGraph
 import graphFunctions as gf
 import lpsolv as lp
 import greedy as gr
-import genetic as gen
+import genetic2 as gen
 
 ####################################################################
 ########################## parameters ##############################
 ####################################################################
 
 repeats				= 1
+
+'''
+plot_enable			= True
+show_enable			= True
+gr_enable			= False
+lp_enable			= False
+cli				= True
+cli_lp				= True
+gen_enable			= False
+'''
+
 plot_enable			= False
 show_enable			= False
 gr_enable			= False
@@ -33,6 +44,8 @@ lp_enable			= False
 cli				= False
 cli_lp				= False
 gen_enable			= True
+
+
 number_of_demands		= 3
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
@@ -167,7 +180,7 @@ for j in range(repeats):
 
 	if gen_enable:
 		genome=gen.evolution(G,d_list)
-		print 'This is the first genetic solution'
+		print 'Genetic solution'
 		print genome
 
 	# print out gurobi stats
