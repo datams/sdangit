@@ -25,28 +25,30 @@ import genetic2 as gen
 ########################## parameters ##############################
 ####################################################################
 
+
+cli=0
+genetic=1
+
+if cli==1:
+	plot_enable			= True
+	show_enable			= True
+	gr_enable			= False
+	lp_enable			= False
+	cli				= True
+	cli_lp				= True
+	gen_enable			= False
+
+if genetic==1:
+	plot_enable			= False
+	show_enable			= False
+	gr_enable			= False
+	lp_enable			= True
+	cli				= False
+	cli_lp				= False
+	gen_enable			= True
+
 repeats				= 1
-
-'''
-plot_enable			= True
-show_enable			= True
-gr_enable			= False
-lp_enable			= False
-cli				= True
-cli_lp				= True
-gen_enable			= False
-'''
-
-plot_enable			= False
-show_enable			= False
-gr_enable			= False
-lp_enable			= False
-cli				= False
-cli_lp				= False
-gen_enable			= True
-
-
-number_of_demands		= 3
+number_of_demands		= 5
 path_selection_criterion	= 'hops'
 graph_type			= 'deight'
 bw_variants			= [1,2,3]
@@ -109,9 +111,9 @@ for j in range(repeats):
 			print '\nAllocated demands'
 			if len(d_list)>0:
 				print gf.get_all_sel_paths(d_list)
-			print '\nPlease choose from nodes '+str(G.nodes())
+			print '\nAvailable nodes '+str(G.nodes())
 			while(True):
-				f=input('Please enter from node (888 for ending): ')
+				f=input('Please enter source node (888 for ending): ')
 				if f in G.nodes() or f==888: break
 				print 'Please enter a valid node'
 			if f==888:
@@ -119,7 +121,7 @@ for j in range(repeats):
 				break
 			if leave==True: break
 			while(True):
-				t=input('Please enter to node: ')
+				t=input('Please enter target node: ')
 				if t in G.nodes(): break
 				print 'Please enter a valid node'
 			bwreq=input('Please enter bw req: ')
