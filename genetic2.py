@@ -32,7 +32,12 @@ class genome:
     		gen_pool=self.d_list[i].paths_pack
 	if gen_pool!=[]:
 		new_gen=random.choice(gf.pack2p(gen_pool))
-		self.list[i]=new_gen
+		los=[0,0,0,0,0,0,0,0,1,1]
+		leer=random.choice(los)
+		if leer==0:
+			self.list[i]=new_gen
+		else:
+			self.list[i]=None
 	return self
 
     # reports back the number of allocated paths with a given genome
@@ -56,9 +61,13 @@ class genome:
 # tries to allocate a selected path with a given bw and reports if it was possible
 def alloc_gen(G, sel_path, bw):
 	G_updated=copy.deepcopy(G)
-	G_updated=gf.update_edges(G_updated, sel_path, bw)
-	if gf.minimum_bw(G_updated)>0:	
-		success=True
+	if sel_path!=None:
+		G_updated=gf.update_edges(G_updated, sel_path, bw)
+		if gf.minimum_bw(G_updated)>0:	
+			success=True
+		else:
+			success=False
+			G_updated=G
 	else:
 		success=False
 		G_updated=G
@@ -102,7 +111,10 @@ def evolution(G,d_list):
 			a=genome(d_list)
 			print 'done'
 			print a.list
+		print 'cycles: '+str(cycles)
+		print 'rating'		
+		print a.rate(G)
 		if cycles==330 or new_rating==len(d_list):
 			break
-		print 'cycles: '+str(cycles)
+		
 	return a.list
