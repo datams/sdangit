@@ -182,8 +182,8 @@ for j in range(repeats):
 
 	if gen_enable:
 		genome=gen.evolution(G,d_list)
-		print 'Genetic solution'
-		print genome
+		#print 'Genetic solution'
+		#print genome
 
 	# print out gurobi stats
 	if lp_enable or cli_lp:
