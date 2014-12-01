@@ -5,11 +5,43 @@ import graphFunctions as gf
 import random
 import copy
 
-# todo for parallels
+# a population contains a set of individuals (genomes) and can rank them
 class population:
-    def __init__(self):
+    def __init__(self,G,d_list,pop_size):
+	self.ranking=[]
+	self.fitness={}
 	self.individuals=[]
-	self.rankings={}
+	for k in range(pop_size):
+		individuals.append(genome(d_list))
+
+    def mutall(self, level):
+	for j in range(len(self.individuals)):
+		individuals[j].mutate(level)
+
+    def rateall(self):
+	for i in range(len(self.individuals)):
+		self.fitness[i]=individuals[i].rate(G)[0]
+
+    def rank(self):
+	self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
+
+    def fork(self,level):
+	new_individuals=[]
+	for l in range(len(self.individuals)):
+		index=self.ranking[l]
+		if l==0 or l==1:	
+			new_individuals.append(self.individuals[index])
+		elif l==2 or l==3:
+			new_individuals.append(self.individuals[index].mutate(level))
+			new_individuals.append(self.individuals[index].mutate(level))
+		elif l<len(self.individuals):
+			new_individuals.append(self.individuals[index].mutate(level))
+	self.individuals=new_individuals
+
+    def best_genome(self)
+	index=self.ranking[0]
+	return self.individuals[index]
+
 
 # reflects a genome as a list of path choices for demands
 class genome:
@@ -98,18 +130,19 @@ def randb(percentage):
 	decision=random.choice(los)
 	return decision
 
+
 # runs multiple evolution iterations in order to find the best genome
-def evolution(G,d_list):
+def paraevolution(G,d_list):
 	for i in range(len(d_list)):
 		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
 
-	a=genome(d_list)
-	a.mutate(1)
+	pop_size=50
+	p=population(G,d_list,pop_size)
+	p.mutall(1)
 
 	# set burst duration
 	burst_duration=2
-
 	# For number of iterations:
 	cycles=0
 	burst_timer=burst_duration
@@ -124,7 +157,73 @@ def evolution(G,d_list):
 				bursting=False
 		else:
 			mutationrate=1
-		print mutationrate
+		p.rateall()
+		p.rank()
+		
+		if cycles==200 or new_rating==len(d_list):
+			selection=p.best_genome()
+			result=[]
+			alloc_counter=0
+			# only show the allocatable paths as a result
+			for j in range(len(selection)):
+				if selection[j]:
+					result.append(a.list[j])
+					alloc_counter+=1
+				else:
+					result.append(None)
+			acc_ratio=float(alloc_counter)/float(len(selection))*100
+			break
+
+		p.fork(mutationrate)
+
+	print '\nRun Genetic Algorithm'
+	print 'Acceptance Rate: '+str(acc_ratio)
+	print 'Result: '+str(result)
+	print 'Iterations: '+str(cycles)
+
+	return result
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# runs multiple evolution iterations in order to find the best genome
+def evolution(G,d_list):
+	for i in range(len(d_list)):
+		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
+		d_list[i].set_paths_pack(pathpack)
+
+	a=genome(d_list)
+	a.mutate(1)
+
+	# set burst duration
+	burst_duration=2
+	# For number of iterations:
+	cycles=0
+	burst_timer=burst_duration
+	bursting=False
+	while(True):
+		if cycles%50 == 0 or bursting:
+			bursting=True
+			mutationrate=4
+			burst_timer-=1
+			if burst_timer<=0:
+				burst_timer=burst_duration
+				bursting=False
+		else:
+			mutationrate=1
 		old_rating = a.rate(G)[0]
 		#print 'a='+str(a.list)+' with rating: '+str(old_rating)
 		b = a.mutate(mutationrate)
