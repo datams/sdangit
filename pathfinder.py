@@ -25,7 +25,6 @@ import genetic2 as gen
 ########################## parameters ##############################
 ####################################################################
 
-
 cli=0
 genetic=1
 
@@ -48,9 +47,9 @@ if genetic==1:
 	gen_enable			= True
 
 repeats				= 1
-number_of_demands		= 5
+number_of_demands		= 15
 path_selection_criterion	= 'hops'
-graph_type			= 'deight'
+graph_type			= 'srg'
 bw_variants			= [1,2,3]
 lat_variants			= [4,8]
 
@@ -126,9 +125,11 @@ for j in range(repeats):
 				print 'Please enter a valid node'
 			bwreq=input('Please enter bw req: ')
 			latreq=input('Please enter lat req: ')
+			prioreq=input('Please enter priority: ')
 			# create demand
 			temp_dem = dem.demand(G.nodes(),None,None)
 			temp_dem.make_choice_concrete(f,t,bwreq,latreq)
+			temp_dem.set_priority(prioreq)
 			d_list.append(temp_dem)
 			number_of_demands+=1
 			[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\
@@ -181,6 +182,7 @@ for j in range(repeats):
 
 
 	if gen_enable:
+		print '\nRun Genetic Algorithm'
 		genome=gen.evolution(G,d_list)
 		#print 'Genetic solution'
 		#print genome

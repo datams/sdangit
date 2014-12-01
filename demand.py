@@ -63,6 +63,10 @@ class demand:
 	return self.group
     def set_group(self,group2set):
 	self.group=group2set
+    def block(self):
+	self.blocked=True
+    def unblock(self):
+	self.blocked=False
 
     # random choice of two distinct graph nodes as source / target
     def make_choice(self):

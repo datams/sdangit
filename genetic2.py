@@ -39,12 +39,7 @@ class genome:
 	    		gen_pool=self.d_list[i].paths_pack
 			if gen_pool!=[]:
 				new_gen=random.choice(gf.pack2p(gen_pool))
-				los=[0,0,0,0,0,0,0,0,1,1]
-				leer=random.choice(los)
-				if leer==0:
-					self.list[i]=new_gen
-				else:
-					self.list[i]=None
+				self.list[i]=new_gen
 	return self
 
     # reports back the number of allocated paths with a given genome
@@ -61,8 +56,13 @@ class genome:
 				alloc_status[i]=True
 			elif success == False:
 				alloc_status[i]=None
-	return [counter,alloc_status]
-
+	used_bw=bw_consum(G, G_updated)
+	if used_bw<=0:
+		fitness=0
+	else:
+		fitness=0.9*float(counter)+0.1/used_bw
+	#print 'fitness: '+str(fitness)
+	return [fitness,alloc_status]
 
 # tries to allocate a selected path with a given bw and reports if it was possible
 def alloc_gen(G, sel_path, bw):
@@ -78,6 +78,19 @@ def alloc_gen(G, sel_path, bw):
 		success=False
 		G_updated=G
 	return [G_updated, success]
+
+# calculates the total bw on all edges consumed
+def bw_consum(G, G_updated):
+	total_bw=float(0)
+	edges = G.edges()
+	for edge in edges:
+		from_node = edge[0]
+		to_node = edge[1]
+		orig_bw = G[from_node][to_node]['bw']
+		end_bw = G_updated[from_node][to_node]['bw']
+		used_bw=float(orig_bw)-float(end_bw)
+		total_bw+=used_bw
+	return total_bw
 
 # returns 1 with a percentage probability, else 0
 def randb(percentage):
@@ -119,13 +132,13 @@ def evolution(G,d_list):
 			a=b
 		cycles+=1
 		burst_start-=1
-		# reset after 200 iterations
-		if cycles%200 == 0:
-			a=genome(d_list)
+		# reset after n iterations
+		#if cycles%400 == 0:
+			#a=genome(d_list)
 		#print 'cycles: '+str(cycles)
 		#print 'rating: '+str(a.rate(G)[0])
 		# stop after 1000 iterations or when acceptance ratio 100%
-		if cycles==1000 or new_rating==len(d_list):
+		if cycles==200 or new_rating==len(d_list):
 			selection=a.rate(G)[1]
 			result=[]
 			alloc_counter=0
@@ -139,6 +152,7 @@ def evolution(G,d_list):
 			acc_ratio=float(alloc_counter)/float(len(selection))*100
 			break
 
+	print 'Iterations: '+str(cycles)
 	print 'Result: '+str(result)
 	print 'Acceptance Rate: '+str(acc_ratio)
 	return result

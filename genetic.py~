@@ -32,7 +32,8 @@ def rate(G, d_list, genome):
 			path=random.choice(gf.pack2p(possible))
 			[G_updated, success] =  alloc_gen(G_updated, path, d_list[i].bw)
 			if success == True:
-				counter+=1		
+				counter+=1
+	return counter		
 
 # mutates a genome on level-many positions if possible
 def mutate(genome,d_list,level):

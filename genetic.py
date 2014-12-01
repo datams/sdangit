@@ -15,7 +15,7 @@ def gen_rand_index(d_list, level):
 def alloc_gen(G, sel_path, bw):
 	G_updated=copy.deepcopy(G)
 	G_updated=gf.update_edges(G_updated, sel_path, bw)
-	if gf.minimum_bw(G_updated)<0:	
+	if gf.minimum_bw(G_updated)>0:
 		success=True
 	else:
 		success=False
