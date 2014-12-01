@@ -107,21 +107,23 @@ def evolution(G,d_list):
 	a=genome(d_list)
 	a.mutate(1)
 
+	# set burst duration
+	burst_duration=2
 	# For number of iterations:
 	cycles=0
-	burst_start=50
-	burst_duration=2
+	burst_timer=burst_duration
+	bursting=False
 	while(True):
-		if burst_start==0:
+		if cycles%50 == 0 or bursting:
+			bursting=True
 			mutationrate=4
-			burst_duration-=1
-			if burst_duration==0:
-				burst_duration=4
-				burst_start=50
-			burst_start+=1
+			burst_timer-=1
+			if burst_timer<=0:
+				burst_timer=burst_duration
+				bursting=False
 		else:
 			mutationrate=1
-
+		print mutationrate
 		old_rating = a.rate(G)[0]
 		#print 'a='+str(a.list)+' with rating: '+str(old_rating)
 		b = a.mutate(mutationrate)
@@ -131,7 +133,6 @@ def evolution(G,d_list):
 			#print 'take b as a'
 			a=b
 		cycles+=1
-		burst_start-=1
 		# reset after n iterations
 		#if cycles%400 == 0:
 			#a=genome(d_list)
