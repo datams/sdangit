@@ -10,23 +10,31 @@ class population:
     def __init__(self,G,d_list,pop_size):
 	self.G=G
 	self.d_list=d_list
+	# a list with ranking positions for each corresponding demand
 	self.ranking=[]
+	# a dict with the fitness value for each corresponding demand
 	self.fitness={}
+	# a list containing all genomes of the population
 	self.individuals=[]
+	# initialize all genomes
 	for k in range(pop_size):
 		self.individuals.append(genome(d_list))
-
+    
+    # mutate all genomes by level level
     def mutall(self, level):
 	for j in range(len(self.individuals)):
 		self.individuals[j].mutate(level)
 
+    # determine the fitness for all genomes and store to fitness dict
     def rateall(self):
 	for i in range(len(self.individuals)):
 		self.fitness[i]=self.individuals[i].rate(self.G)[0]
 
+    # determine the ranking based on fitness
     def rank(self):
 	self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
 
+    # produce the next generation (keep nr 1&2, privilege nr 3&4)
     def fork(self,level):
 	new_individuals=[]
 	for l in range(len(self.individuals)):
@@ -40,6 +48,7 @@ class population:
 			new_individuals.append(self.individuals[index].mutate(level))
 	self.individuals=new_individuals
 
+    # return best genome of population
     def best_genome(self):
 	index=self.ranking[0]
 	return self.individuals[index]
@@ -135,6 +144,7 @@ def randb(percentage):
 
 # runs multiple evolution iterations in order to find the best genome
 def paraevolution(G,d_list):
+	# determine all feasible paths
 	for i in range(len(d_list)):
 		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
@@ -150,7 +160,7 @@ def paraevolution(G,d_list):
 	burst_timer=burst_duration
 	bursting=False
 	while(True):
-		if cycles%12 == 0 or bursting:
+		if cycles%7 == 0 or bursting:
 			bursting=True
 			mutationrate=4
 			burst_timer-=1
@@ -161,12 +171,10 @@ def paraevolution(G,d_list):
 			mutationrate=1
 		p.rateall()
 		p.rank()
-		
-		print 'bis da gekommen'
-		print 'cycle '+str(cycles)
 
-		if cycles==30:
+		if cycles==12:
 			selection=p.best_genome()
+			print 'selection rating: '+str(selection.rate(G))
 			result=[]
 			alloc_counter=0
 			# only show the allocatable paths as a result
@@ -175,26 +183,19 @@ def paraevolution(G,d_list):
 					result.append(selection.list[j])
 					alloc_counter+=1
 				else:
-					result.append(None)
+					pass
+					#result.append(None)
 			acc_ratio=float(alloc_counter)/float(len(selection.list))*100
 			break
-
 		cycles+=1
 		p.fork(mutationrate)
 
 	print '\nRun Genetic Algorithm'
-	print 'Acceptance Rate: '+str(acc_ratio)
+	print 'Acceptance ratio: '+str(acc_ratio)+'%'
 	print 'Result: '+str(result)
 	print 'Iterations: '+str(cycles)
 
 	return result
-
-
-
-
-
-
-
 
 
 
@@ -254,7 +255,7 @@ def evolution(G,d_list):
 			break
 
 	print '\nRun Genetic Algorithm'
-	print 'Acceptance Rate: '+str(acc_ratio)
+	print 'Acceptance ratio: '+str(acc_ratio)+'%'
 	print 'Result: '+str(result)
 	print 'Iterations: '+str(cycles)
 

@@ -149,7 +149,8 @@ def solve(G,d_list):
 			varName=v.varName
 			varValue=v.x
 			# get all P vars
-			if varName.startswith('P'+str(r)) and varValue==1:
+			# CAVEAT.. STARTWITH
+			if varName.startswith('P'+str(r)+'_') and varValue==1:
 				P=varName
 				# find underscore position 
 				u1=P.find('_')
@@ -165,17 +166,28 @@ def solve(G,d_list):
 	
 	result=[]
 	sel_paths={}
+	counter=0
 	for r in Requests:
 		pp=[]
 		e_list=tuplelist(paths[r, s[r], t[r]]) # select path for request and convert to tuplelist
 		# 4Debug: print selected request with path
-		#print 'r:'+str(r)+' s[r]:'+str(s[r])+' t[r]:'+str(t[r])+' paths[r, s[r], t[r]]:'+str(paths[r, s[r], t[r]])
+		print 'r:'+str(r)+' s[r]:'+str(s[r])+' t[r]:'+str(t[r])+' paths[r, s[r], t[r]]:'+str(paths[r, s[r], t[r]])
 		if e_list.select(s[r],'*')!=[]: # if there really is a path, continue
 			temp_edge= e_list.select(s[r],'*')[0] # take start edge
 			pp.append(temp_edge[0]) # write first node
 			pp.append(temp_edge[1]) # write second node
 			if temp_edge[1]!=t[r]:
 				for j in range(1,len(e_list)): # write all other nodes
+					if len(e_list.select(pp[j],'*'))<1:
+						print 'EMPTY MATCHING FOUND...'
+						print 'r: '+str(r)
+						print 'paths[r, s[r], t[r]] '+str(paths[r, s[r], t[r]])
+						print "e_list.select(pp[j],'*'): " +str(e_list)
+						print "e_list: " +str(e_list.select(pp[j],'*'))
+						print 's[r]: '+str(s[r])
+						print 't[r]: '+str(t[r])
+						print 'pp up to now '+str(pp)
+						print 'now looking for tuples beginning with '+str(pp[j])
 					temp_edge= e_list.select(pp[j],'*')[0] # select following edge
 					pp.append(temp_edge[1]) # append second node of edge (first one has already been added before)
 					# for the case the path has loops and not the full paths is taken
@@ -187,6 +199,7 @@ def solve(G,d_list):
 			# there could still be loops in the path which sould be deleted			
 			pp=deloop(pp)
 			result.append([int(z) for z in pp])
-			sel_paths[(int(s[r]),int(t[r]))]=[[int(z) for z in pp],bw_r[r]]
+			sel_paths[counter]=[[int(z) for z in pp],bw_r[r]]
+			counter+=1
 
 	return [result,sel_paths,accepted,rejected,ratio,x_sol]
