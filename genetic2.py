@@ -152,7 +152,9 @@ def evolution(G,d_list):
 			acc_ratio=float(alloc_counter)/float(len(selection))*100
 			break
 
-	print 'Iterations: '+str(cycles)
-	print 'Result: '+str(result)
+	print '\nRun Genetic Algorithm'
 	print 'Acceptance Rate: '+str(acc_ratio)
+	print 'Result: '+str(result)
+	print 'Iterations: '+str(cycles)
+
 	return result

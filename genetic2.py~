@@ -132,13 +132,13 @@ def evolution(G,d_list):
 			a=b
 		cycles+=1
 		burst_start-=1
-		# reset after 200 iterations
-		if cycles%400 == 0:
-			a=genome(d_list)
+		# reset after n iterations
+		#if cycles%400 == 0:
+			#a=genome(d_list)
 		#print 'cycles: '+str(cycles)
 		#print 'rating: '+str(a.rate(G)[0])
 		# stop after 1000 iterations or when acceptance ratio 100%
-		if cycles==1000 or new_rating==len(d_list):
+		if cycles==200 or new_rating==len(d_list):
 			selection=a.rate(G)[1]
 			result=[]
 			alloc_counter=0
@@ -152,7 +152,9 @@ def evolution(G,d_list):
 			acc_ratio=float(alloc_counter)/float(len(selection))*100
 			break
 
+	print '\nRun Genetic Algorithm'
 	print 'Iterations: '+str(cycles)
-	print 'Result: '+str(result)
 	print 'Acceptance Rate: '+str(acc_ratio)
+	print 'Result: '+str(result)
+
 	return result

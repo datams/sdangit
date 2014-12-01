@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ####################################################################
-########################## imports #################################
+######################## python imports ############################
 ####################################################################
 
 import matplotlib.pyplot as plt
@@ -14,6 +14,11 @@ import copy
 import pygraphviz
 import os
 import operator
+import time
+
+####################################################################
+####################### modules imports ############################
+####################################################################
 import demand as dem
 import customGraph
 import graphFunctions as gf
@@ -150,14 +155,24 @@ for j in range(repeats):
 			i+=1
 			if i==number_of_demands:
 				break
-	
+
 	# gurobi solver
 	if lp_enable or cli_lp:
 		print '\n\n---\nRun Gurobi Solver'
+		lptic = time.time()
 		[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
+		lptoc = time.time()
 		print '\nGurobi Solver complete\n---'
 
+	# run genetic algorithm
+	if gen_enable:
+		tic = time.time()
+		genome=gen.evolution(G,d_list)	
+		toc = time.time()
+		print 'Genetic Time: '+str(toc - tic)
+		#print 'Genetic solution: '+str(genome)
 
+	# print 
 	if gr_enable:
 		# print out result stats
 		print '\n\n######### End Stats ###############'
@@ -180,22 +195,15 @@ for j in range(repeats):
 		gf.util_histo(G, G_updated, plot_enable)
 		print 'sel path book:\n'+str(gf.get_all_sel_paths(d_list))
 
-
-	if gen_enable:
-		print '\nRun Genetic Algorithm'
-		genome=gen.evolution(G,d_list)
-		#print 'Genetic solution'
-		#print genome
-
 	# print out gurobi stats
 	if lp_enable or cli_lp:
 		print '\nGurobi:'
-		print 'Allocated demands: '+str(lp_accepted)
 		print 'Acceptance ratio '+str(lp_ratio*100)+'%'
-		print 'sel path book:\n'+str(lp_result)+'\n'
+		print 'sel path book:\n'+str(lp_result)
+		print 'Allocated demands: '+str(lp_accepted)
+		print 'Gurobi Time: '+str(lptoc - lptic)
+		print '\n'
 
-
-	
 	# print comparison
 	if lp_enable and gr_enable:
 		print '\n\n######### Comparison Stats ###############'
