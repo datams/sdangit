@@ -52,7 +52,7 @@ if genetic==1:
 	gen_enable			= True
 
 repeats				= 1
-number_of_demands		= 20
+number_of_demands		= 15
 path_selection_criterion	= 'hops'
 graph_type			= 'srg'
 bw_variants			= [1,2,3]

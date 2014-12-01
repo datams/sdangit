@@ -8,19 +8,21 @@ import copy
 # a population contains a set of individuals (genomes) and can rank them
 class population:
     def __init__(self,G,d_list,pop_size):
+	self.G=G
+	self.d_list=d_list
 	self.ranking=[]
 	self.fitness={}
 	self.individuals=[]
 	for k in range(pop_size):
-		individuals.append(genome(d_list))
+		self.individuals.append(genome(d_list))
 
     def mutall(self, level):
 	for j in range(len(self.individuals)):
-		individuals[j].mutate(level)
+		self.individuals[j].mutate(level)
 
     def rateall(self):
 	for i in range(len(self.individuals)):
-		self.fitness[i]=individuals[i].rate(G)[0]
+		self.fitness[i]=self.individuals[i].rate(self.G)[0]
 
     def rank(self):
 	self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
@@ -137,7 +139,7 @@ def paraevolution(G,d_list):
 		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
 
-	pop_size=50
+	pop_size=8
 	p=population(G,d_list,pop_size)
 	p.mutall(1)
 
@@ -148,7 +150,7 @@ def paraevolution(G,d_list):
 	burst_timer=burst_duration
 	bursting=False
 	while(True):
-		if cycles%50 == 0 or bursting:
+		if cycles%12 == 0 or bursting:
 			bursting=True
 			mutationrate=4
 			burst_timer-=1
@@ -160,20 +162,24 @@ def paraevolution(G,d_list):
 		p.rateall()
 		p.rank()
 		
-		if cycles==200 or new_rating==len(d_list):
+		print 'bis da gekommen'
+		print 'cycle '+str(cycles)
+
+		if cycles==30:
 			selection=p.best_genome()
 			result=[]
 			alloc_counter=0
 			# only show the allocatable paths as a result
-			for j in range(len(selection)):
-				if selection[j]:
-					result.append(a.list[j])
+			for j in range(len(selection.list)):
+				if selection.list[j]:
+					result.append(selection.list[j])
 					alloc_counter+=1
 				else:
 					result.append(None)
-			acc_ratio=float(alloc_counter)/float(len(selection))*100
+			acc_ratio=float(alloc_counter)/float(len(selection.list))*100
 			break
 
+		cycles+=1
 		p.fork(mutationrate)
 
 	print '\nRun Genetic Algorithm'
@@ -182,12 +188,6 @@ def paraevolution(G,d_list):
 	print 'Iterations: '+str(cycles)
 
 	return result
-
-
-
-
-
-
 
 
 

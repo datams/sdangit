@@ -167,7 +167,7 @@ for j in range(repeats):
 	# run genetic algorithm
 	if gen_enable:
 		tic = time.time()
-		genome=gen.evolution(G,d_list)	
+		genome=gen.paraevolution(G,d_list)	
 		toc = time.time()
 		print 'Genetic Time: '+str(toc - tic)
 		#print 'Genetic solution: '+str(genome)
