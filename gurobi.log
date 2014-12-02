@@ -73158,3 +73158,239 @@ Thread count was 1 (of 4 available processors)
 
 Optimal solution found (tolerance 1.00e-04)
 Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:03:45 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:11:41 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:12:08 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:12:34 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:13:26 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:18:02 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:18:57 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:20:02 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:20:50 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:20:57 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:24:25 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:24:34 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:25:10 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:26:49 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:28:34 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:30:15 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:31:32 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:32:58 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:33:44 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:34:22 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:34:27 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Tue Dec  2 16:37:10 2014
+
+Optimize a model with 32 rows, 38 columns and 130 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 32 rows and 38 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0%

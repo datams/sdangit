@@ -39,20 +39,42 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 			d_u=gf.find_all_d_to_reroute(optimal_path, d_list[i].bw, d_list)
 			print 'all d_u: '+str(d_u)
 			# solve subproblem of [d_n and all d_u] in G_updated
-			d_index_subset = [i] + d_u
+			d_index_subset = d_u + [i]
 			d_list_subset = [d_list[j] for j in d_index_subset]
-			# produce graph without d_u
+			# produce graph without d_u's
 			G_without_du=copy.deepcopy(G_updated)
-			for index in d_index_subset:
-				[G_without_du] = gf.dealloc(G_without_du, d_list[index])
+			d_list_du=copy.deepcopy(d_list)
+			for index in d_u:
+				[G_without_du] = gf.dealloc(G_without_du, d_list_du[index])
 			# LP solver for the sub problem
 			lp_sel_paths=lp.solve(G_without_du,d_list_subset)[1]
 			print '\n\nlp_sel_paths: '+str(lp_sel_paths)+'\n\n'
 			# if path found for all: allocate
 			if len(lp_sel_paths)==len(d_list_subset):
-				# blablablblal
-				[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[d_u],path_selection_criterion)
-				plot_pool.plot(G_updated, None, 2, plot_enable)
+				# dealloc d_u's
+				for index in d_u:
+					print 'd_u: '+str(d_u)+' zum dealloc'
+					print 'index: '+str(index)
+					print 'd_list[index].path '+str(d_list[index].source )
+					[G_updated] = gf.dealloc(G_updated, d_list[index])
+					plot_pool.plot(G_updated, d_list[index], 2, plot_enable)
+				# alloc rerouting solution
+				for u in d_index_subset:
+					print 'u='+str(u)
+					print 'pfad ist: '+str(lp_sel_paths[u][0])
+					[G_updated, sel_path]=gf.alloc_p(G_updated, d_list[u], lp_sel_paths[u][0])
+					if sel_path==[]:
+						print 'nicht gegangen'
+					print 'plotte'
+					plot_pool.plot(G_updated, d_list[u], 3, plot_enable)
+
+
+
+
+
+
+
+
 
 
 
