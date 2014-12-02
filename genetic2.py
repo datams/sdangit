@@ -34,7 +34,7 @@ class population:
     def rank(self):
 	self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
 
-    # produce the next generation (keep nr 1&2, privilege nr 3&4)
+    # produce the next generation (keep nr 1&2, privilege nr 3&4 by having 2 children each)
     def fork(self,level):
 	new_individuals=[]
 	for l in range(len(self.individuals)):
@@ -149,6 +149,7 @@ def paraevolution(G,d_list):
 		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
 
+	# pop size should at least be 5 (because of fork privileges)
 	pop_size=8
 	p=population(G,d_list,pop_size)
 	p.mutall(1)

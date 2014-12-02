@@ -30,8 +30,8 @@ import genetic2 as gen
 ########################## parameters ##############################
 ####################################################################
 
-cli=0
-genetic=1
+cli=1
+genetic=0
 
 if cli==1:
 	plot_enable			= True
@@ -49,7 +49,7 @@ if genetic==1:
 	lp_enable			= True
 	cli				= False
 	cli_lp				= False
-	gen_enable			= False
+	gen_enable			= True
 
 repeats				= 1
 number_of_demands		= 15

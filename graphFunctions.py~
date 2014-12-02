@@ -60,9 +60,8 @@ def alloc_p(G, d, sel_path):
 	print "lat req: "+str(d.lat)+'\n'
 
 	# store sel path in demand
-	if d!=None:
-		d.set_allocated()
-		d.set_path(sel_path)
+	d.set_allocated()
+	d.set_path(sel_path)
 
 	# update graph
 	G_updated=update_edges(G_updated, sel_path, d.get_bw())
@@ -70,9 +69,8 @@ def alloc_p(G, d, sel_path):
 	if minimum_bw(G_updated)<0:	
 		sel_path=[]
 		G_updated=G
-		if d!=None:
-			d.set_unallocated()
-			d.set_path([])
+		d.set_unallocated()
+		d.set_path([])
 		
 	return [G_updated, sel_path]
 
@@ -380,7 +378,7 @@ def check_intersect(path1, path2):
 			degree+=cmpT(edge, path2[i])
 	return degree
 
-# get all demands, whose path intersect with optimal path by at least one and are not blocked and would release enough bw and the most alternatives
+# find BEST demand, whose path intersect with optimal path by at least one and are not blocked and would release more than enough bw and the most alternatives
 def find_d_to_reroute(optimal_path, bw_req, d_list):
 	intersecting_demands_list=[]
 	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand
@@ -391,6 +389,22 @@ def find_d_to_reroute(optimal_path, bw_req, d_list):
 			intersecting_demands_list.append([i,alt_num])
 	if len(intersecting_demands_list)>0:
 		to_reroute_index = max(intersecting_demands_list, key=operator.itemgetter(1))[0]
+		return to_reroute_index
+	else:
+		return None
+
+# get ALL demands in order (best first), whose path intersect with optimal path by at least one and are not blocked and would more than enough bw and the most alternatives
+def find_all_d_to_reroute(optimal_path, bw_req, d_list):
+	intersecting_demands_list=[]
+	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand
+		degree=check_intersect(optimal_path, d_list[i].path)
+		# print 'Found degree '+str(degree)+' fuer demand nummer '+str(i)+' and bw '+str(d_list[i].bw)
+		if degree>0 and d_list[i].blocked==False: # and d_list[i].bw>=bw_req:
+			alt_num=len(d_list[i].get_alternative_paths())
+			intersecting_demands_list.append([i,alt_num])
+	if len(intersecting_demands_list)>0:
+		du_sorted = sorted(intersecting_demands_list, key=operator.itemgetter(1), reverse=True)
+		to_reroute_index = [x[0] for x in du_sorted]
 		return to_reroute_index
 	else:
 		return None

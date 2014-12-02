@@ -66,8 +66,8 @@ def solve(G,d_list):
 		lat_r[k]=d_list[k].lat
 
 	# 4Debug: print requests
-	#for r in Requests:
-		#print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' with bw_r '+str(bw_r[r])+' and lat_r '+str(lat_r[r])
+	for r in Requests:
+		print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' with bw_r '+str(bw_r[r])+' and lat_r '+str(lat_r[r])
 	
 	##### Create optimization model #####
 	m = Model('sdan')
@@ -171,7 +171,7 @@ def solve(G,d_list):
 		pp=[]
 		e_list=tuplelist(paths[r, s[r], t[r]]) # select path for request and convert to tuplelist
 		# 4Debug: print selected request with path
-		print 'r:'+str(r)+' s[r]:'+str(s[r])+' t[r]:'+str(t[r])+' paths[r, s[r], t[r]]:'+str(paths[r, s[r], t[r]])
+		# print 'r:'+str(r)+' s[r]:'+str(s[r])+' t[r]:'+str(t[r])+' paths[r, s[r], t[r]]:'+str(paths[r, s[r], t[r]])
 		if e_list.select(s[r],'*')!=[]: # if there really is a path, continue
 			temp_edge= e_list.select(s[r],'*')[0] # take start edge
 			pp.append(temp_edge[0]) # write first node
