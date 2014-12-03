@@ -62,7 +62,7 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 				# alloc rerouting solution
 				for u in d_index_subset:
 					print 'u='+str(u)
-					print 'pfad ist: '+str(lp_sel_paths[u][0])
+					print 'pfad ist: '+str(lp_sel_paths[d_index_subset.index(u)][0])
 					[G_updated, sel_path]=gf.alloc_p(G_updated, d_list[u], lp_sel_paths[d_index_subset.index(u)][0])
 					if sel_path==[]:
 						print 'nicht gegangen'

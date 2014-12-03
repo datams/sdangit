@@ -36,7 +36,7 @@ genetic=0
 
 if ran==1:
 	plot_enable			= True
-	show_enable			= True
+	show_enable			= False
 	gr_enable			= True
 	lp_enable			= True
 	cli				= False

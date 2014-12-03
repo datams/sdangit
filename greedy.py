@@ -57,6 +57,7 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 					print 'd_u: '+str(d_u)+' zum dealloc'
 					print 'index: '+str(index)
 					print 'd_list[index].path '+str(d_list[index].source )
+					plot_pool.plot(G_updated, d_list[index], 2, plot_enable)
 					[G_updated] = gf.dealloc(G_updated, d_list[index])
 					plot_pool.plot(G_updated, d_list[index], 2, plot_enable)
 				# alloc rerouting solution

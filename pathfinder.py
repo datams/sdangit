@@ -46,8 +46,8 @@ if ran==1:
 	number_of_demands		= 9
 	path_selection_criterion	= 'hops'
 	graph_type			= 'deight'
-	bw_variants			= [1,2,3]
-	lat_variants			= [4,8]
+	bw_variants			= [4]
+	lat_variants			= [4,8,10]
 
 if cli==1:
 	plot_enable			= True
