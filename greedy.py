@@ -35,7 +35,7 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 			optimal_path = gf.select_path(path_pack_in_empty_graph, path_selection_criterion)
 			print 'The best path for empty graph: '+str(optimal_path)
 			#### FIND D_U TO REROUTE #####
-			# get all demands, whose path intersect with optimal path by at least one and are not blocked and would release enough bw and the most alternatives
+			# get all demands, whose path intersect with optimal path by at least one and are not blocked
 			d_u=gf.find_all_d_to_reroute(optimal_path, d_list[i].bw, d_list)
 			print 'all d_u: '+str(d_u)
 			# solve subproblem of [d_n and all d_u] in G_updated
@@ -51,6 +51,7 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 			print '\n\nlp_sel_paths: '+str(lp_sel_paths)+'\n\n'
 			# if path found for all: allocate
 			if len(lp_sel_paths)==len(d_list_subset):
+				number_of_rerouting_success+=1
 				# dealloc d_u's
 				for index in d_u:
 					print 'd_u: '+str(d_u)+' zum dealloc'
@@ -61,12 +62,14 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 				# alloc rerouting solution
 				for u in d_index_subset:
 					print 'u='+str(u)
-					print 'pfad ist: '+str(lp_sel_paths[u][0])
-					[G_updated, sel_path]=gf.alloc_p(G_updated, d_list[u], lp_sel_paths[u][0])
+					print 'pfad ist: '+str(lp_sel_paths[d_index_subset.index(u)][0])
+					[G_updated, sel_path]=gf.alloc_p(G_updated, d_list[u], lp_sel_paths[d_index_subset.index(u)][0])
 					if sel_path==[]:
 						print 'nicht gegangen'
 					print 'plotte'
 					plot_pool.plot(G_updated, d_list[u], 3, plot_enable)
+			else:
+				print 'not possible to allocate by rerouting'
 
 
 

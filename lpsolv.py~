@@ -66,8 +66,8 @@ def solve(G,d_list):
 		lat_r[k]=d_list[k].lat
 
 	# 4Debug: print requests
-	#for r in Requests:
-		#print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' with bw_r '+str(bw_r[r])+' and lat_r '+str(lat_r[r])
+	for r in Requests:
+		print 'Request: '+str(r)+' from '+str(s[r])+' to '+str(t[r])+' with bw_r '+str(bw_r[r])+' and lat_r '+str(lat_r[r])
 	
 	##### Create optimization model #####
 	m = Model('sdan')

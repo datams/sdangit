@@ -149,6 +149,7 @@ def paraevolution(G,d_list):
 		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
 
+	# pop size should at least be 5 (because of fork privileges)
 	pop_size=8
 	p=population(G,d_list,pop_size)
 	p.mutall(1)

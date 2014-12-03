@@ -393,7 +393,7 @@ def find_d_to_reroute(optimal_path, bw_req, d_list):
 	else:
 		return None
 
-# get ALL demands in order (best first), whose path intersect with optimal path by at least one and are not blocked and have the most alternatives
+# get ALL demands in order (best first), whose path intersect with optimal path by at least one and are not blocked (sorted by number of alternative paths)
 def find_all_d_to_reroute(optimal_path, bw_req, d_list):
 	intersecting_demands_list=[]
 	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand

@@ -200,7 +200,7 @@ def solve(G,d_list):
 			# there could still be loops in the path which sould be deleted			
 			pp=deloop(pp)
 			result.append([int(z) for z in pp])
-			sel_paths[counter]=[[int(z) for z in pp],bw_r[r]]
+			sel_paths[r]=[[int(z) for z in pp],bw_r[r]]
 			counter+=1
 
 	return [result,sel_paths,accepted,rejected,ratio,x_sol]
