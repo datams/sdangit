@@ -30,8 +30,8 @@ import genetic2 as gen
 ########################## parameters ##############################
 ####################################################################
 
-ran=1
-cli=0
+ran=0
+cli=1
 genetic=0
 
 if ran==1:
@@ -136,32 +136,43 @@ for j in range(repeats):
 			print '\nAllocated demands'
 			if len(d_list)>0:
 				print gf.get_all_sel_paths(d_list)
-			print '\nAvailable nodes '+str(G.nodes())
-			while(True):
-				f=input('Please enter source node (888 for ending): ')
-				if f in G.nodes() or f==888: break
-				print 'Please enter a valid node'
-			if f==888:
-				leave=True
-				break
-			if leave==True: break
-			while(True):
-				t=input('Please enter target node: ')
-				if t in G.nodes(): break
-				print 'Please enter a valid node'
-			bwreq=input('Please enter bw req: ')
-			latreq=input('Please enter lat req: ')
-			prioreq=input('Please enter priority: ')
-			# create demand
-			temp_dem = dem.demand(G.nodes(),None,None)
-			temp_dem.make_choice_concrete(f,t,bwreq,latreq)
-			temp_dem.set_priority(prioreq)
-			d_list.append(temp_dem)
-			number_of_demands+=1
-			[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\
-			gr.finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection_criterion,\
-			number_of_rerouting_attempts, number_of_rerouting_success, plot_enable)
-			i+=1
+			mode=input('remove=0, add=1: ')
+			if mode==0:
+				d_remove=input('demand nr to remove: ')
+				if d_remove < len(d_list):
+					[G_updated]=gf.dealloc(G_updated, d_list[d_remove])
+					temp=d_list.pop(d_remove)
+					plot_pool.plot(G_updated, None, 2, plot_enable)
+					i-=1
+					print '\nAllocated demands'
+					if len(d_list)>0:
+						print gf.get_all_sel_paths(d_list)
+			else:
+				while(True):
+					f=input('Please enter source node (888 for ending): ')
+					if f in G.nodes() or f==888: break
+					print 'Please enter a valid node'
+				if f==888:
+					leave=True
+					break
+				if leave==True: break
+				while(True):
+					t=input('Please enter target node: ')
+					if t in G.nodes(): break
+					print 'Please enter a valid node'
+				bwreq=input('Please enter bw req: ')
+				latreq=input('Please enter lat req: ')
+				prioreq=input('Please enter priority: ')
+				# create demand
+				temp_dem = dem.demand(G.nodes(),None,None)
+				temp_dem.make_choice_concrete(f,t,bwreq,latreq)
+				temp_dem.set_priority(prioreq)
+				d_list.append(temp_dem)
+				number_of_demands+=1
+				[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\
+				gr.finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection_criterion,\
+				number_of_rerouting_attempts, number_of_rerouting_success, plot_enable)
+				i+=1
 
 	# greedy solver
 	if gr_enable:
@@ -180,10 +191,13 @@ for j in range(repeats):
 	# gurobi solver
 	if lp_enable or cli_lp:
 		print '\n\n---\nRun Gurobi Solver'
-		lptic = time.time()
-		[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
-		lptoc = time.time()
-		print '\nGurobi Solver complete\n---'
+		if len(d_list)>0:
+			lptic = time.time()
+			[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
+			lptoc = time.time()
+			print '\nGurobi Solver complete\n---'
+		else:
+			print 'no demands available'
 
 	# run genetic algorithm
 	if gen_enable:
