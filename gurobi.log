@@ -74900,3 +74900,35 @@ Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0%
 
 Gurobi 5.6.3 (linux64) logging started Wed Dec  3 14:59:37 2014
 
+
+Gurobi 5.6.3 (linux64) logging started Wed Dec  3 15:04:00 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Wed Dec  3 15:06:45 2014
+
+Optimize a model with 25 rows, 19 columns and 65 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 25 rows and 19 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0%
+
+Gurobi 5.6.3 (linux64) logging started Wed Dec  3 15:06:58 2014
+
+
+Gurobi 5.6.3 (linux64) logging started Wed Dec  3 15:08:40 2014
+
+Optimize a model with 25 rows, 19 columns and 65 nonzeros
+Found heuristic solution: objective -0
+Presolve removed 25 rows and 19 columns
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0%

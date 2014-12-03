@@ -136,7 +136,7 @@ for j in range(repeats):
 			print '\nAllocated demands'
 			if len(d_list)>0:
 				print gf.get_all_sel_paths(d_list)
-			mode=input('remove=0, add=1: ')
+			mode=input('remove=0, add=1, leave=888: ')
 			if mode==0:
 				d_remove=input('demand nr to remove: ')
 				if d_remove < len(d_list):
@@ -147,14 +147,14 @@ for j in range(repeats):
 					print '\nAllocated demands'
 					if len(d_list)>0:
 						print gf.get_all_sel_paths(d_list)
-			else:
+			if mode==888:
+				leave=True
+				break
+			if mode==1:
 				while(True):
-					f=input('Please enter source node (888 for ending): ')
-					if f in G.nodes() or f==888: break
+					f=input('Please enter source node: ')
+					if f in G.nodes(): break
 					print 'Please enter a valid node'
-				if f==888:
-					leave=True
-					break
 				if leave==True: break
 				while(True):
 					t=input('Please enter target node: ')
