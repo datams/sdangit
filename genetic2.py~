@@ -51,8 +51,7 @@ class population:
     # return best genome of population
     def best_genome(self):
 	index=self.ranking[0]
-	#print 'fitness of all genomes: '+str(self.fitness)
-	print 'fitness of best genome: '+str(self.fitness[index])
+	#print 'fitness of best genome: '+str(self.fitness[index])
 	return self.individuals[index]
 
 
@@ -91,10 +90,10 @@ class genome:
     def rate(self, G):
 	G_updated=copy.deepcopy(G)
 	counter=0
-	alloc_status=[]
+	#alloc_status=[]
 	one_failed=False
 	for i in range(len(self.d_list)):
-		alloc_status.append(None)
+		#alloc_status.append(None)
 		if self.list[i]!=None:
 			[G_updated, success] = alloc_gen(G_updated, self.list[i], self.d_list[i].bw)
 			if success == True:
@@ -114,10 +113,14 @@ class genome:
 	#if genome_is_sane and one_failed==False:
 	if one_failed==False:
 		# calculate fitness
-		used_bw=bw_consum(G, G_updated)
-		if used_bw>0:
-			fitness=0.9*float(counter)+0.1/used_bw
-	#return [fitness,alloc_status]
+		total_alloc_bw=bw_consum(G, G_updated)
+		total_req_bw=0
+		for i in range(len(self.d_list)):
+			if self.list[i]!=None:
+				total_req_bw+=self.d_list[i].bw
+		if total_alloc_bw>0:
+			fitness = float(counter)/float(len(self.d_list)) + float(total_req_bw)/float(total_alloc_bw)
+			#fitness=0.9*float(counter)+0.1/total_alloc_bw	
 	return fitness
 
 # tries to allocate a selected path with a given bw and reports if it was possible
@@ -134,6 +137,17 @@ def alloc_gen(G, sel_path, bw):
 		success=False
 		G_updated=G
 	return [G_updated, success]
+
+# calculates the total bw on all edges available
+def bw_available(G):
+	total_bw=float(0)
+	edges = G.edges()
+	for edge in edges:
+		from_node = edge[0]
+		to_node = edge[1]
+		bw = G[from_node][to_node]['bw']
+		total_bw+=bw
+	return total_bw
 
 # calculates the total bw on all edges consumed
 def bw_consum(G, G_updated):

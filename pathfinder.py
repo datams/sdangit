@@ -31,8 +31,8 @@ import genetic2 as gen
 ####################################################################
 
 ran=0
-cli=1
-genetic=0
+cli=0
+genetic=1
 
 if ran==1:
 	plot_enable			= True

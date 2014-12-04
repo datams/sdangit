@@ -31,8 +31,8 @@ import genetic2 as gen
 ####################################################################
 
 ran=0
-cli=1
-genetic=0
+cli=0
+genetic=1
 
 if ran==1:
 	plot_enable			= True
@@ -60,7 +60,7 @@ if cli==1:
 	repeats				= 1
 	number_of_demands		= 8
 	path_selection_criterion	= 'hops'
-	graph_type			= 'srg'
+	graph_type			= 'deight'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 
@@ -133,6 +133,7 @@ for j in range(repeats):
 		if show_enable:
 			os.system('eog topo0.png &')
 		while(True):
+			print 'used bw: '+str(gen.bw_consum(G, G_updated))
 			print '\nAllocated demands'
 			if len(d_list)>0:
 				print gf.get_all_sel_paths(d_list)
