@@ -268,7 +268,7 @@ for j in range(repeats):
 			os.system('convert ' + lp_plot_pool.plot_pngs + ' +append '+str(lp_plot_pool.prefix)+'.png')
 			os.system('rm ' + lp_plot_pool.plot_pngs)
 			#os.system('convert ' + str(plot_pool.prefix)+'.png '+str(lp_plot_pool.prefix)+'.png -append total.png')
-			print 'Min lat in graph for LP: '+str(gf.minimum_lat(G_lp))
+			print 'Min bw in graph for LP: '+str(gf.minimum_bw(G_lp))
 		# plot gen
 		if gen_enable:
 			gen_plot_pool=gf.plot_pool('gopo')
@@ -280,7 +280,7 @@ for j in range(repeats):
 				G_gen = gf.update_edges(G_gen, gen_p, gen_bw)
 				gen_plot_pool.plotpa(G_gen, gen_p, 1, plot_enable)
 			os.system('convert ' + gen_plot_pool.plot_pngs + ' +append '+str(gen_plot_pool.prefix)+'.png')
-			print 'Min lat in graph for Gen: '+str(gf.minimum_lat(G_gen))
+			print 'Min bw in graph for Gen: '+str(gf.minimum_bw(G_gen))
 
 	# show plot	
 	if show_enable and plot_enable and gr_enable and lp_enable:

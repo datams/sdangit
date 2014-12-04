@@ -51,7 +51,8 @@ class population:
     # return best genome of population
     def best_genome(self):
 	index=self.ranking[0]
-	print 'fitness of best genome: '+str(self.ranking[index])
+	#print 'fitness of all genomes: '+str(self.fitness)
+	print 'fitness of best genome: '+str(self.fitness[index])
 	return self.individuals[index]
 
 
@@ -91,7 +92,7 @@ class genome:
 	G_updated=copy.deepcopy(G)
 	counter=0
 	alloc_status=[]
-	for i in range(self.size):
+	for i in range(len(self.d_list)):
 		alloc_status.append(None)
 		if self.list[i]!=None:
 			[G_updated, success] = alloc_gen(G_updated, self.list[i], self.d_list[i].bw)
@@ -100,12 +101,15 @@ class genome:
 				alloc_status[i]=True
 			elif success == False:
 				alloc_status[i]=None
-	used_bw=bw_consum(G, G_updated)
-	if used_bw<=0:
-		fitness=0
-	else:
-		fitness=0.9*float(counter)+0.1/used_bw
-	#print 'fitness: '+str(fitness)
+	# default fitness=0
+	fitness=0	
+
+	# check if genome sane
+	if gf.minimum_bw(G_updated)>=0:
+		# calculate fitness
+		used_bw=bw_consum(G, G_updated)
+		if used_bw>0:
+			fitness=0.9*float(counter)+0.1/used_bw
 	return [fitness,alloc_status]
 
 # tries to allocate a selected path with a given bw and reports if it was possible
@@ -152,7 +156,11 @@ def paraevolution(G,d_list):
 
 	# pop size should at least be 5 (because of fork privileges)
 	pop_size=8
+
+	# create population
 	p=population(G,d_list,pop_size)
+
+	# create initial generation by mutating all individuals
 	p.mutall(1)
 
 	# set burst duration
@@ -176,7 +184,6 @@ def paraevolution(G,d_list):
 
 		if cycles==12:
 			selection=p.best_genome()
-			print 'selection rating: '+str(selection.rate(G))
 			sel_paths={}
 			result=[]
 			alloc_counter=0
@@ -189,16 +196,16 @@ def paraevolution(G,d_list):
 				else:
 					pass
 					#result.append(None)
-			acc_ratio=float(len(result))/float(len(d_list))*100
+			acc_ratio=float(len(result))/float(len(d_list))
 			break
 		cycles+=1
 		p.fork(mutationrate)
 
 	print '\nRun Genetic Algorithm'
-	print 'Acceptance ratio: '+str(acc_ratio)+'%'
+	print 'Acceptance ratio: '+str(acc_ratio*100)+'%'
 	print 'Iterations: '+str(cycles)
 
-	return [result,sel_paths]
+	return [result,sel_paths,acc_ratio]
 
 
 

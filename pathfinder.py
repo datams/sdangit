@@ -72,7 +72,7 @@ if genetic==1:
 	cli				= False
 	cli_lp				= False
 	gen_enable			= True
-	repeats				= 1
+	repeats				= 20
 	number_of_demands		= 15
 	path_selection_criterion	= 'hops'
 	graph_type			= 'srg'
@@ -202,7 +202,7 @@ for j in range(repeats):
 	# run genetic algorithm
 	if gen_enable:
 		tic = time.time()
-		[result,gen_sel_paths]=gen.paraevolution(G,d_list)	
+		[result,gen_sel_paths,gen_ratio]=gen.paraevolution(G,d_list)	
 		toc = time.time()
 		print 'Genetic Time: '+str(toc - tic)
 		print 'Gen Result: '+str(result)
@@ -280,11 +280,15 @@ for j in range(repeats):
 				G_gen = gf.update_edges(G_gen, gen_p, gen_bw)
 				gen_plot_pool.plotpa(G_gen, gen_p, 1, plot_enable)
 			os.system('convert ' + gen_plot_pool.plot_pngs + ' +append '+str(gen_plot_pool.prefix)+'.png')
-			print 'Min bw in graph for Gen: '+str(gf.minimum_bw(G_gen))
+			min_gen_bw=gf.minimum_bw(G_gen)			
+			print 'Min bw in graph for Gen: '+str(min_gen_bw)
 
 	# show plot	
 	if show_enable and plot_enable and gr_enable and lp_enable:
 			os.system('eog total.png')
+
+	if min_gen_bw<0 or lp_ratio<gen_ratio:
+		break
 
 # print out stats for repeats
 if repeats>1 and gr_enable:
