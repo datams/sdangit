@@ -31,8 +31,8 @@ import genetic2 as gen
 ####################################################################
 
 ran=0
-cli=0
-genetic=1
+cli=1
+genetic=0
 
 if ran==1:
 	plot_enable			= True
@@ -201,9 +201,12 @@ for j in range(repeats):
 
 	# run genetic algorithm
 	if gen_enable:
+		# pop size should at least be 5 (because of fork privileges)
+		pop_size=25
+		maxgenerations=6
 		print '\nRun Genetic Algorithm'
 		tic = time.time()
-		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution(G,d_list)	
+		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio)
 		toc = time.time()
 		print 'Acceptance ratio: '+str(gen_ratio*100)+'%'
 		print 'Iterations: '+str(gen_cycles)
@@ -238,7 +241,7 @@ for j in range(repeats):
 	if lp_enable or cli_lp:
 		print '\nGurobi:'
 		print 'Acceptance ratio '+str(lp_ratio*100)+'%'
-		print 'LP Result:\n'+str(lp_result)
+		print 'LP Result: '+str(lp_result)
 		print 'LP sel paths:\n'+str(lp_sel_paths)
 		#print 'Allocated demands: '+str(lp_accepted)
 		print 'Gurobi Time: '+str(lptoc - lptic)
@@ -293,6 +296,7 @@ for j in range(repeats):
 		elif gen_enable:
 			os.system('eog '+str(gen_plot_pool.prefix)+'.png')
 
+	
 	#if lp_ratio<gen_ratio:
 	#	break
 

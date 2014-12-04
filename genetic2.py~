@@ -119,7 +119,7 @@ class genome:
 			if self.list[i]!=None:
 				total_req_bw+=self.d_list[i].bw
 		if total_alloc_bw>0:
-			fitness = float(counter)/float(len(self.d_list)) + float(total_req_bw)/float(total_alloc_bw)
+			fitness = 0.8*float(counter)/float(len(self.d_list)) + 0.2*float(total_req_bw)/float(total_alloc_bw)
 			#fitness=0.9*float(counter)+0.1/total_alloc_bw	
 	return fitness
 
@@ -170,14 +170,11 @@ def randb(percentage):
 
 
 # runs multiple evolution iterations in order to find the best genome
-def paraevolution(G,d_list):
+def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio):
 	# determine all feasible paths
 	for i in range(len(d_list)):
 		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
-
-	# pop size should at least be 5 (because of fork privileges)
-	pop_size=8
 
 	# create population
 	p=population(G,d_list,pop_size)
@@ -204,7 +201,7 @@ def paraevolution(G,d_list):
 		p.rateall()
 		p.rank()
 
-		if cycles==12:
+		if cycles==maxgenerations:
 			selection=p.best_genome()
 			sel_paths={}
 			result=[]

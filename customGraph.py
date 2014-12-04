@@ -22,10 +22,10 @@ def make(name):
 		# add nodes and edges to the graph
 		G.add_edge(0,1, bw=4, lat=1)
 		G.add_edge(0,2, bw=4, lat=1)
-		G.add_edge(1,3, bw=4, lat=1)
+		G.add_edge(1,3, bw=8, lat=1)
 		G.add_edge(2,3, bw=4, lat=1)
 		G.add_edge(3,4, bw=4, lat=1)
-		G.add_edge(3,5, bw=4, lat=1)
+		G.add_edge(3,5, bw=10, lat=1)
 		G.add_edge(4,6, bw=4, lat=1)
 		G.add_edge(5,6, bw=4, lat=1)
 		G.add_edge(1,4, bw=4, lat=1)
