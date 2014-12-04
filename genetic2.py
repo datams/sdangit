@@ -51,6 +51,7 @@ class population:
     # return best genome of population
     def best_genome(self):
 	index=self.ranking[0]
+	print 'fitness of best genome: '+str(self.ranking[index])
 	return self.individuals[index]
 
 
@@ -176,88 +177,29 @@ def paraevolution(G,d_list):
 		if cycles==12:
 			selection=p.best_genome()
 			print 'selection rating: '+str(selection.rate(G))
+			sel_paths={}
 			result=[]
 			alloc_counter=0
 			# only show the allocatable paths as a result
 			for j in range(len(selection.list)):
 				if selection.list[j]:
 					result.append(selection.list[j])
+					sel_paths[j]=[selection.list[j],d_list[j].bw]
 					alloc_counter+=1
 				else:
 					pass
 					#result.append(None)
-			acc_ratio=float(alloc_counter)/float(len(selection.list))*100
+			acc_ratio=float(len(result))/float(len(d_list))*100
 			break
 		cycles+=1
 		p.fork(mutationrate)
 
 	print '\nRun Genetic Algorithm'
 	print 'Acceptance ratio: '+str(acc_ratio)+'%'
-	print 'Result: '+str(result)
 	print 'Iterations: '+str(cycles)
 
-	return result
+	return [result,sel_paths]
 
 
 
 
-# runs multiple evolution iterations in order to find the best genome
-def evolution(G,d_list):
-	for i in range(len(d_list)):
-		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
-		d_list[i].set_paths_pack(pathpack)
-
-	a=genome(d_list)
-	a.mutate(1)
-
-	# set burst duration
-	burst_duration=2
-	# For number of iterations:
-	cycles=0
-	burst_timer=burst_duration
-	bursting=False
-	while(True):
-		if cycles%50 == 0 or bursting:
-			bursting=True
-			mutationrate=4
-			burst_timer-=1
-			if burst_timer<=0:
-				burst_timer=burst_duration
-				bursting=False
-		else:
-			mutationrate=1
-		old_rating = a.rate(G)[0]
-		#print 'a='+str(a.list)+' with rating: '+str(old_rating)
-		b = a.mutate(mutationrate)
-		new_rating = b.rate(G)[0]
-		#print 'b='+str(a.list)+' with rating: '+str(new_rating)
-		if new_rating>old_rating:
-			#print 'take b as a'
-			a=b
-		cycles+=1
-		# reset after n iterations
-		#if cycles%400 == 0:
-			#a=genome(d_list)
-		#print 'cycles: '+str(cycles)
-		#print 'rating: '+str(a.rate(G)[0])
-		# stop after 1000 iterations or when acceptance ratio 100%
-		if cycles==200 or new_rating==len(d_list):
-			selection=a.rate(G)[1]
-			result=[]
-			alloc_counter=0
-			# only show the allocatable paths as a result
-			for j in range(len(selection)):
-				if selection[j]:
-					result.append(a.list[j])
-					alloc_counter+=1
-				else:
-					result.append(None)
-			acc_ratio=float(alloc_counter)/float(len(selection))*100
-			break
-
-	print '\nRun Genetic Algorithm'
-	print 'Acceptance ratio: '+str(acc_ratio)+'%'
-	print 'Result: '+str(result)
-	print 'Iterations: '+str(cycles)
-
-	return result

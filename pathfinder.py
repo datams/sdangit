@@ -31,8 +31,8 @@ import genetic2 as gen
 ####################################################################
 
 ran=0
-cli=1
-genetic=0
+cli=0
+genetic=1
 
 if ran==1:
 	plot_enable			= True
@@ -60,12 +60,12 @@ if cli==1:
 	repeats				= 1
 	number_of_demands		= 8
 	path_selection_criterion	= 'hops'
-	graph_type			= 'deight'
+	graph_type			= 'srg'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 
 if genetic==1:
-	plot_enable			= False
+	plot_enable			= True
 	show_enable			= False
 	gr_enable			= False
 	lp_enable			= True
@@ -202,10 +202,11 @@ for j in range(repeats):
 	# run genetic algorithm
 	if gen_enable:
 		tic = time.time()
-		genome=gen.paraevolution(G,d_list)	
+		[result,gen_sel_paths]=gen.paraevolution(G,d_list)	
 		toc = time.time()
 		print 'Genetic Time: '+str(toc - tic)
-		#print 'Genetic solution: '+str(genome)
+		print 'Gen Result: '+str(result)
+		print 'Gen sel paths: '+str(gen_sel_paths)
 
 	# print 
 	if gr_enable:
@@ -234,7 +235,8 @@ for j in range(repeats):
 	if lp_enable or cli_lp:
 		print '\nGurobi:'
 		print 'Acceptance ratio '+str(lp_ratio*100)+'%'
-		print 'sel path book:\n'+str(lp_result)
+		print 'LP Result:\n'+str(lp_result)
+		print 'LP sel paths:\n'+str(lp_sel_paths)
 		print 'Allocated demands: '+str(lp_accepted)
 		print 'Gurobi Time: '+str(lptoc - lptic)
 		print '\n'
@@ -265,7 +267,20 @@ for j in range(repeats):
 				lp_plot_pool.plotpa(G_lp, lp_p, 1, plot_enable)
 			os.system('convert ' + lp_plot_pool.plot_pngs + ' +append '+str(lp_plot_pool.prefix)+'.png')
 			os.system('rm ' + lp_plot_pool.plot_pngs)
-			os.system('convert ' + str(plot_pool.prefix)+'.png '+str(lp_plot_pool.prefix)+'.png -append total.png')
+			#os.system('convert ' + str(plot_pool.prefix)+'.png '+str(lp_plot_pool.prefix)+'.png -append total.png')
+			print 'Min bw in graph for LP: '+str(gf.minimum_bw(G_lp))
+		# plot gen
+		if gen_enable:
+			gen_plot_pool=gf.plot_pool('gopo')
+			G_gen=copy.deepcopy(G)
+			gen_plot_pool.plotpa(G_gen, None, 1, plot_enable)
+			for key in (gen_sel_paths):
+				gen_p=gen_sel_paths[key][0]
+				gen_bw=gen_sel_paths[key][1]
+				G_gen = gf.update_edges(G_gen, gen_p, gen_bw)
+				gen_plot_pool.plotpa(G_gen, gen_p, 1, plot_enable)
+			os.system('convert ' + gen_plot_pool.plot_pngs + ' +append '+str(gen_plot_pool.prefix)+'.png')
+			print 'Min bw in graph for Gen: '+str(gf.minimum_bw(G_gen))
 
 	# show plot	
 	if show_enable and plot_enable and gr_enable and lp_enable:
