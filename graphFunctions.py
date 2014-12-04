@@ -336,6 +336,21 @@ def select_path(paths_pack, criterion):
 
 	return sel_path
 
+
+
+# check if sel_paths is feasible in graph G
+def is_sane(G,sel_paths):
+    G_temp=copy.deepcopy(G)
+    for key in (gen_sel_paths):
+	gen_p=gen_sel_paths[key][0]
+	gen_bw=gen_sel_paths[key][1]
+	G_gen = gf.update_edges(G_gen, gen_p, gen_bw)
+	gen_plot_pool.plotpa(G_gen, gen_p, 1, plot_enable)
+	os.system('convert ' + gen_plot_pool.plot_pngs + ' +append '+str(gen_plot_pool.prefix)+'.png')
+	min_gen_bw=gf.minimum_bw(G_gen)			
+	print 'Min bw in graph for Gen: '+str(min_gen_bw)
+
+
 # compare tuple on equality (disregarding order)
 def cmpT(tuple1, tuple2):
 	#if sorted(tuple1) == sorted(tuple2):

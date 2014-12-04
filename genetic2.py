@@ -28,7 +28,7 @@ class population:
     # determine the fitness for all genomes and store to fitness dict
     def rateall(self):
 	for i in range(len(self.individuals)):
-		self.fitness[i]=self.individuals[i].rate(self.G)[0]
+		self.fitness[i]=self.individuals[i].rate(self.G)
 
     # determine the ranking based on fitness
     def rank(self):
@@ -92,25 +92,33 @@ class genome:
 	G_updated=copy.deepcopy(G)
 	counter=0
 	alloc_status=[]
+	one_failed=False
 	for i in range(len(self.d_list)):
 		alloc_status.append(None)
 		if self.list[i]!=None:
 			[G_updated, success] = alloc_gen(G_updated, self.list[i], self.d_list[i].bw)
 			if success == True:
 				counter+=1
-				alloc_status[i]=True
+				#alloc_status[i]=True
 			elif success == False:
-				alloc_status[i]=None
+				#alloc_status[i]=None
+				one_failed=True
+	
 	# default fitness=0
 	fitness=0	
 
 	# check if genome sane
-	if gf.minimum_bw(G_updated)>=0:
+	#genome_is_sane=False
+	#if gf.minimum_bw(G_updated)>=0:
+	#	genome_is_sane=True
+	#if genome_is_sane and one_failed==False:
+	if one_failed==False:
 		# calculate fitness
 		used_bw=bw_consum(G, G_updated)
 		if used_bw>0:
 			fitness=0.9*float(counter)+0.1/used_bw
-	return [fitness,alloc_status]
+	#return [fitness,alloc_status]
+	return fitness
 
 # tries to allocate a selected path with a given bw and reports if it was possible
 def alloc_gen(G, sel_path, bw):
