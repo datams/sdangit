@@ -336,6 +336,19 @@ def select_path(paths_pack, criterion):
 
 	return sel_path
 
+
+
+# check if sel_paths is feasible in graph G
+def is_sane(G,sel_paths):
+    G_temp=copy.deepcopy(G)
+    for key in sel_paths:
+	path=sel_paths[key][0]
+	bw=sel_paths[key][1]
+	G_temp = update_edges(G_temp, path, bw)
+    min_bw=minimum_bw(G_temp)		
+    return min_bw
+
+
 # compare tuple on equality (disregarding order)
 def cmpT(tuple1, tuple2):
 	#if sorted(tuple1) == sorted(tuple2):

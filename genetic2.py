@@ -51,8 +51,7 @@ class population:
     # return best genome of population
     def best_genome(self):
 	index=self.ranking[0]
-	#print 'fitness of all genomes: '+str(self.fitness)
-	print 'fitness of best genome: '+str(self.fitness[index])
+	#print 'fitness of best genome: '+str(self.fitness[index])
 	return self.individuals[index]
 
 
@@ -209,11 +208,7 @@ def paraevolution(G,d_list):
 		cycles+=1
 		p.fork(mutationrate)
 
-	print '\nRun Genetic Algorithm'
-	print 'Acceptance ratio: '+str(acc_ratio*100)+'%'
-	print 'Iterations: '+str(cycles)
-
-	return [result,sel_paths,acc_ratio]
+	return [result, sel_paths, acc_ratio, cycles]
 
 
 

@@ -108,10 +108,11 @@ class genome:
 	fitness=0	
 
 	# check if genome sane
-	genome_is_sane=False
-	if gf.minimum_bw(G_updated)>=0:
-		genome_is_sane=True
-	if genome_is_sane and one_failed==False:
+	#genome_is_sane=False
+	#if gf.minimum_bw(G_updated)>=0:
+	#	genome_is_sane=True
+	#if genome_is_sane and one_failed==False:
+	if one_failed==False:
 		# calculate fitness
 		used_bw=bw_consum(G, G_updated)
 		if used_bw>0:
@@ -208,11 +209,7 @@ def paraevolution(G,d_list):
 		cycles+=1
 		p.fork(mutationrate)
 
-	print '\nRun Genetic Algorithm'
-	print 'Acceptance ratio: '+str(acc_ratio*100)+'%'
-	print 'Iterations: '+str(cycles)
-
-	return [result,sel_paths,acc_ratio]
+	return [result, sel_paths, acc_ratio, cycles]
 
 
 

@@ -31,8 +31,8 @@ import genetic2 as gen
 ####################################################################
 
 ran=0
-cli=0
-genetic=1
+cli=1
+genetic=0
 
 if ran==1:
 	plot_enable			= True
@@ -60,19 +60,19 @@ if cli==1:
 	repeats				= 1
 	number_of_demands		= 8
 	path_selection_criterion	= 'hops'
-	graph_type			= 'srg'
+	graph_type			= 'deight'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 
 if genetic==1:
-	plot_enable			= True
+	plot_enable			= False
 	show_enable			= False
 	gr_enable			= False
 	lp_enable			= True
 	cli				= False
 	cli_lp				= False
 	gen_enable			= True
-	repeats				= 20
+	repeats				= 1
 	number_of_demands		= 15
 	path_selection_criterion	= 'hops'
 	graph_type			= 'srg'
@@ -201,12 +201,15 @@ for j in range(repeats):
 
 	# run genetic algorithm
 	if gen_enable:
+		print '\nRun Genetic Algorithm'
 		tic = time.time()
-		[result,gen_sel_paths,gen_ratio]=gen.paraevolution(G,d_list)	
+		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution(G,d_list)	
 		toc = time.time()
-		print 'Genetic Time: '+str(toc - tic)
+		print 'Acceptance ratio: '+str(gen_ratio*100)+'%'
+		print 'Iterations: '+str(gen_cycles)
 		print 'Gen Result: '+str(result)
 		print 'Gen sel paths: '+str(gen_sel_paths)
+		print 'Genetic Time: '+str(toc - tic)
 
 	# print 
 	if gr_enable:
@@ -237,7 +240,7 @@ for j in range(repeats):
 		print 'Acceptance ratio '+str(lp_ratio*100)+'%'
 		print 'LP Result:\n'+str(lp_result)
 		print 'LP sel paths:\n'+str(lp_sel_paths)
-		print 'Allocated demands: '+str(lp_accepted)
+		#print 'Allocated demands: '+str(lp_accepted)
 		print 'Gurobi Time: '+str(lptoc - lptic)
 		print '\n'
 
@@ -255,6 +258,7 @@ for j in range(repeats):
 		if gr_enable:
 			os.system('convert ' + plot_pool.plot_pngs + ' +append '+str(plot_pool.prefix)+'.png')
 			os.system('rm ' + plot_pool.plot_pngs)
+
 		# plot lp
 		if lp_enable:
 			lp_plot_pool=gf.plot_pool('lopo')
@@ -267,8 +271,7 @@ for j in range(repeats):
 				lp_plot_pool.plotpa(G_lp, lp_p, 1, plot_enable)
 			os.system('convert ' + lp_plot_pool.plot_pngs + ' +append '+str(lp_plot_pool.prefix)+'.png')
 			os.system('rm ' + lp_plot_pool.plot_pngs)
-			#os.system('convert ' + str(plot_pool.prefix)+'.png '+str(lp_plot_pool.prefix)+'.png -append total.png')
-			print 'Min bw in graph for LP: '+str(gf.minimum_bw(G_lp))
+			
 		# plot gen
 		if gen_enable:
 			gen_plot_pool=gf.plot_pool('gopo')
@@ -280,15 +283,18 @@ for j in range(repeats):
 				G_gen = gf.update_edges(G_gen, gen_p, gen_bw)
 				gen_plot_pool.plotpa(G_gen, gen_p, 1, plot_enable)
 			os.system('convert ' + gen_plot_pool.plot_pngs + ' +append '+str(gen_plot_pool.prefix)+'.png')
-			min_gen_bw=gf.minimum_bw(G_gen)			
-			print 'Min bw in graph for Gen: '+str(min_gen_bw)
 
-	# show plot	
-	if show_enable and plot_enable and gr_enable and lp_enable:
-			os.system('eog total.png')
+	# show plot
+	if show_enable and plot_enable:
+		if gr_enable:
+			os.system('eog '+str(plot_pool.prefix)+'.png')
+		elif lp_enable:
+			os.system('eog '+str(lp_plot_pool.prefix)+'.png')
+		elif gen_enable:
+			os.system('eog '+str(gen_plot_pool.prefix)+'.png')
 
-	if min_gen_bw<0 or lp_ratio<gen_ratio:
-		break
+	#if lp_ratio<gen_ratio:
+	#	break
 
 # print out stats for repeats
 if repeats>1 and gr_enable:
