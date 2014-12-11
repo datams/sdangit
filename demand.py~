@@ -53,6 +53,11 @@ class demand:
 	popped=all_paths.pop(all_paths.index(self.path))
 	alternative_paths=all_paths
 	return alternative_paths
+    def add_to_paths_pack(self,sel_path):
+	current_pack=self.paths_pack
+	current_paths=[element[0] for element in current_pack]
+	if sel_path not in current_paths:
+		self.paths_pack.append(sel_path)
     def set_paths_pack(self,pack2set):
 	self.paths_pack=pack2set
     def get_priority(self):
@@ -63,6 +68,10 @@ class demand:
 	return self.group
     def set_group(self,group2set):
 	self.group=group2set
+    def block(self):
+	self.blocked=True
+    def unblock(self):
+	self.blocked=False
 
     # random choice of two distinct graph nodes as source / target
     def make_choice(self):

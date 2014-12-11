@@ -62,6 +62,7 @@ def alloc_p(G, d, sel_path):
 	# store sel path in demand
 	d.set_allocated()
 	d.set_path(sel_path)
+	d.add_to_paths_pack(sel_path)
 
 	# update graph
 	G_updated=update_edges(G_updated, sel_path, d.get_bw())
@@ -338,6 +339,17 @@ def select_path(paths_pack, criterion):
 
 
 
+# check if demand is feasible in graph G
+def is_feasible(G,d,path_selection_criterion):
+	d_temp=copy.deepcopy(d)
+	# look for paths
+	[G_updated, paths_pack, sel_path]=alloc(G,d_temp,path_selection_criterion)
+	# if successful, return True
+	if sel_path!=[]:
+		return True
+	else:
+		return False
+
 # check if sel_paths is feasible in graph G
 def is_sane(G,sel_paths):
     G_temp=copy.deepcopy(G)
@@ -345,9 +357,11 @@ def is_sane(G,sel_paths):
 	path=sel_paths[key][0]
 	bw=sel_paths[key][1]
 	G_temp = update_edges(G_temp, path, bw)
-    min_bw=minimum_bw(G_temp)		
-    return min_bw
-
+    min_bw=minimum_bw(G_temp)
+    if min_bw>=0:
+	return True
+    else:
+	return False
 
 # compare tuple on equality (disregarding order)
 def cmpT(tuple1, tuple2):
@@ -391,6 +405,7 @@ def check_intersect(path1, path2):
 			degree+=cmpT(edge, path2[i])
 	return degree
 
+
 # find BEST demand, whose path intersect with optimal path by at least one and are not blocked and would release more than enough bw and the most alternatives
 def find_d_to_reroute(optimal_path, bw_req, d_list):
 	intersecting_demands_list=[]
@@ -421,6 +436,64 @@ def find_all_d_to_reroute(optimal_path, bw_req, d_list):
 		return to_reroute_index
 	else:
 		return None
+
+
+# check 2 paths on having some of the same edges
+def check_intersect_bw(path1, path2, G, release_bw, bw_req):
+	path1=n2e_list(path1)
+	path2=n2e_list(path2)
+	if len(path1)>len(path2):
+		long_path=path1
+		short_path=path2
+
+	if len(path2)>len(path1):
+		long_path=path2
+		short_path=path1
+
+	invalid=False
+	degree=0
+	for edge in path1:
+		for i in range(len(path2)):
+			old_bw = G[edge[0]][edge[1]]['bw']
+			new_bw = old_bw + release_bw
+			#print 'old_bw '+str(old_bw)
+			#print 'new_bw '+str(new_bw)
+			#print 'release_bw '+str(release_bw)
+			#print 'bw_req '+str(bw_req)
+			if new_bw<bw_req:
+				print 'set invalid'
+				invalid=True
+			degree+=cmpT(edge, path2[i])
+	if invalid==True:
+		return -1
+	else:
+		return degree
+
+# does also check if bw release enough
+def find_all_d_to_reroute2(optimal_path, G, bw_req, d_list):
+	intersecting_demands_list=[]
+	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand
+		degree=check_intersect_bw(optimal_path, d_list[i].path, G, d_list[i].bw, bw_req)
+		# print 'Found degree '+str(degree)+' fuer demand nummer '+str(i)+' and bw '+str(d_list[i].bw)
+		if degree>0 and d_list[i].blocked==False:
+			print 'd_list[i].path '+str(d_list[i].path)
+			print 'd_list[i].paths_pack '+str(d_list[i].paths_pack)
+			alt_num=len(d_list[i].get_alternative_paths())
+			intersecting_demands_list.append([i,alt_num])
+	if len(intersecting_demands_list)>0:
+		du_sorted = sorted(intersecting_demands_list, key=operator.itemgetter(1), reverse=True)
+		to_reroute_index = [x[0] for x in du_sorted]
+		return to_reroute_index
+	else:
+		return []
+
+
+
+
+
+
+
+
 
 # converts a path pack to a path list
 def pack2p(path_pack):

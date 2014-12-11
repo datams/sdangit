@@ -53,6 +53,14 @@ class demand:
 	popped=all_paths.pop(all_paths.index(self.path))
 	alternative_paths=all_paths
 	return alternative_paths
+    def add_to_paths_pack(self,G,sel_path):
+	current_pack=self.paths_pack
+	current_paths=[element[0] for element in current_pack]
+	if sel_path not in current_paths:
+		path_elist=gf.n2e_list(sel_path)
+		path_lat=gf.path_len(G,path_elist)
+		path_hops=len(path_elist)
+		self.paths_pack.append((sel_path,path_lat,path_hops))
     def set_paths_pack(self,pack2set):
 	self.paths_pack=pack2set
     def get_priority(self):

@@ -30,24 +30,24 @@ import genetic2 as gen
 ########################## parameters ##############################
 ####################################################################
 
-ran=0
-cli=1
+ran=1
+cli=0
 genetic=0
 
 if ran==1:
-	plot_enable			= True
+	plot_enable			= False
 	show_enable			= False
 	gr_enable			= True
 	lp_enable			= True
 	cli				= False
 	cli_lp				= False
 	gen_enable			= False
-	repeats				= 1
-	number_of_demands		= 9
+	repeats				= 40
+	number_of_demands		= 14
 	path_selection_criterion	= 'hops'
 	graph_type			= 'deight'
-	bw_variants			= [4]
-	lat_variants			= [4,8,10]
+	bw_variants			= [1,2,4]
+	lat_variants			= [4,8,10,20]
 
 if cli==1:
 	plot_enable			= True
@@ -58,7 +58,7 @@ if cli==1:
 	cli_lp				= True
 	gen_enable			= False
 	repeats				= 1
-	number_of_demands		= 8
+	number_of_demands		= 12
 	path_selection_criterion	= 'hops'
 	graph_type			= 'deight'
 	bw_variants			= [1,2,3]
