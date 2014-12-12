@@ -41,6 +41,9 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 			print 'all d_u: '+str(d_u)
 			# solve subproblem of [d_n and all d_u] in G_updated
 			if d_u!=[]:
+				# bound the number of d_u for LP
+				number_of_du_bound=4
+				d_u=d_u[:number_of_du_bound]
 				d_index_subset = d_u + [i]
 				d_list_subset = [d_list[j] for j in d_index_subset]
 				# produce graph without d_u's
