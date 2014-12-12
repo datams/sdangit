@@ -30,8 +30,8 @@ import genetic2 as gen
 ########################## parameters ##############################
 ####################################################################
 
-ran=1
-cli=0
+ran=0
+cli=1
 genetic=0
 
 if ran==1:
@@ -136,7 +136,10 @@ for j in range(repeats):
 			print '\nAllocated demands'
 			if len(d_list)>0:
 				print gf.get_all_sel_paths(d_list)
-			mode=input('remove=0, add=1, leave=888: ')
+			mode=input('remove=0, add=1, edit_state=2 leave=888: ')
+			if mode==888:
+				leave=True
+				break
 			if mode==0:
 				d_remove=input('demand nr to remove: ')
 				if d_remove < len(d_list):
@@ -147,9 +150,15 @@ for j in range(repeats):
 					print '\nAllocated demands'
 					if len(d_list)>0:
 						print gf.get_all_sel_paths(d_list)
-			if mode==888:
-				leave=True
-				break
+			if mode==2:
+				d_change=input('demand nr whose state should change: ')
+				if d_change < len(d_list):
+					action=input('block=1, unblock=0: ')
+					if action==1:
+						d_list[d_change].block()
+					if action==0:
+						d_list[d_change].unblock()
+
 			if mode==1:
 				while(True):
 					f=input('Please enter source node: ')
@@ -162,11 +171,13 @@ for j in range(repeats):
 					print 'Please enter a valid node'
 				bwreq=input('Please enter bw req: ')
 				latreq=input('Please enter lat req: ')
-				prioreq=input('Please enter priority: ')
+				block=input('Please enter 1 for block: ')
 				# create demand
 				temp_dem = dem.demand(G.nodes(),None,None)
 				temp_dem.make_choice_concrete(f,t,bwreq,latreq)
-				temp_dem.set_priority(prioreq)
+				if block==1:
+					print 'Blocking demand'
+					temp_dem.block()
 				d_list.append(temp_dem)
 				number_of_demands+=1
 				[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\

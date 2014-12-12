@@ -54,6 +54,20 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 				# LP solver for the sub problem
 				lp_sel_paths=lp.solve(G_without_du,d_list_subset)[1]
 				print '\n\nlp_sel_paths: '+str(lp_sel_paths)+'\n\n'
+				# if path_found_for_all OR (path not found for all) but the demands_without_path_are_cancellable: go
+				# therefore: nothing (blocked) live gets rerouted and reroutables don't get terminated
+				# decision variables
+				'''
+				path_found_for_all=len(lp_sel_paths)==len(d_list_subset)
+				demands_without_path_are_cancellable=True
+				subproblem_d_index_path_found=lp_sel_paths.keys()
+				d_index_path_found=[d_index_subset[i] for i in subproblem_d_index_path_found]
+				for index in d_index_subset:
+					if index not in d_index_path_found:
+						if d_list[index].status!=0
+							demands_without_path_are_cancellable=False
+				if len(lp_sel_paths)==len(d_list_subset):
+				'''
 				# if path found for all: allocate
 				if len(lp_sel_paths)==len(d_list_subset):
 					number_of_rerouting_success+=1

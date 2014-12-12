@@ -62,7 +62,7 @@ def alloc_p(G, d, sel_path):
 	# store sel path in demand
 	d.set_allocated()
 	d.set_path(sel_path)
-	d.add_to_paths_pack(sel_path)
+	d.add_to_paths_pack(G,sel_path)
 
 	# update graph
 	G_updated=update_edges(G_updated, sel_path, d.get_bw())
@@ -507,5 +507,9 @@ def pack2p(path_pack):
 def pv(text,var):
 	print text+' : '+str(var)
 
-
+# write something to a file
+def write2file(filename, var):
+	f = open(filename, "a")
+        f.write(str(var)+'\n')
+	f.close()
 

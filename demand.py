@@ -18,12 +18,16 @@ class demand:
 	self.lat = None
 	self.bw_variants = bw_variants
 	self.lat_variants = lat_variants
+	# reflects allocation status: 0=not allocated, 1=allocated	
 	self.x=0
 	self.path=[]
 	self.paths_pack=[]
-	self.priority=1
+	#self.priority=1
 	self.group=None
-	self.blocked=False
+	# status reflects rerouting permissions
+	# 1=reroutable (used, not live), 2=blocked (live)
+	# 0=cancellable not used anymore
+	self.status=1
     def set_source(self, s):
         self.source=s
     def get_source(self):
@@ -63,18 +67,18 @@ class demand:
 		self.paths_pack.append((sel_path,path_lat,path_hops))
     def set_paths_pack(self,pack2set):
 	self.paths_pack=pack2set
-    def get_priority(self):
-	return self.priority
-    def set_priority(self,priority2set):
-	self.priority=priority2set
+    #def get_priority(self):
+	#return self.priority
+    #def set_priority(self,priority2set):
+	#self.priority=priority2set
     def get_group(self):
 	return self.group
     def set_group(self,group2set):
 	self.group=group2set
     def block(self):
-	self.blocked=True
+	self.status=2
     def unblock(self):
-	self.blocked=False
+	self.status=1
 
     # random choice of two distinct graph nodes as source / target
     def make_choice(self):
