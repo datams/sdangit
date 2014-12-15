@@ -171,9 +171,12 @@ def randb(percentage):
 
 # runs multiple evolution iterations in order to find the best genome
 def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio):
+	
 	# determine all feasible paths
 	for i in range(len(d_list)):
-		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
+		G_prune=copy.deepcopy(G)
+		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
+		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
 
 	# create population

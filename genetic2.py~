@@ -120,7 +120,7 @@ class genome:
 				total_req_bw+=self.d_list[i].bw
 		if total_alloc_bw>0:
 			fitness = 0.8*float(counter)/float(len(self.d_list)) + 0.2*float(total_req_bw)/float(total_alloc_bw)
-			#fitness=0.9*float(counter)+0.1/total_alloc_bw	
+			#fitness=0.9*float(counter)+0.1/total_alloc_bw
 	return fitness
 
 # tries to allocate a selected path with a given bw and reports if it was possible
@@ -173,7 +173,9 @@ def randb(percentage):
 def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio):
 	# determine all feasible paths
 	for i in range(len(d_list)):
-		pathpack=gf.shortest_p(G,d_list[i].source,d_list[i].target,d_list[i].lat)
+		G_prune=copy.deepcopy(G)
+		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
+		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
 
 	# create population

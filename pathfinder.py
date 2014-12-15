@@ -31,8 +31,8 @@ import genetic2 as gen
 ####################################################################
 
 ran=0
-cli=1
-genetic=0
+cli=0
+genetic=1
 
 if ran==1:
 	plot_enable			= False
@@ -214,7 +214,7 @@ for j in range(repeats):
 	if gen_enable:
 		# pop size should at least be 5 (because of fork privileges)
 		pop_size=25
-		maxgenerations=6
+		maxgenerations=12
 		print '\nRun Genetic Algorithm'
 		tic = time.time()
 		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio)
