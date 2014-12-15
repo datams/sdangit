@@ -342,8 +342,9 @@ def select_path(paths_pack, criterion):
 # check if demand is feasible in graph G
 def is_feasible(G,d,path_selection_criterion):
 	d_temp=copy.deepcopy(d)
+	G_temp=copy.deepcopy(G)
 	# look for paths
-	[G_updated, paths_pack, sel_path]=alloc(G,d_temp,path_selection_criterion)
+	[G_updated, paths_pack, sel_path]=alloc(G_temp,d_temp,path_selection_criterion)
 	# if successful, return True
 	if sel_path!=[]:
 		return True

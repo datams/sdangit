@@ -118,9 +118,15 @@ for j in range(repeats):
 	if lp_enable or gr_enable or gen_enable:
 		d_list=[]
 		for k in range(number_of_demands):
-			temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
-			temp_dem.make_choice()
-			d_list.append(temp_dem)
+			while(True):
+				# initialize demand
+				temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
+				# make random choice
+				temp_dem.make_choice()
+				# check feasibility
+				if gf.is_feasible(G,temp_dem,path_selection_criterion):
+					d_list.append(temp_dem)
+					break
 			# 4Debug: print demands
 			print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
 	# cli mode	
@@ -214,7 +220,7 @@ for j in range(repeats):
 	if gen_enable:
 		# pop size should at least be 5 (because of fork privileges)
 		pop_size=25
-		maxgenerations=12
+		maxgenerations=16
 		print '\nRun Genetic Algorithm'
 		tic = time.time()
 		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio)
