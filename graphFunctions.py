@@ -32,7 +32,7 @@ def alloc(G, d, path_selection_criterion):
 
 	# path finding
 	paths_pack = shortest_p(G_prune,d.get_source(),d.get_target(),d.get_lat())
-	print '\nPaths (holding lat.) found: \n'+str(paths_pack)+'\n'
+	#print '\nPaths (holding lat.) found: \n'+str(paths_pack)+'\n'
 
 	if paths_pack!=[] and paths_pack!=None:
 		# store found paths in demand
@@ -114,6 +114,16 @@ def minimum_lat(G):
 		                min_weight=temp_weight
 	return min_weight
 
+# returns maximum latency in graph
+def maximum_lat(G):
+	max_weight=None
+	for n,nbrs in G.adjacency_iter():
+		for nbr,eattr in nbrs.items():
+		        temp_weight=eattr['lat']
+		        if temp_weight>max_weight or max_weight==None:
+		                max_weight=temp_weight
+	return max_weight
+
 # returns minimum latency in graph
 def minimum_bw(G):
 	min_weight=None
@@ -123,6 +133,16 @@ def minimum_bw(G):
 		        if temp_weight<min_weight or min_weight==None:
 		                min_weight=temp_weight
 	return min_weight
+
+# returns maximum latency in graph
+def maximum_bw(G):
+	max_weight=None
+	for n,nbrs in G.adjacency_iter():
+		for nbr,eattr in nbrs.items():
+		        temp_weight=eattr['bw']
+		        if temp_weight>max_weight or max_weight==None:
+		                max_weight=temp_weight
+	return max_weight
 
 # returns a list of edges from a list of nodes
 def n2e_list(path):

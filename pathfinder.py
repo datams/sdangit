@@ -75,7 +75,7 @@ if genetic==1:
 	repeats				= 1
 	number_of_demands		= 15
 	path_selection_criterion	= 'hops'
-	graph_type			= 'srg_multiple'
+	graph_type			= 'srg'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 
@@ -115,14 +115,27 @@ for j in range(repeats):
 	number_of_rerouting_success=0
 
 	# create all demands
+	bw_lowest=gf.minimum_bw(G)
+	bw_highest=gf.maximum_bw(G)
+
+	lat_lowest=gf.minimum_lat(G)
+	lat_highest=gf.maximum_lat(G)*50
+
+	print bw_lowest
+	print bw_highest
+	print lat_lowest
+	print lat_highest
+
 	if lp_enable or gr_enable or gen_enable:
 		d_list=[]
 		for k in range(number_of_demands):
 			while(True):
+				print 'Create demand Nr. '+str(k)
 				# initialize demand
 				temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
 				# make random choice
-				temp_dem.make_choice()
+				#temp_dem.make_random_choice()
+				temp_dem.make_total_random_choice(bw_lowest, bw_highest, lat_lowest, lat_highest)
 				# check feasibility
 				if gf.is_feasible(G,temp_dem,path_selection_criterion):
 					d_list.append(temp_dem)
@@ -225,17 +238,17 @@ for j in range(repeats):
 		maxgenerations=7
 
 		# decimal amount of number of high society genomes in a population
-		clergy_size=0.2
+		clergy_size=0.1
 		# pos. int (smaller than pop_size) number of children of high society genomes
-		clergy_children=3
+		clergy_children=1
 
 		# decimal amount of number of middle class genomes in a population
-		nobility_size=0.3
+		nobility_size=0.2
 		# pos. int (smaller than pop_size) number of children of middle class genomes
-		nobility_children=1
+		nobility_children=2
 
 		# pos. int (smaller than nr of demands) mutation rate at beginning
-		start_mut=4
+		start_mut=5
 		# pos. int (smaller than nr of demands) mutation rate at the end
 		end_mut=1
 		# non-allocated choice probability percentage

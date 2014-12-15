@@ -35,7 +35,7 @@ class population:
     # determine the fitness for all genomes and store to fitness dict
     def rateall(self):
 	for i in range(len(self.individuals)):
-		self.fitness[i]=self.individuals[i].rate(self.G, weight_ac, weight_bw)
+		self.fitness[i]=self.individuals[i].rate(self.G, self.weight_ac, self.weight_bw)
 
     # determine the ranking based on fitness
     def rank(self):
@@ -66,7 +66,9 @@ class population:
     # return best genome of population
     def best_genome(self):
 	index=self.ranking[0]
-	#print 'fitness of best genome: '+str(self.fitness[index])
+	print 'fitness of best genome: '+str(self.fitness[index])
+	print 'all ranking values: '+str(self.ranking)
+	print 'all fitness values: '+str(self.fitness)
 	return self.individuals[index]
 
 
@@ -210,7 +212,7 @@ def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_c
 	# determine all feasible paths
 	for i in range(len(d_list)):
 		G_prune=copy.deepcopy(G)
-		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
+		#G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
 		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
 
@@ -229,6 +231,8 @@ def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_c
 	while(True):
 		p.rateall()
 		p.rank()
+		print 'ranking '+str(p.ranking)
+		print 'fitness '+str(p.fitness)
 
 		if cycles==maxgenerations-1:
 			selection=p.best_genome()

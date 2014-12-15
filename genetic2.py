@@ -66,7 +66,9 @@ class population:
     # return best genome of population
     def best_genome(self):
 	index=self.ranking[0]
-	#print 'fitness of best genome: '+str(self.fitness[index])
+	print 'fitness of best genome: '+str(self.fitness[index])
+	print 'all ranking values: '+str(self.ranking)
+	print 'all fitness values: '+str(self.fitness)
 	return self.individuals[index]
 
 
@@ -229,6 +231,8 @@ def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_c
 	while(True):
 		p.rateall()
 		p.rank()
+		print 'ranking '+str(p.ranking)
+		print 'fitness '+str(p.fitness)
 
 		if cycles==maxgenerations-1:
 			selection=p.best_genome()
