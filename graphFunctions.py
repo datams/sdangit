@@ -22,10 +22,10 @@ def alloc(G, d, path_selection_criterion):
 	path_pack=[]
 	sel_path=[]
 
-	print '\nFinding path for Demand: '
-	print 'Path to find: '+str(d.source)+' ==> '+str(d.target)
-	print "bw req: "+str(d.bw)
-	print "lat req: "+str(d.lat)
+	#print '\nFinding path for Demand: '
+	#print 'Path to find: '+str(d.source)+' ==> '+str(d.target)
+	#print "bw req: "+str(d.bw)
+	#print "lat req: "+str(d.lat)
 
 	# pruning
 	G_prune=prune_bw(G_prune, d.get_bw())

@@ -489,20 +489,12 @@ def find_all_d_to_reroute2(optimal_path, G, bw_req, d_list):
 		return []
 
 
-
-
-
-
-
-
-
 # converts a path pack to a path list
 def pack2p(path_pack):
 	if len(path_pack)>0:
 		return [x[0] for x in path_pack]
 	else:
 		return []
-
 
 # prints variable with it's name
 def pv(text,var):

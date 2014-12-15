@@ -1,4 +1,5 @@
 import networkx as nx
+import random
 
 
 def make(name):
@@ -152,8 +153,17 @@ def make(name):
 		G.add_edge(6,7, bw=5, lat=3.496)
 		G.add_edge(6,11, bw=5, lat=5.41)
 		G.add_edge(6,15, bw=5, lat=3.866)
-		G= nx.disjoint_union(G,G)
-		G.add_edge(0,21, bw=5, lat=3.866)
+		for r in range(4):	
+			old_nodes=G.nodes()			
+			G= nx.disjoint_union(G,G)
+			all_nodes=G.nodes()
+			new_nodes=list(set(all_nodes) - set(old_nodes))
+			for i in range(4):
+				from_node=random.choice(old_nodes)
+				old_nodes.remove(from_node)			
+				to_node=random.choice(new_nodes)
+				new_nodes.remove(to_node)
+				G.add_edge(from_node, to_node, bw=15, lat=3.866)
 		return G
 
 	else:
