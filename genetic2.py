@@ -7,9 +7,13 @@ import copy
 
 # a population contains a set of individuals (genomes) and can rank them
 class population:
-    def __init__(self,G,d_list,pop_size):
+    def __init__(self, G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children):
 	self.G=G
 	self.d_list=d_list
+	self.clergy_size=clergy_size
+	self.clergy_children=clergy_children
+	self.nobility_size=nobility_size
+	self.nobility_children=nobility_children
 	# a list with ranking positions for each corresponding demand
 	self.ranking=[]
 	# a dict with the fitness value for each corresponding demand
@@ -34,17 +38,25 @@ class population:
     def rank(self):
 	self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
 
-    # produce the next generation (keep nr 1&2, privilege nr 3&4 by having 2 children each)
+    # produce the next generation (clergy are preserved and have clergy_children children, nobility have nobility_children, rest gets remaining slots)
     def fork(self,level):
+	# initialize individuals
 	new_individuals=[]
+	# create indices for clergy, nobility and rest
+	[clergy, nobility, rest]= slice_list(range(len(self.individuals)), self.clergy_size, self.nobility_size)
+	#print len(self.individuals)
+	#print clergy
+	#print nobility
 	for l in range(len(self.individuals)):
 		index=self.ranking[l]
-		if l==0 or l==1:	
+		if l in clergy:
 			new_individuals.append(self.individuals[index])
-		elif l==2 or l==3:
-			new_individuals.append(self.individuals[index].mutate(level))
-			new_individuals.append(self.individuals[index].mutate(level))
-		elif l<len(self.individuals):
+			for h in range(self.clergy_children):
+				new_individuals.append(self.individuals[index].mutate(level))
+		elif l in nobility:
+			for h in range(self.nobility_children):
+				new_individuals.append(self.individuals[index].mutate(level))
+		elif len(new_individuals)<len(self.individuals):
 			new_individuals.append(self.individuals[index].mutate(level))
 	self.individuals=new_individuals
 
@@ -168,9 +180,16 @@ def randb(percentage):
 	decision=random.choice(los)
 	return decision
 
+# slices list into 3 parts (0-len*cut1, len*cut1-len*cut2, cut2-end)
+def slice_list(orig_list,cut1,cut2):
+	first_list = orig_list[0 : int(len(orig_list) * cut1)]
+	second_list = orig_list[int(len(orig_list) * cut1) : int(len(orig_list) * cut2)]
+	third_list = orig_list[int(len(orig_list) * cut2) : ]
+	return[first_list, second_list,	third_list]
+
 
 # runs multiple evolution iterations in order to find the best genome
-def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio):
+def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_children,nobility_size,nobility_children):
 	
 	# determine all feasible paths
 	for i in range(len(d_list)):
@@ -180,7 +199,7 @@ def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio):
 		d_list[i].set_paths_pack(pathpack)
 
 	# create population
-	p=population(G,d_list,pop_size)
+	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children)
 
 	# create initial generation by mutating all individuals
 	p.mutall(1)

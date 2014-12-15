@@ -220,10 +220,15 @@ for j in range(repeats):
 	if gen_enable:
 		# pop size should at least be 5 (because of fork privileges)
 		pop_size=25
-		maxgenerations=12
+		maxgenerations=16
+		clergy_size=0.1
+		clergy_children=2
+		nobility_size=0.2
+		nobility_children=2
 		print '\nRun Genetic Algorithm'
 		tic = time.time()
-		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio)
+		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
+		(G,d_list,pop_size,maxgenerations,lp_ratioclergy_size,clergy_children,nobility_size,nobility_children)
 		toc = time.time()
 		print 'Acceptance ratio: '+str(gen_ratio*100)+'%'
 		print 'Iterations: '+str(gen_cycles)
@@ -314,8 +319,10 @@ for j in range(repeats):
 			os.system('eog '+str(gen_plot_pool.prefix)+'.png')
 
 	
-	#if lp_ratio<gen_ratio:
-	#	break
+	if lp_ratio<gen_ratio:
+		print 'Ha! Genetic is better than LP'
+		print 'Sanity: '+str(gf.is_sane(G,gen_sel_paths))
+		break
 
 # print out stats for repeats
 if repeats>1 and gr_enable:
