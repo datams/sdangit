@@ -227,10 +227,14 @@ for j in range(repeats):
 		nobility_children=1
 		start_mut=4
 		end_mut=1
+		non_prob=10
+		weight_ac=0.9
+		weight_bw=0.1
 		print '\nRun Genetic Algorithm'
 		tic = time.time()
 		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
-		(G, d_list, pop_size, maxgenerations, lp_ratio, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut)
+		(G, d_list, pop_size, maxgenerations, lp_ratio,\
+		clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac, weight_bw)
 		toc = time.time()
 		print 'Acceptance ratio: '+str(gen_ratio*100)+'%'
 		print 'Iterations: '+str(gen_cycles)

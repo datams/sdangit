@@ -7,13 +7,16 @@ import copy
 
 # a population contains a set of individuals (genomes) and can rank them
 class population:
-    def __init__(self, G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children):
+    def __init__(self, G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac, weight_bw):
 	self.G=G
 	self.d_list=d_list
 	self.clergy_size=clergy_size
 	self.clergy_children=clergy_children
 	self.nobility_size=nobility_size
 	self.nobility_children=nobility_children
+	self.non_prob=non_prob
+	self.weight_ac=weight_ac
+	self.weight_bw=weight_bw
 	# a list with ranking positions for each corresponding demand
 	self.ranking=[]
 	# a dict with the fitness value for each corresponding demand
@@ -27,12 +30,12 @@ class population:
     # mutate all genomes by level level
     def mutall(self, level):
 	for j in range(len(self.individuals)):
-		self.individuals[j].mutate(level)
+		self.individuals[j].mutate(level,self.non_prob)
 
     # determine the fitness for all genomes and store to fitness dict
     def rateall(self):
 	for i in range(len(self.individuals)):
-		self.fitness[i]=self.individuals[i].rate(self.G)
+		self.fitness[i]=self.individuals[i].rate(self.G, self.weight_ac, self.weight_bw)
 
     # determine the ranking based on fitness
     def rank(self):
@@ -52,12 +55,12 @@ class population:
 		if l in clergy:
 			new_individuals.append(self.individuals[index])
 			for h in range(self.clergy_children):
-				new_individuals.append(self.individuals[index].mutate(level))
+				new_individuals.append(self.individuals[index].mutate(level,self.non_prob))
 		elif l in nobility:
 			for h in range(self.nobility_children):
-				new_individuals.append(self.individuals[index].mutate(level))
+				new_individuals.append(self.individuals[index].mutate(level,self.non_prob))
 		elif len(new_individuals)<len(self.individuals):
-			new_individuals.append(self.individuals[index].mutate(level))
+			new_individuals.append(self.individuals[index].mutate(level,self.non_prob))
 	self.individuals=new_individuals
 
     # return best genome of population
@@ -83,12 +86,12 @@ class genome:
 	return randpos
 
     # mutates a genome at level-many positions
-    def mutate(self,level):
+    def mutate(self,level,non_prob):
 	# get random positions in genome
     	randpos=self.randpos(level)
     	for i in randpos:
 		# for a given probability (percentage) delete the gen to None
-		if randb(10)==1:
+		if randb(non_prob)==1:
 			self.list[i]=None
 		else:
 			# get gen pool of possibilities for genome position
@@ -99,7 +102,7 @@ class genome:
 	return self
 
     # reports back the number of allocated paths with a given genome
-    def rate(self, G):
+    def rate(self, G, weight_ac, weight_bw):
 	G_updated=copy.deepcopy(G)
 	counter=0
 	#alloc_status=[]
@@ -131,7 +134,7 @@ class genome:
 			if self.list[i]!=None:
 				total_req_bw+=self.d_list[i].bw
 		if total_alloc_bw>0:
-			fitness = 0.8*float(counter)/float(len(self.d_list)) + 0.2*float(total_req_bw)/float(total_alloc_bw)
+			fitness = weight_ac*float(counter)/float(len(self.d_list)) + weight_bw*float(total_req_bw)/float(total_alloc_bw)
 			#fitness=0.9*float(counter)+0.1/total_alloc_bw
 	return fitness
 
@@ -202,7 +205,7 @@ def shape_mut2(n, bottom, upper):
 
 
 # runs multiple evolution iterations in order to find the best genome
-def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut):
+def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut, non_prob, weight_ac, weight_bw):
 	
 	# determine all feasible paths
 	for i in range(len(d_list)):
@@ -212,7 +215,7 @@ def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_c
 		d_list[i].set_paths_pack(pathpack)
 
 	# create population
-	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children)
+	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac, weight_bw)
 
 	# create initial generation by mutating all individuals
 	p.mutall(1)
