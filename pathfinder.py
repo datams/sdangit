@@ -221,14 +221,16 @@ for j in range(repeats):
 		# pop size should at least be 5 (because of fork privileges)
 		pop_size=25
 		maxgenerations=16
-		clergy_size=0.1
-		clergy_children=2
-		nobility_size=0.2
-		nobility_children=2
+		clergy_size=0.2
+		clergy_children=3
+		nobility_size=0.3
+		nobility_children=1
+		start_mut=4
+		end_mut=1
 		print '\nRun Genetic Algorithm'
 		tic = time.time()
 		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
-		(G, d_list, pop_size, maxgenerations, lp_ratio, clergy_size, clergy_children, nobility_size, nobility_children)
+		(G, d_list, pop_size, maxgenerations, lp_ratio, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut)
 		toc = time.time()
 		print 'Acceptance ratio: '+str(gen_ratio*100)+'%'
 		print 'Iterations: '+str(gen_cycles)

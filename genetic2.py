@@ -187,9 +187,22 @@ def slice_list(orig_list,cut1,cut2):
 	third_list = orig_list[int(len(orig_list) * cut2) : ]
 	return[first_list, second_list,	third_list]
 
+# creates a list of mutation rate (integers) with n-many values between bottom and upper
+def shape_mut2(n, bottom, upper):
+    data=[]
+    distance = float(upper - bottom)
+    steps = float(n)
+    step =  distance / steps
+    for i in range(n):
+	value=float(bottom) + step * float(i)
+	rounded_value=round(value,0)
+	int_value=int(rounded_value)
+        data.append(int_value)
+    return data
+
 
 # runs multiple evolution iterations in order to find the best genome
-def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_children,nobility_size,nobility_children):
+def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut):
 	
 	# determine all feasible paths
 	for i in range(len(d_list)):
@@ -208,6 +221,34 @@ def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_c
 	burst_duration=2
 	# For number of iterations:
 	cycles=0
+	mutationrate=shape_mut2(maxgenerations, start_mut, end_mut)
+
+	while(True):
+		p.rateall()
+		p.rank()
+
+		if cycles==maxgenerations-1:
+			selection=p.best_genome()
+			sel_paths={}
+			result=[]
+			alloc_counter=0
+			# only show the allocatable paths as a result
+			for j in range(len(selection.list)):
+				if selection.list[j]:
+					result.append(selection.list[j])
+					sel_paths[j]=[selection.list[j],d_list[j].bw]
+					alloc_counter+=1
+				else:
+					pass
+					#result.append(None)
+			acc_ratio=float(len(result))/float(len(d_list))
+			break
+
+		cycles+=1
+		p.fork(mutationrate[cycles])
+
+
+	'''	
 	burst_timer=burst_duration
 	bursting=False
 	while(True):
@@ -241,7 +282,7 @@ def paraevolution(G,d_list,pop_size,maxgenerations,lp_ratio,clergy_size,clergy_c
 			break
 		cycles+=1
 		p.fork(mutationrate)
-
+	'''
 	return [result, sel_paths, acc_ratio, cycles]
 
 
