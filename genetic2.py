@@ -7,17 +7,17 @@ import copy
 
 # a population contains a set of individuals (genomes) and can rank them
 class population:
-    def __init__(self, G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac, weight_bw):
+    def __init__(self, G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac):
 	self.G=G
 	self.d_list=d_list
 	self.clergy_size=clergy_size
-	[self.clergy_members, self.nobility_members, self.rest]=slice_list(range(pop_size), clergy_size, nobility_size)
+	[self.clergy_members, self.nobility_members, self.rest]=slice_list(range(pop_size), clergy_size, clergy_size+nobility_size)
 	self.clergy_children=clergy_children
 	self.nobility_size=nobility_size
 	self.nobility_children=nobility_children
 	self.non_prob=non_prob
 	self.weight_ac=weight_ac
-	self.weight_bw=weight_bw
+	self.weight_bw=1-self.weight_ac
 	# a list with ranking positions for each corresponding demand
 	self.ranking=[]
 	# a dict with the fitness value for each corresponding demand
@@ -86,22 +86,23 @@ class population:
 	self.rank()
 	temp=[]
 	for ii in range(len(self.individuals)):
-		if ii in self.clergy_members:
-			jj=self.ranking[ii]
-			current_genome=copy.deepcopy(self.individuals[jj])
-			temp.append(current_genome)
-			for kk in range(self.clergy_children):
+		if len(temp)<len(self.individuals):
+			if ii in self.clergy_members or ii==0:
+				jj=self.ranking[ii]
+				current_genome=copy.deepcopy(self.individuals[jj])
+				temp.append(current_genome)
+				for kk in range(self.clergy_children):
+					current_genome=copy.deepcopy(self.individuals[jj])
+					temp.append(current_genome.mutate(mutrate,self.non_prob))
+			elif ii in self.nobility_members:
+				jj=self.ranking[ii]
+				for kk in range(self.nobility_children):
+					current_genome=copy.deepcopy(self.individuals[jj])
+					temp.append(current_genome.mutate(mutrate,self.non_prob))
+			else:
+				jj=self.ranking[ii]
 				current_genome=copy.deepcopy(self.individuals[jj])
 				temp.append(current_genome.mutate(mutrate,self.non_prob))
-		elif ii in self.nobility_members:
-			jj=self.ranking[ii]
-			for kk in range(self.nobility_children):
-				current_genome=copy.deepcopy(self.individuals[jj])
-				temp.append(current_genome.mutate(mutrate,self.non_prob))
-		elif len(temp)<len(self.individuals):
-			jj=self.ranking[ii]
-			current_genome=copy.deepcopy(self.individuals[jj])
-			temp.append(current_genome.mutate(mutrate,self.non_prob))
 	#print 'equal len '+str(len(temp)==len(self.individuals))
 	self.individuals=temp
 
@@ -245,7 +246,7 @@ def shape_mut2(n, bottom, upper):
 
 
 # runs multiple evolution iterations in order to find the best genome
-def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut, non_prob, weight_ac, weight_bw):
+def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut, non_prob, weight_ac):
 	
 	# determine all feasible paths
 	for i in range(len(d_list)):
@@ -255,7 +256,7 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		d_list[i].set_paths_pack(pathpack)
 
 	# create population
-	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac, weight_bw)
+	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac)
 
 	# create initial generation by mutating all individuals
 	p.mutall(1)

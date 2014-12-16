@@ -116,11 +116,11 @@ def minimum_lat(G):
 
 # returns maximum latency in graph
 def maximum_lat(G):
-	min_weight=None
+	max_weight=None
 	for n,nbrs in G.adjacency_iter():
 		for nbr,eattr in nbrs.items():
 		        temp_weight=eattr['lat']
-		        if temp_weight>min_weight or min_weight==None:
+		        if temp_weight>max_weight or max_weight==None:
 		                max_weight=temp_weight
 	return max_weight
 
@@ -136,11 +136,11 @@ def minimum_bw(G):
 
 # returns maximum latency in graph
 def maximum_bw(G):
-	min_weight=None
+	max_weight=None
 	for n,nbrs in G.adjacency_iter():
 		for nbr,eattr in nbrs.items():
 		        temp_weight=eattr['bw']
-		        if temp_weight>min_weight or min_weight==None:
+		        if temp_weight>max_weight or max_weight==None:
 		                max_weight=temp_weight
 	return max_weight
 

@@ -25,12 +25,13 @@ import graphFunctions as gf
 import lpsolv as lp
 import greedy as gr
 import genetic2 as gen
+import gen_param as gp
 
 ####################################################################
 ########################## parameters ##############################
 ####################################################################
 
-mode='genetic'
+mode='genetic_opt'
 
 if mode=='ran':
 	plot_enable			= False
@@ -66,7 +67,7 @@ if mode=='genetic':
 	plot_enable			= False
 	show_enable			= False
 	gr_enable			= False
-	lp_enable			= False
+	lp_enable			= True
 	cli				= False
 	cli_lp				= False
 	gen_enable			= True
@@ -79,13 +80,13 @@ if mode=='genetic':
 	# pos. int population size (number of genomes in one generation)
 	pop_size=10
 	# pos. int maximum number of iterations resp. generations
-	maxgenerations=10
+	maxgenerations=15
 	# decimal amount of number of high society genomes in a population
 	clergy_size=0.2
 	# pos. int (smaller than pop_size) number of children of high society genomes
-	clergy_children=1
+	clergy_children=2
 	# decimal amount of number of middle class genomes in a population
-	nobility_size=0.4
+	nobility_size=0.2
 	# pos. int (smaller than pop_size) number of children of middle class genomes
 	nobility_children=2
 	# pos. int (smaller than nr of demands) mutation rate at beginning
@@ -96,9 +97,21 @@ if mode=='genetic':
 	non_prob=15
 	# weight of acceptance in fitness function		
 	weight_ac=0.9
-	# weight of bandwidth usage in fitness function		
-	weight_bw=0.1
 
+if mode=='genetic_opt':
+	plot_enable			= False
+	show_enable			= False
+	gr_enable			= False
+	lp_enable			= True
+	cli				= False
+	cli_lp				= False
+	gen_enable			= True
+	repeats				= 1
+	number_of_demands		= 8
+	path_selection_criterion	= 'hops'
+	graph_type			= 'deight'
+	bw_variants			= [1,2,3]
+	lat_variants			= [4,8]
 
 ####################################################################
 ######################## main program ##############################
@@ -147,6 +160,11 @@ if lp_enable or gr_enable or gen_enable:
 				break
 		# 4Debug: print demands
 		print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
+
+if mode=='genetic_opt':
+	gen_param=gp.gen_param()
+	repeats=gen_param.size()
+	[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac]=gen_param.next()
 
 for j in range(repeats):
 
@@ -246,24 +264,26 @@ for j in range(repeats):
 			lptic = time.time()
 			[lp_result,lp_sel_paths,lp_accepted,lp_rejected,lp_ratio,lp_x]=lp.solve(G,d_list)
 			lptoc = time.time()
+			lp_time=lptoc - lptic
 			print '\nGurobi Solver complete\n---'
 		else:
 			print 'no demands available'
 
 	# run genetic algorithm
 	if gen_enable:
-
 		print '\nRun Genetic Algorithm'
 		tic = time.time()
 		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
 		(G, d_list, pop_size, maxgenerations,\
-		clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac, weight_bw)
+		clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac)
 		toc = time.time()
+		gen_time=toc-tic
+		print '\nGenetic:'
 		print 'Acceptance ratio: '+str(gen_ratio*100)+'%'
 		print 'Iterations: '+str(gen_cycles+1)
 		print 'Gen Result: '+str(result)
 		print 'Gen sel paths: '+str(gen_sel_paths)
-		print 'Genetic Time: '+str(toc - tic)
+		print 'Genetic Time: '+str(gen_time)
 
 	# print 
 	if gr_enable:
@@ -295,7 +315,7 @@ for j in range(repeats):
 		print 'LP Result: '+str(lp_result)
 		print 'LP sel paths:\n'+str(lp_sel_paths)
 		#print 'Allocated demands: '+str(lp_accepted)
-		print 'Gurobi Time: '+str(lptoc - lptic)
+		print 'Gurobi Time: '+str(lp_time)
 		print '\n'
 
 	# print comparison
@@ -358,6 +378,9 @@ for j in range(repeats):
 		#print 'Sanity: '+str(gf.is_sane(G,gen_sel_paths))
 		#break
 
+	if mode=='genetic_opt':
+		[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac]=gen_param.next()
+	gf.write2file('experi', [lp_ratio, lp_time, gen_ratio, gen_time])
 
 # print out stats for repeats
 if repeats>1 and gr_enable:
