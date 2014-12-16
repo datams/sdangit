@@ -30,11 +30,9 @@ import genetic2 as gen
 ########################## parameters ##############################
 ####################################################################
 
-ran=0
-cli=0
-genetic=1
+mode='genetic'
 
-if ran==1:
+if mode=='ran':
 	plot_enable			= False
 	show_enable			= False
 	gr_enable			= True
@@ -49,7 +47,7 @@ if ran==1:
 	bw_variants			= [1,2,4]
 	lat_variants			= [4,8,10,20]
 
-if cli==1:
+if mode=='cli':
 	plot_enable			= True
 	show_enable			= True
 	gr_enable			= False
@@ -64,20 +62,42 @@ if cli==1:
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 
-if genetic==1:
+if mode=='genetic':
 	plot_enable			= False
 	show_enable			= False
 	gr_enable			= False
-	lp_enable			= True
+	lp_enable			= False
 	cli				= False
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 15
+	number_of_demands		= 8
 	path_selection_criterion	= 'hops'
-	graph_type			= 'srg'
+	graph_type			= 'deight'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
+	# pos. int population size (number of genomes in one generation)
+	pop_size=10
+	# pos. int maximum number of iterations resp. generations
+	maxgenerations=10
+	# decimal amount of number of high society genomes in a population
+	clergy_size=0.2
+	# pos. int (smaller than pop_size) number of children of high society genomes
+	clergy_children=2
+	# decimal amount of number of middle class genomes in a population
+	nobility_size=0.4
+	# pos. int (smaller than pop_size) number of children of middle class genomes
+	nobility_children=2
+	# pos. int (smaller than nr of demands) mutation rate at beginning
+	start_mut=4
+	# pos. int (smaller than nr of demands) mutation rate at the end
+	end_mut=1
+	# non-allocated choice probability percentage
+	non_prob=15
+	# weight of acceptance in fitness function		
+	weight_ac=0.9
+	# weight of bandwidth usage in fitness function		
+	weight_bw=0.1
 
 
 ####################################################################
@@ -99,6 +119,35 @@ acceptance_ratio_pool=[]
 successful_rerouting_fraction_pool=[]
 number_of_rerouting_attempts_pool=0
 
+# create all demands
+bw_lowest=gf.minimum_bw(G)
+bw_highest=gf.maximum_bw(G)
+
+lat_lowest=gf.minimum_lat(G)
+lat_highest=gf.maximum_lat(G)*50
+
+print bw_lowest
+print bw_highest
+print lat_lowest
+print lat_highest
+
+if lp_enable or gr_enable or gen_enable:
+	d_list=[]
+	for k in range(number_of_demands):
+		while(True):
+			print 'Create demand Nr. '+str(k)
+			# initialize demand
+			temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
+			# make random choice
+			temp_dem.make_random_choice()
+			#temp_dem.make_total_random_choice(bw_lowest, bw_highest, lat_lowest, lat_highest)
+			# check feasibility
+			if gf.is_feasible(G,temp_dem,path_selection_criterion):
+				d_list.append(temp_dem)
+				break
+		# 4Debug: print demands
+		print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
+
 for j in range(repeats):
 
 	# get working copy of graph
@@ -114,34 +163,6 @@ for j in range(repeats):
 	number_of_rerouting_attempts=0
 	number_of_rerouting_success=0
 
-	# create all demands
-	bw_lowest=gf.minimum_bw(G)
-	bw_highest=gf.maximum_bw(G)
-
-	lat_lowest=gf.minimum_lat(G)
-	lat_highest=gf.maximum_lat(G)*50
-
-	print bw_lowest
-	print bw_highest
-	print lat_lowest
-	print lat_highest
-
-	if lp_enable or gr_enable or gen_enable:
-		d_list=[]
-		for k in range(number_of_demands):
-			while(True):
-				print 'Create demand Nr. '+str(k)
-				# initialize demand
-				temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
-				# make random choice
-				#temp_dem.make_random_choice()
-				temp_dem.make_total_random_choice(bw_lowest, bw_highest, lat_lowest, lat_highest)
-				# check feasibility
-				if gf.is_feasible(G,temp_dem,path_selection_criterion):
-					d_list.append(temp_dem)
-					break
-			# 4Debug: print demands
-			print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
 	# cli mode	
 	if cli:
 		d_list=[]
@@ -232,41 +253,14 @@ for j in range(repeats):
 	# run genetic algorithm
 	if gen_enable:
 
-		# pos. int population size (number of genomes in one generation)
-		pop_size=12
-		# pos. int maximum number of iterations resp. generations
-		maxgenerations=7
-
-		# decimal amount of number of high society genomes in a population
-		clergy_size=0.1
-		# pos. int (smaller than pop_size) number of children of high society genomes
-		clergy_children=1
-
-		# decimal amount of number of middle class genomes in a population
-		nobility_size=0.2
-		# pos. int (smaller than pop_size) number of children of middle class genomes
-		nobility_children=2
-
-		# pos. int (smaller than nr of demands) mutation rate at beginning
-		start_mut=5
-		# pos. int (smaller than nr of demands) mutation rate at the end
-		end_mut=1
-		# non-allocated choice probability percentage
-		non_prob=10
-
-		# weight of acceptance in fitness function		
-		weight_ac=0.9
-		# weight of bandwidth usage in fitness function		
-		weight_bw=0.1
-
 		print '\nRun Genetic Algorithm'
 		tic = time.time()
 		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
-		(G, d_list, pop_size, maxgenerations, lp_ratio,\
+		(G, d_list, pop_size, maxgenerations,\
 		clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac, weight_bw)
 		toc = time.time()
 		print 'Acceptance ratio: '+str(gen_ratio*100)+'%'
-		print 'Iterations: '+str(gen_cycles)
+		print 'Iterations: '+str(gen_cycles+1)
 		print 'Gen Result: '+str(result)
 		print 'Gen sel paths: '+str(gen_sel_paths)
 		print 'Genetic Time: '+str(toc - tic)
@@ -359,10 +353,10 @@ for j in range(repeats):
 			os.system('eog '+str(gen_plot_pool.prefix)+'.png')
 
 	
-	if lp_ratio<gen_ratio:
-		print 'Ha! Genetic is better than LP'
-		print 'Sanity: '+str(gf.is_sane(G,gen_sel_paths))
-		break
+	#if lp_ratio<gen_ratio:
+		#print 'Ha! Genetic is better than LP'
+		#print 'Sanity: '+str(gf.is_sane(G,gen_sel_paths))
+		#break
 
 
 # print out stats for repeats
