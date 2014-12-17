@@ -31,7 +31,7 @@ import gen_param as gp
 ########################## parameters ##############################
 ####################################################################
 
-mode='genetic_opt'
+mode='genetic'
 
 if mode=='ran':
 	plot_enable			= False
@@ -72,9 +72,9 @@ if mode=='genetic':
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 8
+	number_of_demands		= 50
 	path_selection_criterion	= 'hops'
-	graph_type			= 'deight'
+	graph_type			= 'srg_multiple'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 	# pos. int population size (number of genomes in one generation)
@@ -107,11 +107,12 @@ if mode=='genetic_opt':
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 8
+	number_of_demands		= 50
 	path_selection_criterion	= 'hops'
-	graph_type			= 'deight'
+	graph_type			= 'srg_multiple'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
+	min_gen_time=None
 
 ####################################################################
 ######################## main program ##############################
@@ -152,8 +153,8 @@ if lp_enable or gr_enable or gen_enable:
 			# initialize demand
 			temp_dem = dem.demand(G.nodes(),bw_variants,lat_variants)
 			# make random choice
-			temp_dem.make_random_choice()
-			#temp_dem.make_total_random_choice(bw_lowest, bw_highest, lat_lowest, lat_highest)
+			#temp_dem.make_random_choice()
+			temp_dem.make_total_random_choice(bw_lowest, bw_highest, lat_lowest, lat_highest)
 			# check feasibility
 			if gf.is_feasible(G,temp_dem,path_selection_criterion):
 				d_list.append(temp_dem)
@@ -163,7 +164,7 @@ if lp_enable or gr_enable or gen_enable:
 
 if mode=='genetic_opt':
 	gen_param=gp.gen_param()
-	repeats=gen_param.size()
+	repeats=gen_param.size()-1
 	[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac]=gen_param.next()
 
 for j in range(repeats):
@@ -381,6 +382,13 @@ for j in range(repeats):
 	if mode=='genetic_opt':
 		gf.write2file('experi', [[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac], lp_ratio, lp_time, gen_ratio, gen_time])
 		[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac]=gen_param.next()
+
+		if lp_ratio==gen_ratio:
+			if gen_time<min_gen_time or min_gen_time==None:
+				best_param=[[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac], lp_ratio, lp_time, gen_ratio, gen_time]
+
+
+print best_param
 
 # print out stats for repeats
 if repeats>1 and gr_enable:

@@ -1,7 +1,7 @@
 class gen_param:
 	def __init__(self):
 		# pos. int population size (number of genomes in one generation)
-		self.pop_size_pool=[8,10,15,20]
+		self.pop_size_pool=[15,20,30,40]
 		# pos. int maximum number of iterations resp. generations
 		self.maxgenerations_pool=[10,15,30]
 		# decimal amount of number of high society genomes in a population
