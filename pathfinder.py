@@ -107,7 +107,7 @@ if mode=='genetic_opt':
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 15
+	number_of_demands		= 10
 	path_selection_criterion	= 'hops'
 	graph_type			= 'srg'
 	bw_variants			= [1,2,3]
@@ -394,6 +394,7 @@ for j in range(repeats):
 
 
 print best_param
+print 'Time factor: '+str(gen_time/lp_time)
 
 # print out stats for repeats
 if repeats>1 and gr_enable:

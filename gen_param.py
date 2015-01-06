@@ -9,11 +9,11 @@ class gen_param:
 		# pos. int (smaller than pop_size) number of children of high society genomes
 		self.clergy_children_pool=[2]
 		# decimal amount of number of middle class genomes in a population
-		self.nobility_size_pool=[0.2]
+		self.nobility_size_pool=[0]
 		# pos. int (smaller than pop_size) number of children of middle class genomes
 		self.nobility_children_pool=[1]
 		# pos. int (smaller than nr of demands) mutation rate at beginning
-		self.start_mut_pool=[12]
+		self.start_mut_pool=[8]
 		# pos. int (smaller than nr of demands) mutation rate at the end
 		self.end_mut_pool=[1]
 		# non-allocated choice probability percentage

@@ -238,7 +238,8 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 	cycles=0
 	#mutationrate=shape_mut2(maxgenerations, start_mut, end_mut)
 	# set initial mutation rate	
-	mutrate=7
+	mutrate=5
+	p.evolute(mutrate)
 
 	print 'enter loop'
 	while(True):
@@ -250,10 +251,12 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		#p.evolute(mutationrate[cycles])
 		p.evolute(mutrate)
 		# print p.ranking
-		p.best_genome()
+		[selection, fitness]=p.best_genome()
 		# count better childern
 		better_childern = [val for val in p.fitness.values() if val > old_best_fitness]
-		if len(better_childern)>len(p.d_list)/5:
+		print 'len(better_childern): '+str(len(better_childern))
+		print 'len(p.d_list)/5: '+str(len(p.d_list)/5)
+		if len(better_childern)>=len(p.d_list)/5 and mutrate<len(p.d_list):
 			mutrate += 1
 		elif mutrate>1:
 			mutrate -=1
@@ -267,7 +270,6 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		sel_paths={}
 		result=[]
 		acc_ratio=0
-		[selection, fitness]=p.best_genome()
 		if fitness>0:
 			# only show the allocatable paths as a result
 			for j in range(len(selection.list)):

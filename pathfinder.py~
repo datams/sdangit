@@ -107,7 +107,7 @@ if mode=='genetic_opt':
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 15
+	number_of_demands		= 10
 	path_selection_criterion	= 'hops'
 	graph_type			= 'srg'
 	bw_variants			= [1,2,3]
@@ -280,7 +280,7 @@ for j in range(repeats):
 		tic = time.time()
 		[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
 		(G, d_list, pop_size, maxgenerations,\
-		clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac)
+		clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio)
 		toc = time.time()
 		gen_time=toc-tic
 		print '\nGenetic:'
