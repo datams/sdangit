@@ -72,13 +72,13 @@ if mode=='genetic':
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 50
+	number_of_demands		= 15
 	path_selection_criterion	= 'hops'
-	graph_type			= 'srg_multiple'
+	graph_type			= 'srg'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 	# pos. int population size (number of genomes in one generation)
-	pop_size=10
+	pop_size=15
 	# pos. int maximum number of iterations resp. generations
 	maxgenerations=15
 	# decimal amount of number of high society genomes in a population
@@ -94,7 +94,7 @@ if mode=='genetic':
 	# pos. int (smaller than nr of demands) mutation rate at the end
 	end_mut=1
 	# non-allocated choice probability percentage
-	non_prob=15
+	non_prob=10
 	# weight of acceptance in fitness function		
 	weight_ac=0.9
 
@@ -107,9 +107,9 @@ if mode=='genetic_opt':
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 50
+	number_of_demands		= 15
 	path_selection_criterion	= 'hops'
-	graph_type			= 'srg_multiple'
+	graph_type			= 'srg'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 	min_gen_time=None
@@ -137,8 +137,8 @@ number_of_rerouting_attempts_pool=0
 bw_lowest=gf.minimum_bw(G)
 bw_highest=gf.maximum_bw(G)
 
-lat_lowest=gf.minimum_lat(G)
-lat_highest=gf.maximum_lat(G)*50
+lat_lowest=gf.minimum_lat(G)*3
+lat_highest=gf.maximum_lat(G)*20
 
 print bw_lowest
 print bw_highest
@@ -164,8 +164,8 @@ if lp_enable or gr_enable or gen_enable:
 
 if mode=='genetic_opt':
 	gen_param=gp.gen_param()
-	repeats=gen_param.size()-1
-	[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac]=gen_param.next()
+	repeats=gen_param.size()
+	best_param=None
 
 for j in range(repeats):
 
@@ -269,6 +269,10 @@ for j in range(repeats):
 			print '\nGurobi Solver complete\n---'
 		else:
 			print 'no demands available'
+
+
+	if mode=='genetic_opt':
+		[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac]=gen_param.next()
 
 	# run genetic algorithm
 	if gen_enable:
@@ -380,10 +384,11 @@ for j in range(repeats):
 		#break
 
 	if mode=='genetic_opt':
-		gf.write2file('experi', [[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac], lp_ratio, lp_time, gen_ratio, gen_time])
-		[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac]=gen_param.next()
+		gf.write2file('experi',\
+		[[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac], lp_ratio, lp_time, gen_ratio, gen_time])
 
-		if lp_ratio==gen_ratio:
+
+		if lp_ratio>gen_ratio-0.05 and lp_ratio<gen_ratio+0.05:
 			if gen_time<min_gen_time or min_gen_time==None:
 				best_param=[[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac], lp_ratio, lp_time, gen_ratio, gen_time]
 

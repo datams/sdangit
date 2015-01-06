@@ -42,33 +42,6 @@ class population:
     def rank(self):
 	self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
 
-
-    '''def fork(self,level):
-	# initialize individuals
-	new_individuals=[]
-	# create indices for clergy, nobility and rest
-	[clergy, nobility, rest]= slice_list(range(len(self.individuals)), self.clergy_size, self.nobility_size)
-	for l in range(len(self.individuals)):
-		index=self.ranking[l]
-		#old_individuals=copy.deepcopy(self.individuals)
-		old_individuals=self.individuals
-		#print 'clergy '+str(clergy)
-		#print 'nobility '+str(nobility)
-		#if l in clergy or l==0:
-		if l==0:
-			print str(l)+'old best: '+str(old_individuals[index].list)+'\n with fitness '+str(old_individuals[index].rate(self.G, self.weight_ac, self.weight_bw))
-			new_individuals.append(old_individuals[index])
-			print str(l)+'new best: '+str(new_individuals[l].list)+'\n with fitness '+str(new_individuals[l].rate(self.G, self.weight_ac, self.weight_bw))
-			for h in range(self.clergy_children):
-				new_individuals.append(old_individuals[index].mutate(level,self.non_prob))
-		#elif l in nobility:
-		elif False:
-			for h in range(self.nobility_children):
-				new_individuals.append(old_individuals[index].mutate(level,self.non_prob))
-		elif len(new_individuals)<len(old_individuals):
-			new_individuals.append(old_individuals[index].mutate(level,self.non_prob))
-	self.individuals=new_individuals
-    '''
     # return best genome of population and it's fitness
     def best_genome(self):
 	i=self.ranking[0]
@@ -246,7 +219,7 @@ def shape_mut2(n, bottom, upper):
 
 
 # runs multiple evolution iterations in order to find the best genome
-def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut, non_prob, weight_ac):
+def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut, non_prob, weight_ac, target_ratio):
 	
 	# determine all feasible paths
 	for i in range(len(d_list)):
@@ -256,23 +229,34 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		d_list[i].set_paths_pack(pathpack)
 
 	# create population
-	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac, weight_bw)
+	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac)
 
 	# create initial generation by mutating all individuals
 	p.mutall(1)
 
 	# For number of iterations:
 	cycles=0
-	mutationrate=shape_mut2(maxgenerations, start_mut, end_mut)
+	#mutationrate=shape_mut2(maxgenerations, start_mut, end_mut)
+	# set initial mutation rate	
+	mutrate=7
 
 	print 'enter loop'
 	while(True):
 		print 'cycle '+str(cycles)
-		mutrate=mutationrate[cycles]
+		#mutrate=mutationrate[cycles]
 		print 'mutrate '+str(mutrate)
-		p.evolute(mutationrate[cycles])
-		#print p.ranking
+		# get best fitness value
+		[selection, old_best_fitness]=p.best_genome()
+		#p.evolute(mutationrate[cycles])
+		p.evolute(mutrate)
+		# print p.ranking
 		p.best_genome()
+		# count better childern
+		better_childern = [val for val in p.fitness.values() if val > old_best_fitness]
+		if len(better_childern)>len(p.d_list)/5:
+			mutrate += 1
+		elif mutrate>1:
+			mutrate -=1
 		#print 'best genome '+str(p.individuals[p.ranking[0]].list)+' with fitness '
 		#print 'alle genomes: '
 		#for kk in range(len(p.individuals)):
@@ -280,25 +264,30 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		#print 'ranking '+str(p.ranking)
 		#print 'fitness '+str(p.fitness)
 
-		if cycles==maxgenerations-1:
-			sel_paths={}
-			result=[]
-			alloc_counter=0
-			acc_ratio=0
-			[selection, fitness]=p.best_genome()
-			if fitness>0:
-				# only show the allocatable paths as a result
-				for j in range(len(selection.list)):
-					if selection.list[j]:
-						result.append(selection.list[j])
-						sel_paths[j]=[selection.list[j],d_list[j].bw]
-						alloc_counter+=1
-					else:
-						pass
-						#result.append(None)
-				acc_ratio=float(len(result))/float(len(d_list))
+		sel_paths={}
+		result=[]
+		acc_ratio=0
+		[selection, fitness]=p.best_genome()
+		if fitness>0:
+			# only show the allocatable paths as a result
+			for j in range(len(selection.list)):
+				if selection.list[j]:
+					result.append(selection.list[j])
+					sel_paths[j]=[selection.list[j],d_list[j].bw]
+				else:
+					pass
+					#result.append(None)
+			acc_ratio=float(len(result))/float(len(d_list))
+
+		target_hit=False
+		if target_ratio>acc_ratio-0.05 and target_ratio<acc_ratio+0.05:
+			target_hit=True
+
+		#if cycles==maxgenerations-1 or target_hit:
+		if target_hit:
 			print '\n'
 			break
+
 		cycles+=1
 
 	return [result, sel_paths, acc_ratio, cycles]
