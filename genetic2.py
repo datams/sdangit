@@ -64,7 +64,6 @@ class population:
 				jj=self.ranking[ii]
 				#current_genome=copy.deepcopy(self.individuals[jj])
 				current_genome=self.individuals[jj].copy()
-				#print self.individuals[jj].copy()
 				temp.append(current_genome)
 				for kk in range(self.clergy_children):
 					#current_genome=copy.deepcopy(self.individuals[jj])
@@ -101,7 +100,9 @@ class genome:
 		self.bws.append(d_list[i].bw)
 
     def copy(self):
-	return genome(self.d_list)
+	genome_copy = genome(self.d_list)
+	genome_copy.list=self.list[:]
+	return genome_copy
 
     # generates a list of level-many positions in genome
     def randpos(self, level):
@@ -268,15 +269,21 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		print 'mutrate '+str(mutrate)
 		# get best fitness value
 		[selection, old_best_fitness]=p.best_genome()
+		old_fitness=p.fitness.copy()
 		#p.evolute(mutationrate[cycles])
 		p.evolute(mutrate)
 		# print p.ranking
 		[selection, fitness]=p.best_genome()
 		# count better childern
-		better_childern = [val for val in p.fitness.values() if val > old_best_fitness]
-		print 'len(better_childern): '+str(len(better_childern))
+		#better_childern = [val for val in p.fitness.values() if val > old_best_fitness]
+		n_better_childern=0
+		for k in p.fitness:
+			if p.fitness[k]>old_fitness[k]:
+				n_better_childern+=1
+		#print 'len(better_childern): '+str(len(better_childern))
+		print 'n_better_childern: '+str(n_better_childern)
 		print 'len(p.d_list)/5: '+str(len(p.d_list)/5)
-		if len(better_childern)>=len(p.d_list)/5 and mutrate<len(p.d_list):
+		if n_better_childern>=len(p.d_list)/5 and mutrate<len(p.d_list):
 			mutrate += 1
 		elif mutrate>1:
 			mutrate -=1

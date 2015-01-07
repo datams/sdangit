@@ -5,13 +5,13 @@ class gen_param:
 		# pos. int maximum number of iterations resp. generations
 		self.maxgenerations_pool=[20]
 		# decimal amount of number of high society genomes in a population
-		self.clergy_size_pool=[0.2]
+		self.clergy_size_pool=[0]
 		# pos. int (smaller than pop_size) number of children of high society genomes
-		self.clergy_children_pool=[2]
+		self.clergy_children_pool=[3]
 		# decimal amount of number of middle class genomes in a population
 		self.nobility_size_pool=[0]
 		# pos. int (smaller than pop_size) number of children of middle class genomes
-		self.nobility_children_pool=[1]
+		self.nobility_children_pool=[2]
 		# pos. int (smaller than nr of demands) mutation rate at beginning
 		self.start_mut_pool=[8]
 		# pos. int (smaller than nr of demands) mutation rate at the end
