@@ -107,7 +107,7 @@ if mode=='genetic_opt':
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 10
+	number_of_demands		= 15
 	path_selection_criterion	= 'hops'
 	graph_type			= 'srg'
 	bw_variants			= [1,2,3]
@@ -138,7 +138,7 @@ bw_lowest=gf.minimum_bw(G)
 bw_highest=gf.maximum_bw(G)
 
 lat_lowest=gf.minimum_lat(G)*3
-lat_highest=gf.maximum_lat(G)*20
+lat_highest=gf.maximum_lat(G)*30
 
 print bw_lowest
 print bw_highest

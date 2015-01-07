@@ -49,7 +49,7 @@ class population:
 	#print ' with genome '+str(self.individuals[self.ranking[0]].list)
 	return [self.individuals[i],self.fitness[i]]
    
-        # produce the next generation (clergy are preserved and have clergy_children children, nobility have nobility_children, rest gets remaining slots)
+    # produce the next generation (clergy are preserved and have clergy_children children, nobility have nobility_children, rest gets remaining slots)
     def evolute(self,mutrate):
 	#print 'clergy members '+str(self.clergy_members)
 	#print 'nobility members'+str(self.nobility_members)
@@ -57,7 +57,20 @@ class population:
 	#print 'nobility childern '+str(self.clergy_children)
 	self.rateall()
 	self.rank()
+
 	temp=[]
+	
+	'''
+	jj=self.ranking[0]
+	current_genome=self.individuals[jj].copy()
+	temp.append(current_genome)
+	for ii in range(len(self.individuals)):
+		if len(temp)<len(self.individuals):
+			jj=self.ranking[ii]
+			current_genome=self.individuals[jj].copy()
+			temp.append(current_genome.mutate(mutrate,self.non_prob))
+	'''
+	
 	for ii in range(len(self.individuals)):
 		if len(temp)<len(self.individuals):
 			if ii in self.clergy_members or ii==0:
@@ -81,6 +94,7 @@ class population:
 				current_genome=self.individuals[jj].copy()
 				temp.append(current_genome.mutate(mutrate,self.non_prob))
 	#print 'equal len '+str(len(temp)==len(self.individuals))
+	
 	self.individuals=temp
 
 
@@ -259,7 +273,8 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 	cycles=0
 	#mutationrate=shape_mut2(maxgenerations, start_mut, end_mut)
 	# set initial mutation rate	
-	mutrate=start_mut
+	#mutrate=start_mut
+	mutrate=int(len(p.d_list)*0.7)
 	p.evolute(mutrate)
 
 	print 'enter loop'
@@ -276,6 +291,8 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		[selection, fitness]=p.best_genome()
 		# count better childern
 		#better_childern = [val for val in p.fitness.values() if val > old_best_fitness]
+		
+		'''		
 		n_better_childern=0
 		for k in p.fitness:
 			if p.fitness[k]>old_fitness[k]:
@@ -287,6 +304,20 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 			mutrate += 1
 		elif mutrate>1:
 			mutrate -=1
+		'''
+	
+		
+		diff=fitness-old_best_fitness
+		'''
+		if diff<0.2 and mutrate<len(p.d_list):
+			mutrate+=1
+		if diff>0.2 and mutrate>1:
+			mutrate-=1
+		'''
+
+		mutrate=int((1-fitness+0.4)*len(p.d_list)*0.7)
+
+
 		#print 'best genome '+str(p.individuals[p.ranking[0]].list)+' with fitness '
 		#print 'alle genomes: '
 		#for kk in range(len(p.individuals)):
