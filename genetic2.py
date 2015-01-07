@@ -113,7 +113,8 @@ class genome:
 
     # reports back the number of allocated paths with a given genome
     def rate(self, G, weight_ac, weight_bw):
-	G_updated=copy.deepcopy(G)
+	#G_updated=copy.deepcopy(G)
+	G_updated=G.copy()
 	counter=0
 	#alloc_status=[]
 	one_failed=False
@@ -153,7 +154,8 @@ class genome:
 
 # tries to allocate a selected path with a given bw and reports if it was possible
 def alloc_gen(G, sel_path, bw):
-	G_updated=copy.deepcopy(G)
+	#G_updated=copy.deepcopy(G)
+	G_updated=G.copy()
 	if sel_path!=None:
 		#print 'alloc: '+str(sel_path)
 		G_updated=gf.update_edges(G_updated, sel_path, bw)
@@ -223,7 +225,8 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 	
 	# determine all feasible paths
 	for i in range(len(d_list)):
-		G_prune=copy.deepcopy(G)
+		#G_prune=copy.deepcopy(G)
+		G_prune=G.copy()
 		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
 		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)

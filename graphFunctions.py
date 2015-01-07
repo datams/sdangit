@@ -16,8 +16,10 @@ import operator
 # finds and allocates a path
 def alloc(G, d, path_selection_criterion):
 	# copy of graph for pruning and updating
-	G_prune=copy.deepcopy(G)
-	G_updated=copy.deepcopy(G)
+	#G_prune=copy.deepcopy(G)
+	G_prune=G.copy()
+	#G_updated=copy.deepcopy(G)
+	G_updated=G.copy()
 
 	path_pack=[]
 	sel_path=[]
@@ -52,7 +54,8 @@ def alloc(G, d, path_selection_criterion):
 def alloc_p(G, d, sel_path):
 	sel_path=sel_path
 	# copy of graph updating
-	G_updated=copy.deepcopy(G)
+	#G_updated=copy.deepcopy(G)
+	G_updated=G.copy()
 
 	print '\nAllocating Demand: '+str(d.source)+' ==> '+str(d.target)
 	print 'with given path '+str(sel_path)
@@ -362,7 +365,8 @@ def select_path(paths_pack, criterion):
 # check if demand is feasible in graph G
 def is_feasible(G,d,path_selection_criterion):
 	d_temp=copy.deepcopy(d)
-	G_temp=copy.deepcopy(G)
+	#G_temp=copy.deepcopy(G)
+	G_temp=G.copy()	
 	# look for paths
 	[G_updated, paths_pack, sel_path]=alloc(G_temp,d_temp,path_selection_criterion)
 	# if successful, return True
@@ -373,7 +377,8 @@ def is_feasible(G,d,path_selection_criterion):
 
 # check if sel_paths is feasible in graph G
 def is_sane(G,sel_paths):
-    G_temp=copy.deepcopy(G)
+    #G_temp=copy.deepcopy(G)
+    G_temp=G.copy()
     for key in sel_paths:
 	path=sel_paths[key][0]
 	bw=sel_paths[key][1]

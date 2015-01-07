@@ -523,6 +523,6 @@ def pv(text,var):
 # write something to a file
 def write2file(filename, var):
 	f = open(filename, "a")
-        f.write(str(var)+'\n')
+        f.write(str(var)+',\n')
 	f.close()
 

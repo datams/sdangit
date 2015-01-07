@@ -238,7 +238,7 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 	cycles=0
 	#mutationrate=shape_mut2(maxgenerations, start_mut, end_mut)
 	# set initial mutation rate	
-	mutrate=5
+	mutrate=start_mut
 	p.evolute(mutrate)
 
 	print 'enter loop'
