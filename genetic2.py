@@ -62,19 +62,24 @@ class population:
 		if len(temp)<len(self.individuals):
 			if ii in self.clergy_members or ii==0:
 				jj=self.ranking[ii]
-				current_genome=copy.deepcopy(self.individuals[jj])
+				#current_genome=copy.deepcopy(self.individuals[jj])
+				current_genome=self.individuals[jj].copy()
+				#print self.individuals[jj].copy()
 				temp.append(current_genome)
 				for kk in range(self.clergy_children):
-					current_genome=copy.deepcopy(self.individuals[jj])
+					#current_genome=copy.deepcopy(self.individuals[jj])
+					current_genome=self.individuals[jj].copy()
 					temp.append(current_genome.mutate(mutrate,self.non_prob))
 			elif ii in self.nobility_members:
 				jj=self.ranking[ii]
 				for kk in range(self.nobility_children):
-					current_genome=copy.deepcopy(self.individuals[jj])
+					#current_genome=copy.deepcopy(self.individuals[jj])
+					current_genome=self.individuals[jj].copy()
 					temp.append(current_genome.mutate(mutrate,self.non_prob))
 			else:
 				jj=self.ranking[ii]
-				current_genome=copy.deepcopy(self.individuals[jj])
+				#current_genome=copy.deepcopy(self.individuals[jj])
+				current_genome=self.individuals[jj].copy()
 				temp.append(current_genome.mutate(mutrate,self.non_prob))
 	#print 'equal len '+str(len(temp)==len(self.individuals))
 	self.individuals=temp
@@ -86,8 +91,17 @@ class genome:
 	self.d_list=d_list
 	self.size=len(d_list)
 	self.list = []
+	self.gene_pool=[]
+	self.bws=[]
 	for k in range(self.size):
 		self.list.append(None)
+	for i in range(self.size):
+		self.gene_pool.append(d_list[i].paths_pack)
+	for j in range(self.size):
+		self.bws.append(d_list[i].bw)
+
+    def copy(self):
+	return genome(self.d_list)
 
     # generates a list of level-many positions in genome
     def randpos(self, level):
@@ -105,9 +119,9 @@ class genome:
 			self.list[i]=None
 		else:
 			# get gen pool of possibilities for genome position
-	    		gen_pool=self.d_list[i].paths_pack
-			if gen_pool!=[]:
-				new_gen=random.choice(gf.pack2p(gen_pool))
+	    		#gene_pool=self.d_list[i].paths_pack
+			if self.gene_pool[i]!=[]:
+				new_gen=random.choice(gf.pack2p(self.gene_pool[i]))
 				self.list[i]=new_gen
 	return self
 
@@ -118,10 +132,12 @@ class genome:
 	counter=0
 	#alloc_status=[]
 	one_failed=False
-	for i in range(len(self.d_list)):
+	#for i in range(len(self.d_list)):
+	for i in range(self.size):
 		#alloc_status.append(None)
 		if self.list[i]!=None:
-			[G_updated, success] = alloc_gen(G_updated, self.list[i], self.d_list[i].bw)
+			#[G_updated, success] = alloc_gen(G_updated, self.list[i], self.d_list[i].bw)
+			[G_updated, success] = alloc_gen(G_updated, self.list[i], self.bws[i])
 			if success == True:
 				counter+=1
 				#alloc_status[i]=True
@@ -141,13 +157,14 @@ class genome:
 		# calculate fitness
 		total_alloc_bw=bw_consum(G, G_updated)
 		total_req_bw=0
-		for i in range(len(self.d_list)):
+		#for i in range(len(self.d_list)):
+		for i in range(self.size):
 			if self.list[i]!=None:
-				total_req_bw+=self.d_list[i].bw
+				total_req_bw+=self.bws[i]
 		if total_alloc_bw>0:
 			#print weight_ac*float(counter)/float(len(self.d_list))
 			#print weight_bw*float(total_req_bw)/float(total_alloc_bw)
-			fitness = weight_ac*float(counter)/float(len(self.d_list)) + weight_bw*float(total_req_bw)/float(total_alloc_bw)
+			fitness = weight_ac*float(counter)/float(self.size) + weight_bw*float(total_req_bw)/float(total_alloc_bw)
 			#print 'tot '+str(fitness)
 			#fitness=0.9*float(counter)+0.1/total_alloc_bw
 	return fitness
