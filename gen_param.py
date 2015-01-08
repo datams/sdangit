@@ -13,11 +13,11 @@ class gen_param:
 		# pos. int (smaller than pop_size) number of children of middle class genomes
 		self.nobility_children_pool=[2]
 		# pos. int (smaller than nr of demands) mutation rate at beginning
-		self.start_mut_pool=[30]
+		self.start_mut_pool=[3]
 		# pos. int (smaller than nr of demands) mutation rate at the end
 		self.end_mut_pool=[1]
 		# non-allocated choice probability percentage
-		self.non_prob_pool=[50]
+		self.non_prob_pool=[20]
 		# weight of acceptance in fitness function		
 		self.weight_ac_pool=[0.9]
 		self.all_param=[]

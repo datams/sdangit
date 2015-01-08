@@ -273,8 +273,8 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 	cycles=0
 	#mutationrate=shape_mut2(maxgenerations, start_mut, end_mut)
 	# set initial mutation rate	
-	#mutrate=start_mut
-	mutrate=int(len(p.d_list)*0.7)
+	mutrate=start_mut
+	#mutrate=int(len(p.d_list)*0.7)
 	p.evolute(mutrate)
 
 	print 'enter loop'
@@ -292,12 +292,13 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		# count better childern
 		#better_childern = [val for val in p.fitness.values() if val > old_best_fitness]
 		
-		'''		
+		# adaptive mut rate 1/5 rule
+			
+		'''
 		n_better_childern=0
 		for k in p.fitness:
 			if p.fitness[k]>old_fitness[k]:
 				n_better_childern+=1
-		#print 'len(better_childern): '+str(len(better_childern))
 		print 'n_better_childern: '+str(n_better_childern)
 		print 'len(p.d_list)/5: '+str(len(p.d_list)/5)
 		if n_better_childern>=len(p.d_list)/5 and mutrate<len(p.d_list):
@@ -305,25 +306,34 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		elif mutrate>1:
 			mutrate -=1
 		'''
-	
+
 		
+		# adaptive mut rate based on diff
 		diff=fitness-old_best_fitness
+		if diff<0.2:
+			#if mutrate>1:
+			if mutrate>1 and mutrate>int((1-fitness+0.4)*len(p.d_list)*0.7):
+				mutrate-=1
+		if diff>0.2:
+			if mutrate<len(p.d_list):
+				mutrate+=1
+
+		
+
 		'''
-		if diff<0.2 and mutrate<len(p.d_list):
-			mutrate+=1
-		if diff>0.2 and mutrate>1:
-			mutrate-=1
+		#mutrate=int((1-fitness+0.4)*len(p.d_list)*0.7)
 		'''
 
-		mutrate=int((1-fitness+0.4)*len(p.d_list)*0.7)
-
+		# adaptive non_prob
+		#p.non_prob=int((1-fitness+0.3)*0.4*100)
+		#print 'p.non_prob '+str(p.non_prob)
 
 		#print 'best genome '+str(p.individuals[p.ranking[0]].list)+' with fitness '
 		#print 'alle genomes: '
 		#for kk in range(len(p.individuals)):
 		#	print p.individuals[kk].list
 		#print 'ranking '+str(p.ranking)
-		#print 'fitness '+str(p.fitness)
+		print 'fitness '+str(p.fitness)
 
 		sel_paths={}
 		result=[]
