@@ -51,7 +51,7 @@ def run_build(graph_type,number_of_demands):
 
 ##################### data out of build #############################
 
-def get_d_list(graph_type):
+def get_std_d_list(graph_type):
 	d_params_srg=[\
 	[6,2,8.29221446513,65.7834691962],\
 	[4,2,6.01901435229,177.951162664],\
@@ -123,12 +123,38 @@ def get_d_list(graph_type):
 
 	if graph_type=='srg':
 		G = customGraph.make('srg')
-		return build_d_list(G,d_params_srg)
+		return [G,build_d_list(G,d_params_srg)]
 	elif graph_type=='srg_multiple':
 		G = customGraph.make('srg_multiple')
-		return build_d_list(G,d_params_srg_multiple)
+		return [G,build_d_list(G,d_params_srg_multiple)]
 	else:
 		print 'invalid graph_type'
 
-	G = customGraph.make('srg')
-	print build_d_list(G,d_params_srg)
+
+def get_rnd_d_list(graph_type, number_of_demands):
+	G = customGraph.make(graph_type)
+
+	bw_lowest		=	gf.minimum_bw(G)
+	bw_highest		=	gf.maximum_bw(G)
+	lat_lowest		=	gf.minimum_lat(G)
+	lat_highest		=	gf.maximum_lat(G)*30
+
+	path_selection_criterion = 'hops'
+	d_list=[]
+	for k in range(number_of_demands):
+		while(True):
+			print 'Create demand Nr. '+str(k)
+			# initialize demand
+			temp_dem = dem.demand(G.nodes(),88,88)
+			# make random choice
+			#temp_dem.make_random_choice()
+			temp_dem.make_total_random_choice(bw_lowest, bw_highest, lat_lowest, lat_highest)
+			# check feasibility
+			if gf.is_feasible(G,temp_dem,path_selection_criterion):
+				d_list.append(temp_dem)
+				break
+		# 4Debug: print demands
+		print 'demand '+str(k)+': '+str(d_list[k].source)+' ==> '+str(d_list[k].target)
+
+	return [G,build_d_list]
+
