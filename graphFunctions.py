@@ -184,6 +184,14 @@ def get_all_sel_paths(demand_list):
 			all_sel_paths[i]=path
 	return all_sel_paths
 
+# get number of allocated demands
+def get_num_alloc_d(demand_list):
+	counter=0
+	for d in demand_list:
+		if d.path!=[] and d.x==1:
+			counter+=1
+	return counter
+
 # returns link utilization
 def link_util(G,F):
 

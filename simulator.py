@@ -38,6 +38,9 @@ record = []
 gen_param=[50, 20, 0.2, 3, 0.1, 2, 3, 1, 20, 0.9, lp_ratio]
 [gen_time, gen_ratio, gen_sel_paths]=su.ga(G, d_list, gen_param)
 
+# Greedy solve
+#[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list)
+
 # Record outcome
 record.append([lp_time, gen_time, gen_param])
 

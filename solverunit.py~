@@ -1,6 +1,7 @@
 import time
 import lpsolv as lp
 import greedy as gr
+import graphFunctions as gf
 import genetic2 as gen
 
 def linp(G, d_list):
@@ -28,3 +29,33 @@ def ga(G, d_list, gen_param):
 	# print 'Iterations: '+str(gen_cycles+1)
 	return [gen_time, gen_ratio, gen_sel_paths]
 
+
+def greed(G, d_list):
+	G_updated=G.copy()
+	plot_enable=False
+	path_selection_criterion = 'hops'
+	plot_pool=gf.plot_pool('topo')
+	plot_pool.plot(G_updated, None, 1, plot_enable)
+	number_of_rerouting_attempts=0
+	number_of_rerouting_success=0
+	complete_d_list=d_list
+	d_list=[]
+	i=0
+	number_of_demands=0
+	tic = time.time()
+
+	for d in complete_d_list:
+		d_list.append(d)
+		number_of_demands+=1
+		[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\
+		gr.finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection_criterion,\
+		number_of_rerouting_attempts, number_of_rerouting_success, plot_enable)
+		i+=1
+
+	toc = time.time()
+	greed_time = toc - tic
+
+	greed_ratio = 2
+	greed_sel_paths = gf.get_all_sel_paths(d_list)
+
+	return [greed_time, greed_ratio, greed_sel_paths]

@@ -4,6 +4,7 @@ import customGraph as gc
 import graphFunctions as gf
 import random
 import copy
+import time
 
 # a population contains a set of individuals (genomes) and can rank them
 class population:
@@ -278,6 +279,7 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 	p.evolute(mutrate)
 
 	print 'enter loop'
+	time_start = time.time()
 	while(True):
 		print 'cycle '+str(cycles)
 		#mutrate=mutationrate[cycles]
@@ -318,7 +320,6 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 			if mutrate<len(p.d_list):
 				mutrate+=1
 
-		
 
 		'''
 		#mutrate=int((1-fitness+0.4)*len(p.d_list)*0.7)
@@ -353,8 +354,10 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		if target_ratio>acc_ratio-0.05 and target_ratio<acc_ratio+0.05:
 			target_hit=True
 
+		time_now = time.time()
+		calc_time = time_now - time_start
 		#if cycles==maxgenerations-1 or target_hit:
-		if target_hit:
+		if target_hit or calc_time>60:
 			print '\n'
 			break
 
