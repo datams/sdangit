@@ -81,6 +81,7 @@ class demand:
 	self.status=1
 
     # random choice of two distinct graph nodes as source / target
+    # bw and lat choice out of a list of possible values
     def make_random_choice(self):
 	self.bw=random.choice(self.bw_variants)
 	self.lat=random.choice(self.lat_variants)
@@ -91,6 +92,7 @@ class demand:
 	self.target = random.choice(temp_n)
 
     # random choice of two distinct graph nodes as source / target
+    # bw and lat choice by random uniform choice
     def make_total_random_choice(self, bw_lowest, bw_highest, lat_lowest, lat_highest):
 	self.bw=random.uniform(bw_lowest, bw_highest)
 	self.lat=random.uniform(lat_lowest, lat_highest)

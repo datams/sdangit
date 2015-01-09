@@ -94,8 +94,6 @@ class demand:
     def make_total_random_choice(self, bw_lowest, bw_highest, lat_lowest, lat_highest):
 	self.bw=random.uniform(bw_lowest, bw_highest)
 	self.lat=random.uniform(lat_lowest, lat_highest)
-	print self.bw
-	print self.lat
 	temp_n=self.nodes
 	self.source = random.choice(temp_n)
 	source_index = temp_n.index(self.source)
