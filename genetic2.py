@@ -23,9 +23,10 @@ class population:
 	self.ranking=[]
 	# a dict with the fitness value for each corresponding demand
 	self.fitness={}
+	for k in range(pop_size):
+		self.fitness[k]=[0,0]
 	# a list containing all genomes of the population
 	self.individuals=[]
-	# initialize all genomes
 	for k in range(pop_size):
 		self.individuals.append(genome(d_list))
     
@@ -41,7 +42,17 @@ class population:
 
     # determine the ranking based on fitness
     def rank(self):
-	self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
+	# rank due to single fitness value
+	# self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
+	
+
+	print 'fitness '+str(self.fitness)
+
+	# rank due to two fitness values
+	fitness2list=[(k, v[0], v[1]) for k,v in self.fitness.items()]
+	sorted_fitness2list = sorted(fitness2list, key = lambda x: (x[1], x[2]), reverse=True)
+	self.ranking=[a for (a,b,c) in sorted_fitness2list]
+
 
     # return best genome of population and it's fitness
     def best_genome(self):
@@ -162,7 +173,7 @@ class genome:
 				one_failed=True
 	
 	# default fitness=0
-	fitness=0	
+	fitness=[0,0]	
 
 	# check if genome sane
 	#genome_is_sane=False
@@ -178,11 +189,11 @@ class genome:
 			if self.list[i]!=None:
 				total_req_bw+=self.bws[i]
 		if total_alloc_bw>0:
-			#print weight_ac*float(counter)/float(len(self.d_list))
-			#print weight_bw*float(total_req_bw)/float(total_alloc_bw)
-			fitness = weight_ac*float(counter)/float(self.size) + weight_bw*float(total_req_bw)/float(total_alloc_bw)
-			#print 'tot '+str(fitness)
-			#fitness=0.9*float(counter)+0.1/total_alloc_bw
+			# linear weighted fitness function
+			ac_fitness = weight_ac*float(counter)/float(self.size)
+			bw_fitness = weight_bw*float(total_req_bw)/float(total_alloc_bw)
+			#fitness = ac_fitness + bw_fitness
+			fitness = [ac_fitness, bw_fitness]
 	return fitness
 
 # tries to allocate a selected path with a given bw and reports if it was possible
@@ -311,10 +322,10 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 
 		
 		# adaptive mut rate based on diff
-		diff=fitness-old_best_fitness
+		diff=fitness[0]-old_best_fitness[0]
 		if diff<0.2:
 			#if mutrate>1:
-			if mutrate>1 and mutrate>int((1-fitness+0.4)*len(p.d_list)*0.7):
+			if mutrate>1 and mutrate>int((1-fitness[0]+0.4)*len(p.d_list)*0.7):
 				mutrate-=1
 		if diff>0.2:
 			if mutrate<len(p.d_list):
