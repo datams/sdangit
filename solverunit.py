@@ -3,6 +3,7 @@ import lpsolv as lp
 import greedy as gr
 import graphFunctions as gf
 import genetic2 as gen
+import multiprocessing
 
 def linp(G, d_list):
 	print '\nRun LP Solver'
@@ -23,6 +24,24 @@ def ga(G, d_list, gen_param):
 	[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
 	(G, d_list, pop_size, maxgenerations,\
 	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio)
+	
+	toc = time.time()
+	gen_time = toc - tic
+	# print 'Iterations: '+str(gen_cycles+1)
+	return [gen_time, gen_ratio, gen_sel_paths]
+
+def ga_coreelement(G, d_list, gen_param, e):
+	pass #####################################
+	# prepare paraevolution for taking event e and breaking
+	return [gen_time, gen_ratio, gen_sel_paths]
+
+def ga_multicore(G, d_list, gen_param):
+	print '\nRun multiple process Genetic Algorithm'
+	[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size,\
+	nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio]=gen_param
+	tic = time.time()
+	
+	# let 4 multiple ga_coreelement run and give them the event e
 	
 	toc = time.time()
 	gen_time = toc - tic
