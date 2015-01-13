@@ -35,7 +35,6 @@ def ga(G, d_list, gen_param):
 
 
 # one instance of the GA that determines on e.is_set()
-
 def ga_coreelement(G, d_list, gen_param, e, return_ratio,  return_paths, ga_thread):
 
 	[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size,\
@@ -48,7 +47,7 @@ def ga_coreelement(G, d_list, gen_param, e, return_ratio,  return_paths, ga_thre
 	
 	print 'Instance '+str(ga_thread)+' reached target'
 
-	return [gen_time, gen_ratio, gen_sel_paths]
+	return [gen_ratio, gen_sel_paths]
 
 def ga_multicore(G, d_list, gen_param):
 	print '\nRun multiple process Genetic Algorithm'
@@ -78,17 +77,12 @@ def ga_multicore(G, d_list, gen_param):
 	w3.join()
 	w4.join()
 	
-	print 'return_ratio: '
-	print return_ratio
-	print 'return_paths: '
-	print return_paths
-
 	gen_ratio=return_ratio[0]
 	gen_sel_paths=return_paths[0]
 
 	toc = time.time()
-	gen_time = toc - tic
-	return [gen_time, gen_ratio, gen_sel_paths]
+	ga_multicore_time = toc - tic
+	return [ga_multicore_time, gen_ratio, gen_sel_paths]
 
 
 def greed(G, d_list):

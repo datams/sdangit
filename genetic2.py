@@ -46,7 +46,7 @@ class population:
 	# self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
 	
 
-	print 'fitness '+str(self.fitness)
+	#print 'fitness '+str(self.fitness)
 
 	# rank due to two fitness values
 	fitness2list=[(k, v[0], v[1]) for k,v in self.fitness.items()]
@@ -57,7 +57,7 @@ class population:
     # return best genome of population and it's fitness
     def best_genome(self):
 	i=self.ranking[0]
-	print 'fitness of best genome: '+str(self.fitness[i])
+	#print 'fitness of best genome: '+str(self.fitness[i])
 	#print ' with genome '+str(self.individuals[self.ranking[0]].list)
 	return [self.individuals[i],self.fitness[i]]
    
@@ -292,9 +292,9 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 	print 'enter loop'
 	time_start = time.time()
 	while(True):
-		print 'cycle '+str(cycles)
+		#print 'cycle '+str(cycles)
 		#mutrate=mutationrate[cycles]
-		print 'mutrate '+str(mutrate)
+		#print 'mutrate '+str(mutrate)
 		# get best fitness value
 		[selection, old_best_fitness]=p.best_genome()
 		old_fitness=p.fitness.copy()
@@ -345,7 +345,7 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		#for kk in range(len(p.individuals)):
 		#	print p.individuals[kk].list
 		#print 'ranking '+str(p.ranking)
-		print 'fitness '+str(p.fitness)
+		#print 'fitness '+str(p.fitness)
 
 		sel_paths={}
 		result=[]
