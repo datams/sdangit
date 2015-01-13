@@ -265,7 +265,7 @@ def shape_mut2(n, bottom, upper):
 
 
 # runs multiple evolution iterations in order to find the best genome
-def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut, non_prob, weight_ac, target_ratio):
+def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut, non_prob, weight_ac, target_ratio, e, return_ratio, return_paths, ga_thread):
 	
 	# determine all feasible paths
 	for i in range(len(d_list)):
@@ -368,10 +368,18 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		time_now = time.time()
 		calc_time = time_now - time_start
 		#if cycles==maxgenerations-1 or target_hit:
-		if target_hit or calc_time>60:
-			print '\n'
+		if target_hit:
+			print 'GA hit target'
+			e.set()
+			return_ratio[0]=[acc_ratio]
+			return_paths[0]=[sel_paths]
 			break
-
+		if calc_time>60:
+			print 'GA timeout'
+			break
+		if e.is_set():
+			print 'Another GA finished'
+			break
 		cycles+=1
 
 	return [result, sel_paths, acc_ratio, cycles]

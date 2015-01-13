@@ -4,6 +4,7 @@ import greedy as gr
 import graphFunctions as gf
 import genetic2 as gen
 import multiprocessing
+from multiprocessing import Manager
 
 def linp(G, d_list):
 	print '\nRun LP Solver'
@@ -21,31 +22,72 @@ def ga(G, d_list, gen_param):
 	nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio]=gen_param
 	tic = time.time()
 	
+	# dummy state	
+	e = multiprocessing.Event()
 	[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
 	(G, d_list, pop_size, maxgenerations,\
-	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio)
+	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio, e)
 	
 	toc = time.time()
 	gen_time = toc - tic
 	# print 'Iterations: '+str(gen_cycles+1)
 	return [gen_time, gen_ratio, gen_sel_paths]
 
-def ga_coreelement(G, d_list, gen_param, e):
-	pass #####################################
-	# prepare paraevolution for taking event e and breaking
-	return [gen_time, gen_ratio, gen_sel_paths]
 
-def ga_multicore(G, d_list, gen_param):
-	print '\nRun multiple process Genetic Algorithm'
+# one instance of the GA that determines on e.is_set()
+
+def ga_coreelement(G, d_list, gen_param, e, return_ratio,  return_paths, ga_thread):
+
 	[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size,\
 	nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio]=gen_param
 	tic = time.time()
 	
-	# let 4 multiple ga_coreelement run and give them the event e
+	[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
+	(G, d_list, pop_size, maxgenerations,\
+	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio, e, return_ratio,  return_paths, ga_thread)
 	
+	print 'Instance '+str(ga_thread)+' reached target'
+
+	return [gen_time, gen_ratio, gen_sel_paths]
+
+def ga_multicore(G, d_list, gen_param):
+	print '\nRun multiple process Genetic Algorithm'
+	tic = time.time()
+	
+	e = multiprocessing.Event()
+	manager = Manager()
+	return_ratio = manager.dict()
+	return_paths = manager.dict()
+
+	w1 = multiprocessing.Process(name='GA1', target=ga_coreelement, args=(G, d_list, gen_param, e, return_ratio, return_paths, 1))
+	w2 = multiprocessing.Process(name='GA2', target=ga_coreelement, args=(G, d_list, gen_param, e, return_ratio, return_paths, 2))
+	w3 = multiprocessing.Process(name='GA3', target=ga_coreelement, args=(G, d_list, gen_param, e, return_ratio, return_paths, 3))
+	w4 = multiprocessing.Process(name='GA4', target=ga_coreelement, args=(G, d_list, gen_param, e, return_ratio, return_paths, 4))
+
+	print 'Start process 1'
+    	w1.start()
+	print 'Start process 2'
+    	w2.start()
+	print 'Start process 3'
+    	w3.start()
+	print 'Start process 4'
+    	w4.start()
+	print 'Wait for all processes'
+	w1.join()
+	w2.join()
+	w3.join()
+	w4.join()
+	
+	print 'return_ratio: '
+	print return_ratio
+	print 'return_paths: '
+	print return_paths
+
+	gen_ratio=return_ratio[0]
+	gen_sel_paths=return_paths[0]
+
 	toc = time.time()
 	gen_time = toc - tic
-	# print 'Iterations: '+str(gen_cycles+1)
 	return [gen_time, gen_ratio, gen_sel_paths]
 
 
