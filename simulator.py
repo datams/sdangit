@@ -28,12 +28,12 @@ import solverunit as su
 records = []
 
 # Create parameters pool
-gen_param=gp.gen_param()
-repeats=gen_param.size()
+param_container=gp.gen_param()
+repeats=param_container.size()
 
 for q in range(repeats):
 
-	gen_param=gen_param.next()
+	param=param_container.next()
 
 	for rep in range(40):
 
@@ -45,26 +45,25 @@ for q in range(repeats):
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
 
 		# Gen solve
-		gen_param=[50, 0.2, 3, 0.1, 2, 3, 30, 0.9, lp_ratio]
-		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, gen_param)
+		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
 
 		# Greedy solve
 		#[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list)
 
 		# Record outcome
-		records.append([lp_time, gen_time, gen_param])
+		records.append([lp_time, gen_time, param])
 
 	# Print results
 	#for rec in record:
 	#	print rec
 
-	lpt=[lp_time for [lp_time, gen_time, gen_param] in records]
-	gnt=[gen_time for [lp_time, gen_time, gen_param] in records]
+	lpt=[lp_time for [lp_time, gen_time, param] in records]
+	gnt=[gen_time for [lp_time, gen_time, param] in records]
 
 	avg_lpt=sum(lpt)/len(lpt)
 	avg_gnt=sum(gnt)/len(gnt)
 
-	gf.write2file('experi',	[avg_lpt, avg_gnt, gen_param])
+	gf.write2file('experi',	[avg_lpt, avg_gnt, param])
 
 	 
 
