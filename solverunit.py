@@ -18,15 +18,15 @@ def linp(G, d_list):
 
 def ga(G, d_list, gen_param):
 	print '\nRun Genetic Algorithm'
-	[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size,\
-	nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio]=gen_param
+	[pop_size, clergy_size, clergy_children, nobility_size,\
+	nobility_children, start_mut, non_prob, weight_ac,lp_ratio]=gen_param
 	tic = time.time()
 	
 	# dummy state	
 	e = multiprocessing.Event()
 	[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
-	(G, d_list, pop_size, maxgenerations,\
-	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio, e)
+	(G, d_list, pop_size,\
+	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, non_prob, weight_ac,lp_ratio, e)
 	
 	toc = time.time()
 	gen_time = toc - tic
@@ -37,13 +37,13 @@ def ga(G, d_list, gen_param):
 # one instance of the GA that determines on e.is_set()
 def ga_coreelement(G, d_list, gen_param, e, return_ratio,  return_paths, ga_thread):
 
-	[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size,\
-	nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio]=gen_param
+	[pop_size, clergy_size, clergy_children, nobility_size,\
+	nobility_children, start_mut, non_prob, weight_ac,lp_ratio]=gen_param
 	tic = time.time()
 	
 	[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
-	(G, d_list, pop_size, maxgenerations,\
-	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac,lp_ratio, e, return_ratio,  return_paths, ga_thread)
+	(G, d_list, pop_size,\
+	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, non_prob, weight_ac, lp_ratio, e, return_ratio,  return_paths, ga_thread)
 	
 	print 'Instance '+str(ga_thread)+' reached target'
 

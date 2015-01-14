@@ -265,7 +265,7 @@ def shape_mut2(n, bottom, upper):
 
 
 # runs multiple evolution iterations in order to find the best genome
-def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, end_mut, non_prob, weight_ac, target_ratio, e, return_ratio, return_paths, ga_thread):
+def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, non_prob, weight_ac, target_ratio, e, return_ratio, return_paths, ga_thread):
 	
 	# determine all feasible paths
 	for i in range(len(d_list)):
@@ -283,7 +283,6 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 
 	# For number of iterations:
 	cycles=0
-	#mutationrate=shape_mut2(maxgenerations, start_mut, end_mut)
 	# set initial mutation rate	
 	mutrate=start_mut
 	#mutrate=int(len(p.d_list)*0.7)
@@ -324,17 +323,14 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 		# adaptive mut rate based on diff
 		diff=fitness[0]-old_best_fitness[0]
 		if diff<0.2:
-			#if mutrate>1:
-			if mutrate>1 and mutrate>int((1-fitness[0]+0.4)*len(p.d_list)*0.7):
+			if mutrate>1:
+			#if mutrate>1 and mutrate>int((1-fitness[0]+0.4)*len(p.d_list)*0.7): # len(p.d_list)*0.7 as the maximum mut rate and (1-fitness[0]+0.4) the function going down over time
 				mutrate-=1
 		if diff>0.2:
 			if mutrate<len(p.d_list):
 				mutrate+=1
 
 
-		'''
-		#mutrate=int((1-fitness+0.4)*len(p.d_list)*0.7)
-		'''
 
 		# adaptive non_prob
 		#p.non_prob=int((1-fitness+0.3)*0.4*100)
@@ -367,18 +363,21 @@ def paraevolution(G,d_list,pop_size,maxgenerations,clergy_size,clergy_children,n
 
 		time_now = time.time()
 		calc_time = time_now - time_start
-		#if cycles==maxgenerations-1 or target_hit:
 		if target_hit:
 			print 'GA hit target'
 			e.set()
 			return_ratio[0]=[acc_ratio]
 			return_paths[0]=[sel_paths]
 			break
-		if calc_time>60:
+		if calc_time>20:
 			print 'GA timeout'
+			return_ratio[0]=[acc_ratio]
+			return_paths[0]=[sel_paths]
 			break
 		if e.is_set():
 			print 'Another GA finished'
+			return_ratio[0]=[acc_ratio]
+			return_paths[0]=[sel_paths]
 			break
 		cycles+=1
 

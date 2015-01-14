@@ -2,8 +2,6 @@ class gen_param:
 	def __init__(self):
 		# pos. int population size (number of genomes in one generation)
 		self.pop_size_pool=[50]
-		# pos. int maximum number of iterations resp. generations
-		self.maxgenerations_pool=[20]
 		# decimal amount of number of high society genomes in a population
 		self.clergy_size_pool=[0.2]
 		# pos. int (smaller than pop_size) number of children of high society genomes
@@ -17,22 +15,21 @@ class gen_param:
 		# pos. int (smaller than nr of demands) mutation rate at the end
 		self.end_mut_pool=[1]
 		# non-allocated choice probability percentage
-		self.non_prob_pool=[50]
+		self.non_prob_pool=[20]
 		# weight of acceptance in fitness function		
 		self.weight_ac_pool=[0.9]
 		self.all_param=[]
 		for pop_size in self.pop_size_pool:
-			for maxgenerations in self.maxgenerations_pool:
-				for clergy_size in self.clergy_size_pool:
-					for clergy_children in self.clergy_children_pool:
-						for nobility_size in self.nobility_size_pool:
-							for nobility_children in self.nobility_children_pool:
-								for start_mut in self.start_mut_pool:
-									for end_mut in self.end_mut_pool:
-										for non_prob in self.non_prob_pool:
-											for weight_ac in self.weight_ac_pool:
-												self.all_param.append(\
-		[pop_size, maxgenerations, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac])
+			for clergy_size in self.clergy_size_pool:
+				for clergy_children in self.clergy_children_pool:
+					for nobility_size in self.nobility_size_pool:
+						for nobility_children in self.nobility_children_pool:
+							for start_mut in self.start_mut_pool:
+								for end_mut in self.end_mut_pool:
+									for non_prob in self.non_prob_pool:
+										for weight_ac in self.weight_ac_pool:
+											self.all_param.append(\
+		[pop_size, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, end_mut, non_prob, weight_ac])
 		self.counter=0
 	
 	def next(self):
