@@ -439,39 +439,6 @@ def check_intersect(path1, path2):
 			degree+=cmpT(edge, path2[i])
 	return degree
 
-
-# find BEST demand, whose path intersect with optimal path by at least one and are not blocked and would release more than enough bw and the most alternatives
-def find_d_to_reroute(optimal_path, bw_req, d_list):
-	intersecting_demands_list=[]
-	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand
-		degree=check_intersect(optimal_path, d_list[i].path)
-		# print 'Found degree '+str(degree)+' fuer demand nummer '+str(i)+' and bw '+str(d_list[i].bw)
-		if degree>0 and d_list[i].status!=2 and d_list[i].bw>=bw_req:
-			alt_num=len(d_list[i].get_alternative_paths())
-			intersecting_demands_list.append([i,alt_num])
-	if len(intersecting_demands_list)>0:
-		to_reroute_index = max(intersecting_demands_list, key=operator.itemgetter(1))[0]
-		return to_reroute_index
-	else:
-		return None
-
-# get ALL demands in order (best first), whose path intersect with optimal path by at least one and are not blocked (sorted by number of alternative paths)
-def find_all_d_to_reroute(optimal_path, bw_req, d_list):
-	intersecting_demands_list=[]
-	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand
-		degree=check_intersect(optimal_path, d_list[i].path)
-		# print 'Found degree '+str(degree)+' fuer demand nummer '+str(i)+' and bw '+str(d_list[i].bw)
-		if degree>0 and d_list[i].status!=2:
-			alt_num=len(d_list[i].get_alternative_paths())
-			intersecting_demands_list.append([i,alt_num])
-	if len(intersecting_demands_list)>0:
-		du_sorted = sorted(intersecting_demands_list, key=operator.itemgetter(1), reverse=True)
-		to_reroute_index = [x[0] for x in du_sorted]
-		return to_reroute_index
-	else:
-		return None
-
-
 # check 2 paths on having some of the same edges
 def check_intersect_bw(path1, path2, G, release_bw, bw_req):
 	path1=n2e_list(path1)
@@ -503,6 +470,38 @@ def check_intersect_bw(path1, path2, G, release_bw, bw_req):
 	else:
 		return degree
 
+# find BEST demand, whose path intersect with optimal path by at least one and are not blocked and would release more than enough bw and the most alternatives
+def find_d_to_reroute(optimal_path, bw_req, d_list):
+	intersecting_demands_list=[]
+	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand
+		degree=check_intersect(optimal_path, d_list[i].path)
+		# print 'Found degree '+str(degree)+' fuer demand nummer '+str(i)+' and bw '+str(d_list[i].bw)
+		if degree>0 and d_list[i].status!=2 and d_list[i].bw>=bw_req:
+			alt_num=len(d_list[i].get_alternative_paths())
+			intersecting_demands_list.append([i,alt_num])
+	if len(intersecting_demands_list)>0:
+		to_reroute_index = max(intersecting_demands_list, key=operator.itemgetter(1))[0]
+		return to_reroute_index
+	else:
+		return None
+
+# get ALL demands in order (best first), whose path intersect with optimal path by at least one and are not blocked (sorted by bw and number of alternative paths)
+def find_all_d_to_reroute(optimal_path, G, bw_req, d_list):
+	intersecting_demands_list=[]
+	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand
+		degree=check_intersect(optimal_path, d_list[i].path)
+		# print 'Found degree '+str(degree)+' fuer demand nummer '+str(i)+' and bw '+str(d_list[i].bw)
+		if degree>0 and d_list[i].status!=2:
+			alt_num=len(d_list[i].get_alternative_paths())
+			bw=d_list[i].bw
+			intersecting_demands_list.append([i,alt_num,bw])
+	if len(intersecting_demands_list)>0:
+		du_sorted = sorted(intersecting_demands_list, key=operator.itemgetter(2,1), reverse=True)
+		to_reroute_index = [x[0] for x in du_sorted]
+		return to_reroute_index
+	else:
+		return []
+
 # does also check if bw release enough
 def find_all_d_to_reroute2(optimal_path, G, bw_req, d_list):
 	intersecting_demands_list=[]
@@ -510,8 +509,6 @@ def find_all_d_to_reroute2(optimal_path, G, bw_req, d_list):
 		degree=check_intersect_bw(optimal_path, d_list[i].path, G, d_list[i].bw, bw_req)
 		# print 'Found degree '+str(degree)+' fuer demand nummer '+str(i)+' and bw '+str(d_list[i].bw)
 		if degree>0 and d_list[i].status!=2:
-			print 'd_list[i].path '+str(d_list[i].path)
-			print 'd_list[i].paths_pack '+str(d_list[i].paths_pack)
 			alt_num=len(d_list[i].get_alternative_paths())
 			intersecting_demands_list.append([i,alt_num])
 	if len(intersecting_demands_list)>0:

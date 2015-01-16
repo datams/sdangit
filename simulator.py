@@ -7,6 +7,7 @@ import copy
 import pygraphviz
 import os
 import time
+import numpy
 
 ####################### modules imports ############################
 import demand as dem
@@ -42,7 +43,7 @@ for expnum in range(repeats):
 	#[G, d_list] = ds.get_std_d_list('srg')
 	[G, d_list] = ds.get_rnd_d_list('srg', 15)
 
-	for rep in range(2):
+	for rep in range(20):
 
 		# LP solve
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
@@ -51,8 +52,8 @@ for expnum in range(repeats):
 		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
 
 		# Greedy solve
-		#[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list)
-
+		[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list)
+		
 		# Record outcome
 		records.append([lp_time, gen_time, param])
 
@@ -61,9 +62,11 @@ for expnum in range(repeats):
 	gnt=[gen_time for [lp_time, gen_time, param] in records]
 
 	avg_lpt=sum(lpt)/len(lpt)
+	std_lpt=numpy.std(lpt)
 	avg_gnt=sum(gnt)/len(gnt)
+	std_gnt=numpy.std(gnt)
 
-	gf.write2file('experi',	[avg_lpt, avg_gnt, param])
+	gf.write2file('experi',	[avg_lpt, std_lpt, avg_gnt, std_gnt, param])
 
 	toc = time.time()
 	exp_time = toc - tic

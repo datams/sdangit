@@ -37,17 +37,18 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 			#### FIND D_U TO REROUTE #####
 			# get all demands, whose path intersect with optimal path by at least one and are not blocked
 			#d_u=gf.find_all_d_to_reroute(optimal_path, d_list[i].bw, d_list)
-			d_u=gf.find_all_d_to_reroute2(optimal_path, G_updated, d_list[i].bw, d_list)
+			#d_u=gf.find_all_d_to_reroute2(optimal_path, G_updated, d_list[i].bw, d_list)
+			d_u=gf.find_all_d_to_reroute(optimal_path, G_updated, d_list[i].bw, d_list)
 			print 'all d_u: '+str(d_u)
 			# solve subproblem of [d_n and all d_u] in G_updated
 			if d_u!=[]:
 				# bound the number of d_u for LP
-				number_of_du_bound=4
+				number_of_du_bound=10
 				d_u=d_u[:number_of_du_bound]
 				d_index_subset = d_u + [i]
 				d_list_subset = [d_list[j] for j in d_index_subset]
 				# produce graph without d_u's
-				G_without_du=copy.deepcopy(G_updated)
+				G_without_du=G_updated.copy()
 				d_list_du=copy.deepcopy(d_list)
 				for index in d_u:
 					[G_without_du] = gf.dealloc(G_without_du, d_list_du[index])

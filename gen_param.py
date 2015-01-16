@@ -3,6 +3,8 @@ class gen_param:
 
 		self.counter=0
 
+		# for my adapted mutation rate
+
 		# pos. int population size (number of genomes in one generation)
 		pop_size_pool=[20,50,80]
 		# decimal amount of number of high society genomes in a population
@@ -35,6 +37,7 @@ class gen_param:
 		[pop_size, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, non_prob, weight_ac, mut_method])
 		
 	
+		# for the 1/5 rule
 
 		# pos. int population size (number of genomes in one generation)
 		pop_size_pool=[20,50,80]
@@ -69,8 +72,6 @@ class gen_param:
 		
 
 
-
-
 	def next(self):
 		if self.counter<len(self.all_param):
 			self.counter+=1
@@ -80,6 +81,7 @@ class gen_param:
 
 	def size(self):
 		return len(self.all_param)
+
 
 # converts a number of seconds to a string hh:mm:ss
 def sec2timestr(sec):
