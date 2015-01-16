@@ -28,28 +28,26 @@ import solverunit as su
 records = []
 
 # Create parameters pool
-param_container=gp.gen_param()
-repeats=param_container.size()
+param_container = gp.gen_param()
+repeats = param_container.size()
+exp_times = []
 
-for q in range(repeats):
+exp_start_time = time.time()
+for expnum in range(repeats):
 
+	tic = time.time()
 	param=param_container.next()
 
-	for rep in range(40):
+	# Graph and demand creation
+	#[G, d_list] = ds.get_std_d_list('srg')
+	[G, d_list] = ds.get_rnd_d_list('srg', 15)
 
-		# Graph and demand creation
-		#[G, d_list] = ds.get_std_d_list('srg')
-		[G, d_list] = ds.get_rnd_d_list('srg', 15)
+	for rep in range(2):
 
 		# LP solve
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
 
 		# Gen solve
-		print param
-		#param=[50, 0.2, 3, 0.1, 2, 3, 30, 0.9, lp_ratio]
-		#print param
-		#print lp_ratio
-		#input(4)
 		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
 
 		# Greedy solve
@@ -70,5 +68,16 @@ for q in range(repeats):
 
 	gf.write2file('experi',	[avg_lpt, avg_gnt, param])
 
-	 
+	toc = time.time()
+	exp_time = toc - tic
+	exp_times.append(exp_time)
+	avg_exp_time = sum(exp_times)/len(exp_times)
+	past_time_calc=avg_exp_time*expnum
+	past_time_real=toc-exp_start_time
+	remaining_time=(repeats-expnum)*avg_exp_time
+	#gf.write2file('time', 'time past: '+str(past_time_real)+'time past calc: '+str(past_time_calc)+'time remaining calc: '+str(remaining_time))
+	gf.write2file('time', 'n='+str(expnum)+'/'+str(repeats)+' time past: '+gp.sec2timestr(past_time_real)+\
+	' time past calc: '+gp.sec2timestr(past_time_calc)+' time remaining calc: '+gp.sec2timestr(remaining_time))
+
+	
 
