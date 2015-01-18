@@ -8,6 +8,7 @@ import pygraphviz
 import os
 import time
 import numpy
+import operator
 
 ####################### modules imports ############################
 import demand as dem
@@ -52,8 +53,8 @@ for expnum in range(repeats):
 		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
 
 		# Greedy solve
-		[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list)
-		input()
+		#[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list)
+		
 		# Record outcome
 		records.append([lp_time, gen_time, param])
 
@@ -78,6 +79,12 @@ for expnum in range(repeats):
 	#gf.write2file('time', 'time past: '+str(past_time_real)+'time past calc: '+str(past_time_calc)+'time remaining calc: '+str(remaining_time))
 	gf.write2file('time', 'n='+str(expnum)+'/'+str(repeats)+' time past: '+gp.sec2timestr(past_time_real)+\
 	' time past calc: '+gp.sec2timestr(past_time_calc)+' time remaining calc: '+gp.sec2timestr(remaining_time))
+
+gf.write2file('experi',	'\n\n\n\nSorted Records:')
+sorted_records = sorted(records, key=operator.itemgetter(1), reverse=True)
+for record in sorted_records:
+	gf.write2file('experi',	record)
+
 
 	
 

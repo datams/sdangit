@@ -6,19 +6,19 @@ class gen_param:
 		# for my adapted mutation rate
 
 		# pos. int population size (number of genomes in one generation)
-		pop_size_pool=[20,50,80]
+		pop_size_pool=[20,50,80,100]
 		# decimal amount of number of high society genomes in a population
-		clergy_size_pool=[0,0.2]
+		clergy_size_pool=[0,0.2,0.3]
 		# pos. int (smaller than pop_size) number of children of high society genomes
-		clergy_children_pool=[3]
+		clergy_children_pool=[3,4]
 		# decimal amount of number of middle class genomes in a population
 		nobility_size_pool=[0,0.1]
 		# pos. int (smaller than pop_size) number of children of middle class genomes
 		nobility_children_pool=[2]
 		# pos. int (smaller than nr of demands) mutation rate at beginning
-		start_mut_pool=[3,5,10]
+		start_mut_pool=[3,5,10,12]
 		# non-allocated choice probability percentage
-		non_prob_pool=[20,30,50]
+		non_prob_pool=[20,30,40,50]
 		# weight of acceptance in fitness function		
 		weight_ac_pool=[0.9]
 		# mutation rate method	
@@ -40,7 +40,7 @@ class gen_param:
 		# for the 1/5 rule
 
 		# pos. int population size (number of genomes in one generation)
-		pop_size_pool=[20,50,80]
+		pop_size_pool=[20,50,80,100]
 		# decimal amount of number of high society genomes in a population
 		clergy_size_pool=[0]
 		# pos. int (smaller than pop_size) number of children of high society genomes
@@ -50,9 +50,9 @@ class gen_param:
 		# pos. int (smaller than pop_size) number of children of middle class genomes
 		nobility_children_pool=[0]
 		# pos. int (smaller than nr of demands) mutation rate at beginning
-		start_mut_pool=[3,5,10]
+		start_mut_pool=[3,5,10,12]
 		# non-allocated choice probability percentage
-		non_prob_pool=[20,30,50]
+		non_prob_pool=[20,30,40,50]
 		# weight of acceptance in fitness function		
 		weight_ac_pool=[0.9]
 		# mutation rate method	
