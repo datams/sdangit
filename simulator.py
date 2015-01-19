@@ -41,10 +41,10 @@ for expnum in range(repeats):
 	param=param_container.next()
 
 	# Graph and demand creation
-	#[G, d_list] = ds.get_std_d_list('srg')
-	[G, d_list] = ds.get_rnd_d_list('srg', 15)
+	[G, d_list] = ds.get_std_d_list('srg_multiple')
+	#[G, d_list] = ds.get_rnd_d_list('srg', 15)
 
-	for rep in range(20):
+	for rep in range(30):
 
 		# LP solve
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
@@ -53,7 +53,8 @@ for expnum in range(repeats):
 		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
 
 		# Greedy solve
-		#[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list)
+		#[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list, 10)
+		
 		
 		# Record outcome
 		records.append([lp_time, gen_time, param])

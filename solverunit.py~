@@ -38,12 +38,12 @@ def ga(G, d_list, gen_param):
 def ga_coreelement(G, d_list, gen_param, lp_ratio, e, return_ratio,  return_paths, ga_thread):
 
 	[pop_size, clergy_size, clergy_children, nobility_size,\
-	nobility_children, start_mut, non_prob, weight_ac]=gen_param
+	nobility_children, start_mut, non_prob, weight_ac, mut_method]=gen_param
 	tic = time.time()
 	
 	[result, gen_sel_paths, gen_ratio, gen_cycles]=gen.paraevolution\
 	(G, d_list, pop_size,\
-	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, non_prob, weight_ac, lp_ratio, e, return_ratio,  return_paths, ga_thread)
+	clergy_size, clergy_children, nobility_size, nobility_children, start_mut, non_prob, weight_ac, mut_method, lp_ratio, e, return_ratio, return_paths, ga_thread)
 	
 	print 'Instance '+str(ga_thread)+' reached target'
 

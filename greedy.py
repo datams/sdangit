@@ -3,7 +3,7 @@ import lpsolv as lp
 import copy
 
 def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection_criterion, \
-	number_of_rerouting_attempts, number_of_rerouting_success, plot_enable):
+	number_of_rerouting_attempts, number_of_rerouting_success, plot_enable, n_LP):
 	##### TRY TO FIND PATH FOR D_N AND ALLOCATE #####
 	[G_updated, paths_pack, sel_path]=gf.alloc(G_updated,d_list[i],path_selection_criterion)
 	# if successful, plot the chosen path
@@ -43,7 +43,7 @@ def finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection
 			# solve subproblem of [d_n and all d_u] in G_updated
 			if d_u!=[]:
 				# bound the number of d_u for LP
-				number_of_du_bound=10
+				number_of_du_bound=n_LP
 				d_u=d_u[:number_of_du_bound]
 				d_index_subset = d_u + [i]
 				d_list_subset = [d_list[j] for j in d_index_subset]

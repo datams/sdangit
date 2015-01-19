@@ -85,7 +85,7 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	return [ga_multicore_time, gen_ratio, gen_sel_paths]
 
 
-def greed(G, d_list):
+def greed(G, d_list, n_LP):
 	G_updated=G.copy()
 	plot_enable=False
 	path_selection_criterion = 'hops'
@@ -104,7 +104,7 @@ def greed(G, d_list):
 		number_of_demands+=1
 		[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\
 		gr.finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection_criterion,\
-		number_of_rerouting_attempts, number_of_rerouting_success, plot_enable)
+		number_of_rerouting_attempts, number_of_rerouting_success, plot_enable, n_LP)
 		i+=1
 
 	toc = time.time()
