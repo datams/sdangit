@@ -49,7 +49,7 @@ for expnum in range(repeats):
 	[G, d_list] = ds.get_std_d_list(graphtype)
 	#[G, d_list] = ds.get_rnd_d_list('srg', 15)
 
-	for rep in range(5):
+	for rep in range(10):
 
 		# LP solve
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
