@@ -153,12 +153,58 @@ def make(name):
 		G.add_edge(6,7, bw=5, lat=3.496)
 		G.add_edge(6,11, bw=5, lat=5.41)
 		G.add_edge(6,15, bw=5, lat=3.866)
-		for r in range(2):	
+		for r in range(4):	
 			old_nodes=G.nodes()			
 			G= nx.disjoint_union(G,G)
 			all_nodes=G.nodes()
 			new_nodes=list(set(all_nodes) - set(old_nodes))
 			for i in range(4):
+				from_node=random.choice(old_nodes)
+				old_nodes.remove(from_node)			
+				to_node=random.choice(new_nodes)
+				new_nodes.remove(to_node)
+				G.add_edge(from_node, to_node, bw=15, lat=3.866)
+		return G
+
+	elif name=='srg_multiple3':
+		G=nx.Graph()
+
+		# add nodes and edges to the graph
+		# bw: line thickness
+		# latency unit: 10e-4 seconds (geo distance / light)
+		G.add_edge(1,2, bw=5, lat=2.515)
+		G.add_edge(1,4, bw=5, lat=4.591)
+		G.add_edge(1,9, bw=5, lat=1.317)
+		G.add_edge(2,11, bw=5, lat=2.076)
+		G.add_edge(2,10, bw=5, lat=0.897)
+		G.add_edge(2,7, bw=5, lat=3.162)
+		G.add_edge(2,15, bw=5, lat=1.333)
+		G.add_edge(2,3, bw=15, lat=3.207)
+		G.add_edge(2,6, bw=15, lat=5.182)
+		G.add_edge(3,12, bw=5, lat=1.033)
+		G.add_edge(3,16, bw=15, lat=0.922)
+		G.add_edge(4,16, bw=15, lat=1.708)
+		G.add_edge(8,14, bw=5, lat=1.69)
+		G.add_edge(14,5, bw=5, lat=3.574)
+		G.add_edge(13,4, bw=5, lat=2.819)
+		G.add_edge(4,5, bw=5, lat=1.685)
+		G.add_edge(4,6, bw=15, lat=6.258)
+		G.add_edge(5,17, bw=5, lat=4.303)
+		G.add_edge(17,2, bw=5, lat=3.236)
+		G.add_edge(5,19, bw=5, lat=3.102)
+		G.add_edge(5,18, bw=5, lat=2.368)
+		G.add_edge(19,20, bw=5, lat=1.634)
+		G.add_edge(20,6, bw=5, lat=2.702)
+		G.add_edge(6,21, bw=5, lat=0.733)
+		G.add_edge(6,7, bw=5, lat=3.496)
+		G.add_edge(6,11, bw=5, lat=5.41)
+		G.add_edge(6,15, bw=5, lat=3.866)
+		for r in range(5):	
+			old_nodes=G.nodes()			
+			G= nx.disjoint_union(G,G)
+			all_nodes=G.nodes()
+			new_nodes=list(set(all_nodes) - set(old_nodes))
+			for i in range(5):
 				from_node=random.choice(old_nodes)
 				old_nodes.remove(from_node)			
 				to_node=random.choice(new_nodes)

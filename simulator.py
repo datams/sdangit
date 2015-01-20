@@ -20,9 +20,7 @@ import genetic2 as gen
 import gen_param as gp
 import demandset as ds
 import solverunit as su
-
-########################## parameters ##############################
-
+import boxpp
 
 ########################## experiment ##############################
 
@@ -31,20 +29,22 @@ records = []
 
 # Create parameters pool
 param_container = gp.gen_param()
-repeats = param_container.size()
+#repeats = param_container.size()
+repeats = 1
 exp_times = []
 
 exp_start_time = time.time()
 for expnum in range(repeats):
 
 	tic = time.time()
-	param=param_container.next()
+	#param=param_container.next()
+	param=[20, 0, 0, 0, 0, 3, 50, 0.9, 1]
 
 	# Graph and demand creation
 	[G, d_list] = ds.get_std_d_list('srg_multiple')
 	#[G, d_list] = ds.get_rnd_d_list('srg', 15)
 
-	for rep in range(30):
+	for rep in range(20):
 
 		# LP solve
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
@@ -59,7 +59,6 @@ for expnum in range(repeats):
 		# Record outcome
 		records.append([lp_time, gen_time, param])
 
-
 	lpt=[lp_time for [lp_time, gen_time, param] in records]
 	gnt=[gen_time for [lp_time, gen_time, param] in records]
 
@@ -68,8 +67,12 @@ for expnum in range(repeats):
 	avg_gnt=sum(gnt)/len(gnt)
 	std_gnt=numpy.std(gnt)
 
+	boxpp.plot(lpt,gnt,'srg_multiple')
+
+	# write avg and std to file
 	gf.write2file('experi',	[avg_lpt, std_lpt, avg_gnt, std_gnt, param])
 
+	# time calculations
 	toc = time.time()
 	exp_time = toc - tic
 	exp_times.append(exp_time)
@@ -77,15 +80,12 @@ for expnum in range(repeats):
 	past_time_calc=avg_exp_time*expnum
 	past_time_real=toc-exp_start_time
 	remaining_time=(repeats-expnum)*avg_exp_time
-	#gf.write2file('time', 'time past: '+str(past_time_real)+'time past calc: '+str(past_time_calc)+'time remaining calc: '+str(remaining_time))
 	gf.write2file('time', 'n='+str(expnum)+'/'+str(repeats)+' time past: '+gp.sec2timestr(past_time_real)+\
 	' time past calc: '+gp.sec2timestr(past_time_calc)+' time remaining calc: '+gp.sec2timestr(remaining_time))
 
+# sort ALL records and print to file
 gf.write2file('experi',	'\n\n\n\nSorted Records:')
 sorted_records = sorted(records, key=operator.itemgetter(1))
 for record in sorted_records:
 	gf.write2file('experi',	record)
-
-
-	
 

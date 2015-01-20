@@ -4,13 +4,13 @@
 ######################## python imports ############################
 ####################################################################
 
-import matplotlib.pyplot as plt
-import matplotlib.colors as colors
+#import matplotlib.pyplot as plt
+#import matplotlib.colors as colors
 import networkx as nx
 import random
 import copy
-#import matplotlib.cm as cmx
-#import numpy as np
+import matplotlib.cm as cmx
+import numpy as np
 import pygraphviz
 import os
 import operator

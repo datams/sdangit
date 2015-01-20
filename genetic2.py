@@ -367,7 +367,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 			return_ratio[0]=[acc_ratio]
 			return_paths[0]=[sel_paths]
 			break
-		if calc_time>20:
+		if calc_time>2000000000000000000:
 			print 'GA timeout'
 			return_ratio[0]=[acc_ratio]
 			return_paths[0]=[sel_paths]

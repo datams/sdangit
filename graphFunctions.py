@@ -1,9 +1,14 @@
-import matplotlib.pyplot as plt
-import matplotlib.colors as colors
+
+# THESE IMPORTS HAVE TO BE ACTIVATED TO USE GRAPHFUNCTIONS PLOTS
+# THEY ARE DEACTIAVTED AS BOXPLOTS IMPORTS THE SAME TOO
+
+#import matplotlib.pyplot as plt
+#import matplotlib.colors as colors
+#import pylab as pl
+
 import networkx as nx
 import random
 import copy
-import pylab as pl
 #import numpy as np
 import pygraphviz
 import os

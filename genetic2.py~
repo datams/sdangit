@@ -311,8 +311,8 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 			for k in p.fitness:
 				if p.fitness[k]>old_fitness[k]:
 					n_better_childern+=1
-			print 'n_better_childern: '+str(n_better_childern)
-			print 'len(p.d_list)/5: '+str(len(p.d_list)/5)
+			#print 'n_better_childern: '+str(n_better_childern)
+			#print 'len(p.d_list)/5: '+str(len(p.d_list)/5)
 			if n_better_childern>=len(p.d_list)/5 and mutrate<len(p.d_list):
 				mutrate += 1
 			elif mutrate>1:

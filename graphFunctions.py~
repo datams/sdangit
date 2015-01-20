@@ -1,5 +1,10 @@
-import matplotlib.pyplot as plt
-import matplotlib.colors as colors
+
+# THESE IMPORTS HAVE TO BE ACTIVATED TO USE GRAPHFUNCTIONS PLOTS
+# THEY ARE DEACTIAVTED AS BOXPLOTS IMPORTS THE SAME TOO
+
+#import matplotlib.pyplot as plt
+#import matplotlib.colors as colors
+
 import networkx as nx
 import random
 import copy
@@ -485,7 +490,7 @@ def find_d_to_reroute(optimal_path, bw_req, d_list):
 	else:
 		return None
 
-# get ALL demands in order (best first), whose path intersect with optimal path by at least one and are not blocked (sorted by number of alternative paths)
+# get ALL demands in order (best first), whose path intersect with optimal path by at least one and are not blocked (sorted by bw and number of alternative paths)
 def find_all_d_to_reroute(optimal_path, G, bw_req, d_list):
 	intersecting_demands_list=[]
 	for i in range(len(d_list)-1): # not compare with the newest (the one that cannot fit) demand

@@ -4,8 +4,8 @@
 ######################## python imports ############################
 ####################################################################
 
-import matplotlib.pyplot as plt
-import matplotlib.colors as colors
+#import matplotlib.pyplot as plt
+#import matplotlib.colors as colors
 import networkx as nx
 import random
 import copy
@@ -107,9 +107,9 @@ if mode=='genetic_opt':
 	cli_lp				= False
 	gen_enable			= True
 	repeats				= 1
-	number_of_demands		= 50
+	number_of_demands		= 15
 	path_selection_criterion	= 'hops'
-	graph_type			= 'srg_multiple'
+	graph_type			= 'srg'
 	bw_variants			= [1,2,3]
 	lat_variants			= [4,8]
 	min_gen_time=None
@@ -137,8 +137,8 @@ number_of_rerouting_attempts_pool=0
 bw_lowest=gf.minimum_bw(G)
 bw_highest=gf.maximum_bw(G)
 
-lat_lowest=gf.minimum_lat(G)*5
-lat_highest=gf.maximum_lat(G)*50
+lat_lowest=gf.minimum_lat(G)*3
+lat_highest=gf.maximum_lat(G)*30
 
 print bw_lowest
 print bw_highest
