@@ -356,22 +356,24 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 			acc_ratio=float(len(result))/float(len(d_list))
 
 		target_hit=False
-		if target_ratio>acc_ratio-0.05 and target_ratio<acc_ratio+0.05:
+		if target_ratio<=acc_ratio:
 			target_hit=True
 
 		time_now = time.time()
 		calc_time = time_now - time_start
 		if target_hit:
+			#gf.write2file('targetcheck', '\n\nGA acc: '+str(acc_ratio)+'\ntarget: '+str(target_ratio)+' \ntarget_ratio<=acc_ratio '+str(target_ratio<=acc_ratio))
 			print 'GA hit target'
 			e.set()
 			return_ratio[0]=[acc_ratio]
 			return_paths[0]=[sel_paths]
 			break
-		if calc_time>2000000000000000000:
+		'''if calc_time>20:
 			print 'GA timeout'
 			return_ratio[0]=[acc_ratio]
 			return_paths[0]=[sel_paths]
 			break
+		'''
 		if e.is_set():
 			print 'Another GA finished'
 			return_ratio[0]=[acc_ratio]

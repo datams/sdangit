@@ -14,6 +14,12 @@ def linp(G, d_list):
 
 	lptoc = time.time()
 	lp_time = lptoc - lptic
+	'''	
+	print 'lp ratio '+str(lp_ratio)
+	print 'lp sel paths'+str(print lp_sel_paths)
+	print 'LP is sane: '+str(gf.is_sane(G, lp_sel_paths))
+	input(5)
+	'''
 	return [lp_time, lp_ratio, lp_sel_paths]
 
 def ga(G, d_list, gen_param):
@@ -77,11 +83,17 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	w3.join()
 	w4.join()
 	
-	gen_ratio=return_ratio[0]
+	gen_ratio=return_ratio[0][0]
 	gen_sel_paths=return_paths[0]
 
 	toc = time.time()
 	ga_multicore_time = toc - tic
+	'''	
+	print 'gen acc ratio'+str(gen_ratio)
+	print 'gen sel paths'+str(gen_sel_paths)
+	print 'GA is sane: '+str(gf.is_sane(G, gen_sel_paths[0]))
+	input(5)
+	'''
 	return [ga_multicore_time, gen_ratio, gen_sel_paths]
 
 

@@ -4,27 +4,18 @@ import numpy as np
 import matplotlib as mpl
 import time
 
-def plot(lpt,gnt,title):
+def plot(lpt,gnt,filename):
 	## agg backend is used to create plot as a .png file
 
 	mpl.use('agg')
 
 	import matplotlib.pyplot as plt
 
-	## Create data
-	'''
-	np.random.seed(10)
-	collectn_1 = np.random.normal(100, 10, 200)
-	collectn_2 = np.random.normal(80, 30, 200)
-	collectn_3 = np.random.normal(90, 20, 200)
-	collectn_4 = np.random.normal(70, 25, 200)
-	
-
-	lpt=[2,1,4,34,14,5,24,2,23,23,13,23,5,56,13,4,56,34,46,1,5,25,26,4,26,235,235]
-	lpt=[0.1*i for i in lpt]
-	gnt=[12,2,35,1,5,4,2,31,5,3,2,1,5,4,2,3,5,5,5,232,1,5,4,2,32,54,58]*10
-	gnt=[0.1*i for i in gnt]
-	'''
+	## data
+	#print 'boxx got lpt values:'
+	#print lpt
+	#print 'boxx got gnt values:'
+	#print gnt
 
 	## combine these different collections into a list    
 	data_to_plot = [lpt, gnt]
@@ -85,9 +76,8 @@ def plot(lpt,gnt,title):
 	ax.set_title(title)
 
 	# Save the figure
-	time_now= (time.strftime("%H%M%S"))
-	date_now= (time.strftime("%d%m%Y"))
-	filename=title+'_'+date_now+'_'+time_now
 	fig.savefig(filename, bbox_inches='tight')
+
+	print 'Boxplot done.'
 
 
