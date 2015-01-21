@@ -541,3 +541,9 @@ def write2file(filename, var):
         f.write(str(var)+',\n')
 	f.close()
 
+# write something to a file without comma
+def write2file_pure(filename, var):
+	f = open(filename, "a")
+        f.write(str(var)+'\n')
+	f.close()
+
