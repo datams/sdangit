@@ -388,6 +388,15 @@ def is_feasible(G,d,path_selection_criterion):
 	else:
 		return False
 
+# check if demand is feasible in graph G more intelligently
+def is_feasible2(G,d,path_selection_criterion):
+	# working copy of graph	
+	G_prune=G.copy()
+	# pruning
+	G_prune=prune_bw(G_prune, d.get_bw())
+	# look for paths
+	return nx.has_path(G_prune,d.source,d.target)
+
 # check if sel_paths is feasible in graph G
 def is_sane(G,sel_paths):
     #G_temp=copy.deepcopy(G)

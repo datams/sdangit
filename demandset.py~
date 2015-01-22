@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 ####################### modules imports ############################
 import demand as dem
 import customGraph
@@ -9,10 +11,10 @@ import solverunit as su
 # runs build_d_params for graph_typ and n demands
 def run_build(graph_type,number_of_demands, ratio):
 	G			=	customGraph.make(graph_type)
-	bw_lowest		=	gf.minimum_bw(G)/30
+	bw_lowest		=	gf.minimum_bw(G)/40
 	bw_highest		=	gf.maximum_bw(G)
 	lat_lowest		=	gf.minimum_lat(G)*10
-	lat_highest		=	gf.maximum_lat(G)*100
+	lat_highest		=	gf.maximum_lat(G)*1000
 	build_d_params(number_of_demands, G, ratio, bw_lowest, bw_highest, lat_lowest, lat_highest)
 
 # prints a list of random demands [source, target, bw, lat]
@@ -22,17 +24,18 @@ def build_d_params(number_of_demands, G, ratio, bw_lowest, bw_highest, lat_lowes
 		d_list=[]
 		for k in range(number_of_demands):
 			while(True):
-				#print 'Create demand Nr. '+str(k)
+				print 'Create demand Nr. '+str(k)
 				# initialize demand
 				temp_dem = dem.demand(G.nodes(),88,88)
 				# make random choice
 				#temp_dem.make_random_choice()
 				temp_dem.make_total_random_choice(bw_lowest, bw_highest, lat_lowest, lat_highest)
 				# check feasibility
-				if gf.is_feasible(G,temp_dem,path_selection_criterion):
+				print 'check feasabilty'
+				if gf.is_feasible2(G, temp_dem, path_selection_criterion):
 					d_list.append(temp_dem)
 					break
-		
+		print 'Running LP'
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
 		print 'lp_ratio '+str(lp_ratio)
 		if lp_ratio>ratio:
@@ -46,18 +49,20 @@ def build_d_params(number_of_demands, G, ratio, bw_lowest, bw_highest, lat_lowes
 ########################## build data ###############################
 
 # always take 70% of the num_nodes as num_demands
-for m in [0.1, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9]:
-	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg',14, m) for ratio: "+str(m))
-	print 'd_lists', "\n\n\nrun_build('srg',14, m) for ratio: "+str(m)
-	run_build('srg',14, m)
+for m in [0.5, 0.7, 0.8, 0.9]:
+	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg', 14, m) for ratio: "+str(m))
+	print 'd_lists', "\n\n\nrun_build('srg', 14, m) for ratio: "+str(m)
+	run_build('srg', 14, m)
 
-	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg_multiple',235, m) for ratio: "+str(m))
-	print 'd_lists', "\n\n\nrun_build('srg_multiple',235, m) for ratio: "+str(m)		
-	run_build('srg_multiple',235, m)
+for m in [0.5, 0.7, 0.8, 0.9]:
+	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg_multiple', 235, m) for ratio: "+str(m))
+	print 'd_lists', "\n\n\nrun_build('srg_multiple', 235, m) for ratio: "+str(m)		
+	run_build('srg_multiple', 235, m)
 
-	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg_multiple8',470, m) for ratio: "+str(m))	
-	print 'd_lists', "\n\n\nrun_build('srg_multiple8',470, m) for ratio: "+str(m)
-	run_build('srg_multiple8',470, m)
+for m in [0.5, 0.7, 0.8, 0.9]:
+	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg_multiple8', 470, m) for ratio: "+str(m))	
+	print 'd_lists', "\n\n\nrun_build('srg_multiple8', 470, m) for ratio: "+str(m)
+	run_build('srg_multiple8', 470, m)
 
 
 ########################## help function ############################
