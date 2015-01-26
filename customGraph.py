@@ -15,6 +15,7 @@ def make(name):
 		G.add_edge(3,5, bw=3, lat=1)
 		G.add_edge(4,6, bw=3, lat=1)
 		G.add_edge(5,6, bw=3, lat=1)
+		G = G.to_directed()
 		return G
 
 	elif name=='double_eight':
@@ -31,6 +32,7 @@ def make(name):
 		G.add_edge(5,6, bw=3, lat=1)
 		F= nx.disjoint_union(G,G)
 		F.add_edge(0,7, bw=3, lat=1)
+		F = F.to_directed()
 		return F
 
 	elif name=='deight':
@@ -46,6 +48,7 @@ def make(name):
 		G.add_edge(4,6, bw=4, lat=1)
 		G.add_edge(5,6, bw=4, lat=1)
 		G.add_edge(1,4, bw=4, lat=1)
+		G = G.to_directed()
 		return G
 
 	elif name=='diamond':
@@ -56,6 +59,7 @@ def make(name):
 		G.add_edge(0,2, bw=1, lat=1)
 		G.add_edge(2,3, bw=1, lat=1)
 		G.add_edge(1,3, bw=1, lat=1)
+		G = G.to_directed()
 		return G
 
 	elif name=='richer1':
@@ -83,6 +87,7 @@ def make(name):
 		G.add_edge(7, 5, bw=1, lat=7)
 		G.add_edge(7, 12, bw=1, lat=14)
 		G.add_edge(5, 3, bw=1, lat=5)
+		G = G.to_directed()
 		return G
 	
 	elif name=='srg':
@@ -118,6 +123,7 @@ def make(name):
 		G.add_edge(6,7, bw=5, lat=3.496)
 		G.add_edge(6,11, bw=5, lat=5.41)
 		G.add_edge(6,15, bw=5, lat=3.866)
+		G = G.to_directed()
 		return G
 
 	elif name=='srg_multiple':
@@ -153,18 +159,39 @@ def make(name):
 		G.add_edge(6,7, bw=5, lat=3.496)
 		G.add_edge(6,11, bw=5, lat=5.41)
 		G.add_edge(6,15, bw=5, lat=3.866)
+
+		'''
+		intercon=''
 		for r in range(4):	
 			old_nodes=G.nodes()			
 			G= nx.disjoint_union(G,G)
 			all_nodes=G.nodes()
 			new_nodes=list(set(all_nodes) - set(old_nodes))
-			for i in range(4):
+			for n in range(4):
 				from_node=random.choice(old_nodes)
 				old_nodes.remove(from_node)			
 				to_node=random.choice(new_nodes)
 				new_nodes.remove(to_node)
-				G.add_edge(from_node, to_node, bw=15, lat=3.866)
+				intercon=intercon+'('+str(from_node)+', '+str(to_node)+'), '
+				G.add_edge(from_node, to_node, bw=50, lat=3.866)
+		print intercon
 		return G
+		'''
+
+		intercon=[(5, 34), (14, 22), (7, 30), (2, 41), (38, 83),\
+		(18, 61), (9, 79), (4, 81), (54, 134), (11, 149), (41, 130),\
+		(56, 107), (32, 241), (26, 288), (93, 237), (152, 316)]
+
+		for r in range(4):	
+			old_nodes=G.nodes()			
+			G= nx.disjoint_union(G,G)
+			all_nodes=G.nodes()
+			new_nodes=list(set(all_nodes) - set(old_nodes))
+		for con in intercon:
+			G.add_edge(con[0], con[1], bw=100, lat=10)
+		G = G.to_directed()
+		return G
+
 
 	elif name=='srg_multiple5':
 		G=nx.Graph()
@@ -199,6 +226,10 @@ def make(name):
 		G.add_edge(6,7, bw=5, lat=3.496)
 		G.add_edge(6,11, bw=5, lat=5.41)
 		G.add_edge(6,15, bw=5, lat=3.866)
+		
+
+		'''		
+		intercon=''
 		for r in range(5):	
 			old_nodes=G.nodes()			
 			G= nx.disjoint_union(G,G)
@@ -209,7 +240,23 @@ def make(name):
 				old_nodes.remove(from_node)			
 				to_node=random.choice(new_nodes)
 				new_nodes.remove(to_node)
-				G.add_edge(from_node, to_node, bw=15, lat=3.866)
+				intercon=intercon+'('+str(from_node)+', '+str(to_node)+'), '
+				G.add_edge(from_node, to_node, bw=50, lat=3.866)
+		print intercon
+		'''
+
+		intercon=[(18, 0), (16, 40), (9, 37), (13, 36), (14, 38), (22, 70), (12, 52),\
+		(5, 73), (21, 53), (39, 54), (28, 116), (75, 91), (10, 140), (59, 106), (83, 112),\
+		(102, 181), (57, 305), (42, 288), (73, 257), (2, 256), (11, 534), (155, 395), (3, 653), (189, 659), (55, 339)]
+
+		for r in range(5):	
+			old_nodes=G.nodes()			
+			G= nx.disjoint_union(G,G)
+			all_nodes=G.nodes()
+			new_nodes=list(set(all_nodes) - set(old_nodes))
+		for con in intercon:
+			G.add_edge(con[0], con[1], bw=100, lat=10)
+		G = G.to_directed()
 		return G
 
 	else:

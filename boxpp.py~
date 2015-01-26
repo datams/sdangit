@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib as mpl
 import time
 
-def plot(lpt,gnt,filename):
+def plot(lpt, lp_ratio, gnt, gen_ratio, filename):
 	## agg backend is used to create plot as a .png file
 
 	mpl.use('agg')
@@ -66,14 +66,16 @@ def plot(lpt,gnt,filename):
 	    flier.set(marker='o', color='#e7298a', alpha=0.5)
 
 	## Custom x-axis labels
-	ax.set_xticklabels(['LP Gurobi', 'Genetic Algorithm'])
+	ax.set_xticklabels(['LP Gurobi '+str(round(lp_ratio,3)), 'Genetic Algorithm '+str(round(gen_ratio,3))], , fontsize=20)
 
 	## Remove top axes and right axes ticks
 	ax.get_xaxis().tick_bottom()
 	ax.get_yaxis().tick_left()
 
+	ax.set_ylabel('time [s]', fontsize=20)
+
 	## Title
-	ax.set_title(title)
+	ax.set_title(filename, fontsize=20)
 
 	# Save the figure
 	fig.savefig(filename, bbox_inches='tight')

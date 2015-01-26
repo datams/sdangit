@@ -267,6 +267,10 @@ def shape_mut2(n, bottom, upper):
 # runs multiple evolution iterations in order to find the best genome
 def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,nobility_children, start_mut, non_prob, weight_ac, mut_method, target_ratio, e, return_ratio, return_paths, ga_thread):
 	
+	# get start time for time out
+	time_start = time.time()
+
+	gf.write2file('GAGACHECK', 'melde ga_thread '+str(ga_thread)+' before feasible paths')
 	# determine all feasible paths
 	for i in range(len(d_list)):
 		#G_prune=copy.deepcopy(G)
@@ -275,6 +279,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
 
+	gf.write2file('GAGACHECK', 'melde ga_thread '+str(ga_thread)+' after feasible paths')
 	# create population
 	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac)
 
@@ -289,7 +294,6 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 	p.evolute(mutrate)
 
 	print 'enter loop'
-	time_start = time.time()
 	while(True):
 		#print 'cycle '+str(cycles)
 		#mutrate=mutationrate[cycles]
@@ -355,8 +359,9 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 					#result.append(None)
 			acc_ratio=float(len(result))/float(len(d_list))
 
+		#print 'GA acc.ratio: '+str(acc_ratio)
 		target_hit=False
-		if target_ratio<=acc_ratio:
+		if target_ratio-0.02<=acc_ratio:
 			target_hit=True
 
 		time_now = time.time()
@@ -368,12 +373,12 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 			return_ratio[0]=[acc_ratio]
 			return_paths[0]=[sel_paths]
 			break
-		'''if calc_time>20:
+		if calc_time>300:
 			print 'GA timeout'
+			e.set()
 			return_ratio[0]=[acc_ratio]
 			return_paths[0]=[sel_paths]
 			break
-		'''
 		if e.is_set():
 			print 'Another GA finished'
 			break

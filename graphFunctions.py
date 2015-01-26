@@ -98,6 +98,8 @@ def dealloc(G_updated, d):
 def shortest_p(G,s,t,lat):
 	if nx.has_path(G,s,t)==True:
 		intelli_cutoff = lat/minimum_lat(G)
+		if intelli_cutoff>20:
+			intelli_cutoff=20
 		paths_found_gen = nx.all_simple_paths(G, s, t, cutoff=intelli_cutoff)
 		paths_found_list=[p for p in paths_found_gen]
 		paths_pack=[]

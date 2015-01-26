@@ -82,8 +82,10 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	w2.join()
 	w3.join()
 	w4.join()
+
+	print 'All processes ended'
 	
-	gen_ratio=return_ratio[0]
+	gen_ratio=return_ratio[0][0]
 	gen_sel_paths=return_paths[0]
 
 	toc = time.time()

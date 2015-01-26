@@ -120,7 +120,7 @@ if mode=='genetic_opt':
 
 # instantiate a graph
 G=customGraph.make(graph_type)
-G=G.to_directed()
+#G=G.to_directed()
 
 # clear terminal
 print chr(27) + "[2J"

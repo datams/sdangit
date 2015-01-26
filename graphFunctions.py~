@@ -98,6 +98,8 @@ def dealloc(G_updated, d):
 def shortest_p(G,s,t,lat):
 	if nx.has_path(G,s,t)==True:
 		intelli_cutoff = lat/minimum_lat(G)
+		if intelli_cutoff>10:
+			intelli_cutoff=10
 		paths_found_gen = nx.all_simple_paths(G, s, t, cutoff=intelli_cutoff)
 		paths_found_list=[p for p in paths_found_gen]
 		paths_pack=[]
@@ -396,25 +398,6 @@ def is_feasible2(G,d,path_selection_criterion):
 	G_prune=prune_bw(G_prune, d.get_bw())
 	# look for paths
 	return nx.has_path(G_prune,d.source,d.target)
-
-
-
-
-
-
-
-
-
-	working copy
-	G_temp=G.copy()
-	# pru
-	# look for paths
-	[G_updated, paths_pack, sel_path]=alloc(G_temp,d_temp,path_selection_criterion)
-	# if successful, return True
-	if sel_path!=[]:
-		return True
-	else:
-		return False
 
 # check if sel_paths is feasible in graph G
 def is_sane(G,sel_paths):
