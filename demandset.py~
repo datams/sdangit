@@ -57,7 +57,7 @@ def build_d_params(number_of_demands, G, ratio, bw_lowest, bw_highest, lat_lowes
 
 ########################## build data ###############################
 
-# always take 70% of the num_nodes as num_demands
+'''
 for m in range(10):
 	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg', 14, m) for ratio: "+str(m))
 	print 'd_lists', "\n\n\nrun_build('srg', 14, m) for ratio: "+str(m)
@@ -73,7 +73,7 @@ for m in range(10):
 	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg_multiple5', 470, m) for ratio: "+str(m))	
 	print 'd_lists', "\n\n\nrun_build('srg_multiple5', 470, m) for ratio: "+str(m)
 	run_build('srg_multiple5', 470, m)
-
+'''
 
 
 ########################## help function ############################
@@ -95,7 +95,6 @@ def build_d_list(G,d_params):
 
 def get_std_d_list(graph_type):
 
-
 	'''
 	d_params_srg=[\
 	[6,2,8.29221446513,65.7834691962],\
@@ -113,7 +112,8 @@ def get_std_d_list(graph_type):
 	[2,16,5.26350258858,5.6304064309],\
 	[16,6,9.76385640111,135.213284538],\
 	[2,3,13.7785166894,80.1619045641]]
-
+	'''
+	'''
 	d_params_srg_multiple=[\
 	[274,288,6.25609563163,54.8997570784],\
 	[170,330,5.52749109725,71.9302899754],\
@@ -269,6 +269,7 @@ def get_std_d_list(graph_type):
 	[463,491,12.9992554273,349.913707677]]
 	'''
 
+	
 	d_params_srg=[\
 	[13,4,0.0,90.822661116],\
 	[19,16,0.0,20.795611307],\
@@ -284,7 +285,8 @@ def get_std_d_list(graph_type):
 	[6,13,0.0,57.2543316307],\
 	[15,21,0.0,130.661481858],\
 	[12,7,0.0,92.7390190793]]
-
+	
+	'''
 	d_params_srg_multiple=[\
 	[135,274,0.916358930825,1853.94229013],\
 	[68,144,0.661910416743,2355.95944896],\
@@ -993,7 +995,7 @@ def get_std_d_list(graph_type):
 	[661,536,0.511559422936,2420.40953854],\
 	[69,284,0.483142037417,742.222886632],\
 	[119,74,0.708802434799,3550.91119008]]
-
+	'''
 
 	if graph_type=='srg':
 		G = customGraph.make('srg')

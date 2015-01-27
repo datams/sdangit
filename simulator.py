@@ -25,35 +25,45 @@ import boxpp
 ########################## experiment ##############################
 
 # Create records variable
-records = []
+all_records = []
 
 # Create parameters pool
 param_container = gp.gen_param()
 #repeats = param_container.size()
 repeats = 1
 exp_times = []
-graphtype='srg'
-repetitions=1
+graphtype='srg_multiple'
+repetitions=2
 time_now= (time.strftime("%H%M%S"))
 date_now= (time.strftime("%d%m%Y"))
-
-exp_name=graphtype+' k='+str(repetitions)+'_'+date_now+'_'+time_now
 
 exp_start_time = time.time()
 for expnum in range(repeats):
 
+	exp_name=graphtype+' k='+str(repetitions)+'_'+date_now+'_'+time_now
+	exp_name_numbered=graphtype+' k='+str(repetitions)+'_'+date_now+'_'+time_now+'_'+str(expnum)
+
 	tic = time.time()
 	#param=param_container.next()
-	param=[20, 0, 0, 0, 0, 3, 50, 0.9, 1]
+	#param=[20, 0, 0, 0, 0, 3, 50, 0.9, 1]
+	param=[200, 0, 0, 0, 0, 80, 60, 0.9, 1]
+	#[pop_size, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, non_prob, weight_ac, mut_method]
 
 	# Graph and demand creation
 	[G, d_list] = ds.get_std_d_list(graphtype)
 	#[G, d_list] = ds.get_rnd_d_list('srg', 15)
 
+	# Create per experiment records variable
+	current_records=[]
+
 	for rep in range(repetitions):
 
 		# LP solve
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
+		#print 'max length of selected LP paths'
+		#print max([len(kk) for (kk,ll) in lp_sel_paths.values()])
+		#print lp_sel_paths
+		#input(8)
 
 		# Gen solve
 		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
@@ -63,20 +73,22 @@ for expnum in range(repeats):
 		
 		
 		# Record outcome
-		records.append([lp_time, lp_ratio, gen_time, gen_ratio, param])
+		all_records.append([lp_time, lp_ratio, gen_time, gen_ratio, param])
+		current_records.append([lp_time, lp_ratio, gen_time, gen_ratio, param])
+		gf.write2file(exp_name+'_log', [lp_time, lp_ratio, gen_time, gen_ratio, param])	
 
-	lpt=[lp_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in records]
-	gnt=[gen_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in records]
+	lpt=[lp_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
+	gnt=[gen_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
 
 	avg_lpt=sum(lpt)/len(lpt)
 	std_lpt=numpy.std(lpt)
 	avg_gnt=sum(gnt)/len(gnt)
 	std_gnt=numpy.std(gnt)
 
-	boxpp.plot(lpt, lp_ratio, gnt, gen_ratio, exp_name)
+	boxpp.plot(lpt, lp_ratio, gnt, gen_ratio, exp_name_numbered)
 
 	# write avg and std to file
-	gf.write2file(exp_name+'_log', [avg_lpt, std_lpt, avg_gnt, std_gnt, param])
+	gf.write2file(exp_name+'_log', '\n\nAvg and Std over reps\n'+[avg_lpt, std_lpt, lp_ratio, avg_gnt, std_gnt, gen_ratio, param])
 
 	# time calculations
 	toc = time.time()
@@ -91,7 +103,7 @@ for expnum in range(repeats):
 
 # sort ALL records and print to file
 gf.write2file(exp_name+'_log',	'\n\n\n\nSorted Records:')
-sorted_records = sorted(records, key=operator.itemgetter(1))
+sorted_records = sorted(all_records, key=operator.itemgetter(3))
 for record in sorted_records:
 	gf.write2file(exp_name+'_log',	record)
 
