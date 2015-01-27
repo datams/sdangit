@@ -59,6 +59,21 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	print '\nRun multiple process Genetic Algorithm'
 	tic = time.time()
 	
+
+	#gf.write2file('GAGARATE', 'vor feasible paths')
+
+	print 'Determine all feasible paths'
+	for i in range(len(d_list)):
+		#G_prune=copy.deepcopy(G)
+		G_prune=G.copy()
+		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
+		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
+		d_list[i].set_paths_pack(pathpack)
+		print 'added packs'
+	
+
+	#gf.write2file('GAGARATE', 'nach feasible paths')
+	print 'Start evolution'
 	e = multiprocessing.Event()
 	manager = Manager()
 	return_ratio = manager.dict()
@@ -82,7 +97,6 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	w2.join()
 	w3.join()
 	w4.join()
-
 	print 'All processes ended'
 	
 	gen_ratio=return_ratio[0][0]

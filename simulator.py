@@ -32,8 +32,8 @@ param_container = gp.gen_param()
 #repeats = param_container.size()
 repeats = 1
 exp_times = []
-graphtype='srg_multiple'
-repetitions=2
+graphtype='srg'
+repetitions=5
 time_now= (time.strftime("%H%M%S"))
 date_now= (time.strftime("%d%m%Y"))
 
@@ -64,6 +64,8 @@ for expnum in range(repeats):
 		#print max([len(kk) for (kk,ll) in lp_sel_paths.values()])
 		#print lp_sel_paths
 		#input(8)
+		print 'LP done.'
+		print 'LP acc. ratio: '+str(lp_ratio)
 
 		# Gen solve
 		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
@@ -75,7 +77,7 @@ for expnum in range(repeats):
 		# Record outcome
 		all_records.append([lp_time, lp_ratio, gen_time, gen_ratio, param])
 		current_records.append([lp_time, lp_ratio, gen_time, gen_ratio, param])
-		gf.write2file(exp_name+'_log', [lp_time, lp_ratio, gen_time, gen_ratio, param])	
+		gf.write2file('data/'+exp_name+'_log', [lp_time, lp_ratio, gen_time, gen_ratio, param])	
 
 	lpt=[lp_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
 	gnt=[gen_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
@@ -85,10 +87,10 @@ for expnum in range(repeats):
 	avg_gnt=sum(gnt)/len(gnt)
 	std_gnt=numpy.std(gnt)
 
-	boxpp.plot(lpt, lp_ratio, gnt, gen_ratio, exp_name_numbered)
+	boxpp.plot(lpt, lp_ratio, gnt, gen_ratio, 'data/'+exp_name_numbered)
 
 	# write avg and std to file
-	gf.write2file(exp_name+'_log', '\n\nAvg and Std over reps\n'+[avg_lpt, std_lpt, lp_ratio, avg_gnt, std_gnt, gen_ratio, param])
+	gf.write2file('data/'+exp_name+'_log', '\n\nAvg and Std over reps\n'+str([avg_lpt, std_lpt, lp_ratio, avg_gnt, std_gnt, gen_ratio, param]))
 
 	# time calculations
 	toc = time.time()
@@ -98,14 +100,14 @@ for expnum in range(repeats):
 	past_time_calc=avg_exp_time*expnum
 	past_time_real=toc-exp_start_time
 	remaining_time=(repeats-expnum)*avg_exp_time
-	gf.write2file(exp_name+'_time', 'n='+str(expnum)+'/'+str(repeats)+' time past: '+gp.sec2timestr(past_time_real)+\
+	gf.write2file('data/'+exp_name+'_time', 'n='+str(expnum)+'/'+str(repeats)+' time past: '+gp.sec2timestr(past_time_real)+\
 	' time past calc: '+gp.sec2timestr(past_time_calc)+' time remaining calc: '+gp.sec2timestr(remaining_time))
 
 # sort ALL records and print to file
-gf.write2file(exp_name+'_log',	'\n\n\n\nSorted Records:')
+gf.write2file('data/'+exp_name+'_log',	'\n\n\n\nSorted Records:')
 sorted_records = sorted(all_records, key=operator.itemgetter(3))
 for record in sorted_records:
-	gf.write2file(exp_name+'_log',	record)
+	gf.write2file('data/'+exp_name+'_log',	record)
 
 
 

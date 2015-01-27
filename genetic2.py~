@@ -270,7 +270,11 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 	# get start time for time out
 	time_start = time.time()
 
-		gf.write2file('GAGARATE', 'melde ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' vor feasible paths')
+
+	
+
+
+	'''
 	# determine all feasible paths
 	for i in range(len(d_list)):
 		#G_prune=copy.deepcopy(G)
@@ -278,8 +282,11 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
 		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
+	'''
 
-		gf.write2file('GAGARATE', 'melde ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' nach feasible paths')
+
+
+	
 
 	# create population
 	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac)
@@ -290,7 +297,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 	# For number of iterations:
 	cycles=0
 	# set initial mutation rate	
-	mutrate=start_mut*len(d_list)
+	mutrate=int(start_mut*len(d_list)/100)
 	#mutrate=int(len(p.d_list)*0.7)
 	p.evolute(mutrate)
 
@@ -299,6 +306,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 		#print 'cycle '+str(cycles)
 		#mutrate=mutationrate[cycles]
 		print 'mutrate '+str(mutrate)
+		#gf.write2file('GAGARATE', 'mutrate '+str(mutrate))
 		# get best fitness value
 		[selection, old_best_fitness]=p.best_genome()
 		old_fitness=p.fitness.copy()
@@ -322,7 +330,6 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 				mutrate += 1
 			elif mutrate>1:
 				mutrate -=1
-		
 		
 		if mut_method==2:
 			# adaptive mut rate based on diff
@@ -360,8 +367,8 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 					#result.append(None)
 			acc_ratio=float(len(result))/float(len(d_list))
 
-		print 'GA acc.ratio: '+str(acc_ratio)
-		gf.write2file('GAGARATE', 'melde ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' rate: '+str(acc_ratio)+' '+str(sel_paths))
+		#print 'GA acc.ratio: '+str(acc_ratio)
+		#gf.write2file('GAGARATE', 'melde ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' rate: '+str(acc_ratio)+' '+str(sel_paths))
 		target_hit=False
 		if target_ratio-0.05<=acc_ratio:
 			target_hit=True
@@ -369,7 +376,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 		time_now = time.time()
 		calc_time = time_now - time_start
 		if target_hit:
-			gf.write2file('targetcheck', '\n\nGA acc: '+str(acc_ratio)+'\ntarget: '+str(target_ratio)+' \ntarget_ratio<=acc_ratio '+str(target_ratio<=acc_ratio))
+			#gf.write2file('targetcheck', '\n\nGA acc: '+str(acc_ratio)+'\ntarget: '+str(target_ratio)+' \ntarget_ratio<=acc_ratio '+str(target_ratio<=acc_ratio))
 			print 'GA hit target'
 			e.set()
 			return_ratio[0]=[acc_ratio]
