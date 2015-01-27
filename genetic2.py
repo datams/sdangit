@@ -19,6 +19,7 @@ class population:
 	self.non_prob=non_prob
 	self.weight_ac=weight_ac
 	self.weight_bw=1-self.weight_ac
+	self.pop_size=pop_size
 	# a list with ranking positions for each corresponding demand
 	self.ranking=[]
 	for k in range(pop_size):
@@ -317,43 +318,42 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 		# get best fitness value
 		[selection, old_best_fitness]=p.best_genome()
 		old_fitness=p.fitness.copy()
-		#p.evolute(mutationrate[cycles])
+		#print 'dada'
+		#print old_fitness
+
+		
 		p.evolute(mutrate)
-
-
-
-		# sollte da nicht noch das rating kommen?
-
 
 		# print p.ranking
 		[selection, fitness]=p.best_genome()
-		# count better childern
-		#better_childern = [val for val in p.fitness.values() if val > old_best_fitness]
-		
+		new_fitness=p.fitness
+				
 		# adaptive mut rate 1/5 rule
-			
 		if mut_method==1:
 			n_better_childern=0
-			for k in p.fitness:
-				if p.fitness[k]>old_fitness[k]:
+			for k in new_fitness:
+				if new_fitness[k][0]>old_fitness[k][0]:
 					n_better_childern+=1
 			#print 'n_better_childern: '+str(n_better_childern)
 			#print 'len(p.d_list)/5: '+str(len(p.d_list)/5)
-			if n_better_childern>=len(p.d_list)/5 and mutrate<len(p.d_list):
+			if n_better_childern >= p.pop_size/5 and mutrate<len(p.d_list):
 				mutrate += 1
 			elif mutrate>1:
 				mutrate -=1
 		
 		if mut_method==2:
+			'''
 			# adaptive mut rate based on diff
 			diff=fitness[0]-old_best_fitness[0]
 			if diff<0.2:
 				if mutrate>1:
-				#if mutrate>1 and mutrate>int((1-fitness[0]+0.4)*len(p.d_list)*0.7): # len(p.d_list)*0.7 as the maximum mut rate and (1-fitness[0]+0.4) the function going down over time
+				#if mutrate>1 and mutrate>int((1-fitness[0]+0.4)*len(p.d_list)*0.7): # len(p.d_list)*0.7
+					#as the maximum mut rate and (1-fitness[0]+0.4) the function going down over time
 					mutrate-=1
 			if diff>0.2:
 				if mutrate<len(p.d_list):
 					mutrate+=1
+			'''
 
 		# adaptive non_prob
 		#p.non_prob=int((1-fitness+0.3)*0.4*100)
@@ -381,7 +381,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 			acc_ratio=float(len(result))/float(len(d_list))
 
 		#print 'GA acc.ratio: '+str(acc_ratio)
-		gf.write2file('GAGARATE', 'melde ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' rate: '+str(acc_ratio))
+		gf.write2file('GAGARATE', 'ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' ratio: '+str(round(acc_ratio,5))+' mut '+str(mutrate))
 		target_hit=False
 		if target_ratio-0.05<=acc_ratio:
 			target_hit=True
