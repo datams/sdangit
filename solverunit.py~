@@ -62,17 +62,18 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 
 	#gf.write2file('GAGARATE', 'vor feasible paths')
 
-	# determine all feasible paths
+	print 'Determine all feasible paths'
 	for i in range(len(d_list)):
 		#G_prune=copy.deepcopy(G)
 		G_prune=G.copy()
 		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
 		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
+		print 'added packs'
 	
 
 	#gf.write2file('GAGARATE', 'nach feasible paths')
-
+	print 'Start evolution'
 	e = multiprocessing.Event()
 	manager = Manager()
 	return_ratio = manager.dict()
@@ -103,12 +104,13 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 
 	toc = time.time()
 	ga_multicore_time = toc - tic
-	'''	
-	print 'gen acc ratio'+str(gen_ratio)
-	print 'gen sel paths'+str(gen_sel_paths)
-	print 'GA is sane: '+str(gf.is_sane(G, gen_sel_paths[0]))
-	input(5)
-	'''
+	
+	if gen_ratio>lp_ratio:
+		print 'gen acc ratio '+str(gen_ratio)
+		#print 'gen sel paths'+str(gen_sel_paths)
+		print 'GA is sane: '+str(gf.is_sane(G, gen_sel_paths[0]))
+		input(5)
+	
 	return [ga_multicore_time, gen_ratio, gen_sel_paths]
 
 

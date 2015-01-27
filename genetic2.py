@@ -21,6 +21,8 @@ class population:
 	self.weight_bw=1-self.weight_ac
 	# a list with ranking positions for each corresponding demand
 	self.ranking=[]
+	for k in range(pop_size):
+		self.ranking.append(k)
 	# a dict with the fitness value for each corresponding demand
 	self.fitness={}
 	for k in range(pop_size):
@@ -67,8 +69,7 @@ class population:
 	#print 'nobility members'+str(self.nobility_members)
 	#print 'nobility childern '+str(self.nobility_children)
 	#print 'nobility childern '+str(self.clergy_children)
-	self.rateall()
-	self.rank()
+
 
 	temp=[]
 	
@@ -107,7 +108,13 @@ class population:
 				temp.append(current_genome.mutate(mutrate,self.non_prob))
 	#print 'equal len '+str(len(temp)==len(self.individuals))
 	
+
 	self.individuals=temp
+
+	self.rateall()
+	self.rank()
+
+
 
 
 # reflects a genome as a list of path choices for demands
@@ -292,7 +299,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac)
 
 	# create initial generation by mutating all individuals
-	p.mutall(1)
+	#p.mutall(1)
 
 	# For number of iterations:
 	cycles=0
@@ -312,6 +319,12 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 		old_fitness=p.fitness.copy()
 		#p.evolute(mutationrate[cycles])
 		p.evolute(mutrate)
+
+
+
+		# sollte da nicht noch das rating kommen?
+
+
 		# print p.ranking
 		[selection, fitness]=p.best_genome()
 		# count better childern
@@ -368,7 +381,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 			acc_ratio=float(len(result))/float(len(d_list))
 
 		#print 'GA acc.ratio: '+str(acc_ratio)
-		#gf.write2file('GAGARATE', 'melde ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' rate: '+str(acc_ratio)+' '+str(sel_paths))
+		gf.write2file('GAGARATE', 'melde ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' rate: '+str(acc_ratio))
 		target_hit=False
 		if target_ratio-0.05<=acc_ratio:
 			target_hit=True
@@ -382,7 +395,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 			return_ratio[0]=[acc_ratio]
 			return_paths[0]=[sel_paths]
 			break
-		if calc_time>600:
+		if calc_time>120:
 			print 'GA timeout'
 			e.set()
 			return_ratio[0]=[acc_ratio]

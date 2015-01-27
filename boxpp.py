@@ -73,12 +73,17 @@ def plot(lpt, lp_ratio, gnt, gen_ratio, filename):
 	ax.get_yaxis().tick_left()
 
 	ax.set_ylabel('time [s]', fontsize=20)
+	ax.set_xlabel('acc. ratio', fontsize=20)
 
 	## Title
 	ax.set_title(filename, fontsize=20)
 
 	# Save the figure
 	fig.savefig(filename, bbox_inches='tight')
+
+	ax.set_yscale('log')
+
+	fig.savefig(filename+'_log', bbox_inches='tight')
 
 	print 'Boxplot done.'
 

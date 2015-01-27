@@ -33,7 +33,7 @@ param_container = gp.gen_param()
 repeats = 1
 exp_times = []
 graphtype='srg'
-repetitions=5
+repetitions=10
 time_now= (time.strftime("%H%M%S"))
 date_now= (time.strftime("%d%m%Y"))
 
@@ -66,6 +66,9 @@ for expnum in range(repeats):
 		#input(8)
 		print 'LP done.'
 		print 'LP acc. ratio: '+str(lp_ratio)
+		if gf.is_sane(G.copy(), lp_sel_paths)==False:
+			print 'LP insane'
+			input(99)
 
 		# Gen solve
 		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
@@ -80,14 +83,27 @@ for expnum in range(repeats):
 		gf.write2file('data/'+exp_name+'_log', [lp_time, lp_ratio, gen_time, gen_ratio, param])	
 
 	lpt=[lp_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
+	lpr=[lp_ratio for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
 	gnt=[gen_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
+	gnr=[gen_ratio for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
 
-	avg_lpt=sum(lpt)/len(lpt)
+	# LP time
+	#avg_lpt=sum(lpt)/len(lpt)
+	avg_lpt=numpy.mean(lpt)
 	std_lpt=numpy.std(lpt)
-	avg_gnt=sum(gnt)/len(gnt)
-	std_gnt=numpy.std(gnt)
+	# LP ratio
+	#avg_lpr=sum(lpr)/len(lpr)
+	avg_lpr=numpy.mean(lpr)
 
-	boxpp.plot(lpt, lp_ratio, gnt, gen_ratio, 'data/'+exp_name_numbered)
+	# GA time
+	#avg_gnt=sum(gnt)/len(gnt)
+	avg_gnt=numpy.mean(gnt)
+	std_gnt=numpy.std(gnt)
+	# GA ratio
+	avg_gnr=sum(gnr)/len(gnr)
+	avg_gnr=numpy.mean(gnr)
+
+	boxpp.plot(lpt, avg_lpr, gnt, avg_gnr, 'data/'+exp_name_numbered)
 
 	# write avg and std to file
 	gf.write2file('data/'+exp_name+'_log', '\n\nAvg and Std over reps\n'+str([avg_lpt, std_lpt, lp_ratio, avg_gnt, std_gnt, gen_ratio, param]))

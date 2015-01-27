@@ -73,7 +73,7 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	
 
 	#gf.write2file('GAGARATE', 'nach feasible paths')
-	print 'Start evolution'
+	print 'Find all paths'
 	e = multiprocessing.Event()
 	manager = Manager()
 	return_ratio = manager.dict()
@@ -84,15 +84,15 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	w3 = multiprocessing.Process(name='GA3', target=ga_coreelement, args=(G, d_list, gen_param, lp_ratio, e, return_ratio, return_paths, 3))
 	w4 = multiprocessing.Process(name='GA4', target=ga_coreelement, args=(G, d_list, gen_param, lp_ratio, e, return_ratio, return_paths, 4))
 
-	print 'Start process 1'
+	print 'Start GA process 1'
     	w1.start()
-	print 'Start process 2'
+	print 'Start GA process 2'
     	w2.start()
-	print 'Start process 3'
+	print 'Start GA process 3'
     	w3.start()
-	print 'Start process 4'
+	print 'Start GA process 4'
     	w4.start()
-	print 'Wait for all processes'
+	print 'GA processes running'
 	w1.join()
 	w2.join()
 	w3.join()
@@ -104,12 +104,13 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 
 	toc = time.time()
 	ga_multicore_time = toc - tic
-	'''	
-	print 'gen acc ratio'+str(gen_ratio)
-	print 'gen sel paths'+str(gen_sel_paths)
-	print 'GA is sane: '+str(gf.is_sane(G, gen_sel_paths[0]))
-	input(5)
-	'''
+	
+	if gen_ratio>lp_ratio:
+		print 'gen acc ratio '+str(gen_ratio)
+		#print 'gen sel paths'+str(gen_sel_paths)
+		print 'GA is sane: '+str(gf.is_sane(G, gen_sel_paths[0]))
+		input(5)
+	
 	return [ga_multicore_time, gen_ratio, gen_sel_paths]
 
 
