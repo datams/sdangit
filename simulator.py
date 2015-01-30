@@ -33,7 +33,7 @@ param_container = gp.gen_param()
 repeats = 1
 exp_times = []
 graphtype='srg'
-repetitions=10
+repetitions=1
 time_now= (time.strftime("%H%M%S"))
 date_now= (time.strftime("%d%m%Y"))
 
@@ -46,7 +46,7 @@ for expnum in range(repeats):
 	tic = time.time()
 	#param=param_container.next()
 	#param=[20, 0, 0, 0, 0, 3, 50, 0.9, 1]
-	param=[200, 0, 0, 0, 0, 80, 60, 0.9, 1]
+	param=[200, 0, 0, 0, 0, 80, 60, 0.9, 2]
 	#[pop_size, clergy_size, clergy_children, nobility_size, nobility_children, start_mut, non_prob, weight_ac, mut_method]
 
 	# Graph and demand creation
@@ -60,10 +60,6 @@ for expnum in range(repeats):
 
 		# LP solve
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
-		#print 'max length of selected LP paths'
-		#print max([len(kk) for (kk,ll) in lp_sel_paths.values()])
-		#print lp_sel_paths
-		#input(8)
 		print 'LP done.'
 		print 'LP acc. ratio: '+str(lp_ratio)
 		if gf.is_sane(G.copy(), lp_sel_paths)==False:
@@ -72,20 +68,21 @@ for expnum in range(repeats):
 
 		# Gen solve
 		[gen_time, gen_ratio, gen_sel_paths]=su.ga_multicore(G, d_list, param, lp_ratio)
+		gen_time_tot=gen_time[0]
+		gen_time_findpaths=gen_time[0]
 
 		# Greedy solve
 		#[greed_time, greed_ratio, greed_sel_paths]=su.greed(G, d_list, 10)
 		
-		
 		# Record outcome
-		all_records.append([lp_time, lp_ratio, gen_time, gen_ratio, param])
-		current_records.append([lp_time, lp_ratio, gen_time, gen_ratio, param])
-		gf.write2file('data/'+exp_name+'_log', [lp_time, lp_ratio, gen_time, gen_ratio, param])	
+		all_records.append([lp_time, lp_ratio, gen_time_tot, gen_ratio, param])
+		current_records.append([lp_time, lp_ratio, gen_time_tot, gen_ratio, param])
+		gf.write2file('data/'+exp_name+'_log', [lp_time, lp_ratio, gen_time_tot, gen_ratio, param])	
 
-	lpt=[lp_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
-	lpr=[lp_ratio for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
-	gnt=[gen_time for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
-	gnr=[gen_ratio for [lp_time, lp_ratio, gen_time, gen_ratio, param] in current_records]
+	lpt=[lp_time for [lp_time, lp_ratio, gen_time_tot, gen_ratio, param] in current_records]
+	lpr=[lp_ratio for [lp_time, lp_ratio, gen_time_tot, gen_ratio, param] in current_records]
+	gnt=[gen_time_tot for [lp_time, lp_ratio, gen_time_tot, gen_ratio, param] in current_records]
+	gnr=[gen_ratio for [lp_time, lp_ratio, gen_time_tot, gen_ratio, param] in current_records]
 
 	# LP time
 	#avg_lpt=sum(lpt)/len(lpt)

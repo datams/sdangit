@@ -49,8 +49,6 @@ class population:
 	# self.ranking=sorted(self.fitness, key=self.fitness.get, reverse=True)
 	
 
-	#print 'fitness '+str(self.fitness)
-
 	# rank due to two fitness values
 	fitness2list=[(k, v[0], v[1]) for k,v in self.fitness.items()]
 	sorted_fitness2list = sorted(fitness2list, key = lambda x: (x[1], x[2]), reverse=True)
@@ -62,61 +60,35 @@ class population:
 	i=self.ranking[0]
 	#print 'fitness of best genome: '+str(self.fitness[i])
 	#print ' with genome '+str(self.individuals[self.ranking[0]].list)
-	return [self.individuals[i],self.fitness[i]]
+	return [self.individuals[i], self.fitness[i]]
    
     # produce the next generation (clergy are preserved and have clergy_children children, nobility have nobility_children, rest gets remaining slots)
     def evolute(self,mutrate):
-	#print 'clergy members '+str(self.clergy_members)
-	#print 'nobility members'+str(self.nobility_members)
-	#print 'nobility childern '+str(self.nobility_children)
-	#print 'nobility childern '+str(self.clergy_children)
-
 
 	temp=[]
-	
-	'''
-	jj=self.ranking[0]
-	current_genome=self.individuals[jj].copy()
-	temp.append(current_genome)
-	for ii in range(len(self.individuals)):
-		if len(temp)<len(self.individuals):
-			jj=self.ranking[ii]
-			current_genome=self.individuals[jj].copy()
-			temp.append(current_genome.mutate(mutrate,self.non_prob))
-	'''
 	
 	for ii in range(len(self.individuals)):
 		if len(temp)<len(self.individuals):
 			if ii in self.clergy_members or ii==0:
 				jj=self.ranking[ii]
-				#current_genome=copy.deepcopy(self.individuals[jj])
 				current_genome=self.individuals[jj].copy()
 				temp.append(current_genome)
 				for kk in range(self.clergy_children):
-					#current_genome=copy.deepcopy(self.individuals[jj])
 					current_genome=self.individuals[jj].copy()
 					temp.append(current_genome.mutate(mutrate,self.non_prob))
 			elif ii in self.nobility_members:
 				jj=self.ranking[ii]
 				for kk in range(self.nobility_children):
-					#current_genome=copy.deepcopy(self.individuals[jj])
 					current_genome=self.individuals[jj].copy()
 					temp.append(current_genome.mutate(mutrate,self.non_prob))
 			else:
 				jj=self.ranking[ii]
-				#current_genome=copy.deepcopy(self.individuals[jj])
 				current_genome=self.individuals[jj].copy()
 				temp.append(current_genome.mutate(mutrate,self.non_prob))
-	#print 'equal len '+str(len(temp)==len(self.individuals))
-	
-
 	self.individuals=temp
 
 	self.rateall()
 	self.rank()
-
-
-
 
 # reflects a genome as a list of path choices for demands
 class genome:
@@ -162,46 +134,44 @@ class genome:
 
     # reports back the number of allocated paths with a given genome
     def rate(self, G, weight_ac, weight_bw):
-	#G_updated=copy.deepcopy(G)
 	G_updated=G.copy()
 	counter=0
-	#alloc_status=[]
 	one_failed=False
-	#for i in range(len(self.d_list)):
 	for i in range(self.size):
-		#alloc_status.append(None)
 		if self.list[i]!=None:
 			#[G_updated, success] = alloc_gen(G_updated, self.list[i], self.d_list[i].bw)
 			[G_updated, success] = alloc_gen(G_updated, self.list[i], self.bws[i])
 			if success == True:
 				counter+=1
-				#alloc_status[i]=True
 			elif success == False:
-				#alloc_status[i]=None
 				one_failed=True
 	
-	# default fitness=0
-	fitness=[0,0]	
+	# default fitness
+	fitness=[0,0]
 
 	# check if genome sane
-	#genome_is_sane=False
-	#if gf.minimum_bw(G_updated)>=0:
-	#	genome_is_sane=True
-	#if genome_is_sane and one_failed==False:
-	if one_failed==False:
-		# calculate fitness
-		total_alloc_bw=bw_consum(G, G_updated)
-		total_req_bw=0
-		#for i in range(len(self.d_list)):
-		for i in range(self.size):
-			if self.list[i]!=None:
-				total_req_bw+=self.bws[i]
-		if total_alloc_bw>0:
-			# linear weighted fitness function
-			ac_fitness = weight_ac*float(counter)/float(self.size)
-			bw_fitness = weight_bw*float(total_req_bw)/float(total_alloc_bw)
-			#fitness = ac_fitness + bw_fitness
-			fitness = [ac_fitness, bw_fitness]
+	'''	
+	genome_is_sane=False
+	if gf.minimum_bw(G_updated)>=0:
+		genome_is_sane=True
+	if genome_is_sane and one_failed==False:
+	'''
+	
+	# bw usage calculations	
+	total_alloc_bw=bw_consum(G, G_updated)
+	total_req_bw=0
+	for i in range(self.size):
+		if self.list[i]!=None:
+			total_req_bw+=self.bws[i]
+
+	# calculate fitness
+	if one_failed==False and total_alloc_bw>0:
+		ac_fitness = float(counter)/float(self.size)
+		bw_fitness = float(total_req_bw)/float(total_alloc_bw)
+		fitness = [ac_fitness, bw_fitness]
+	else:
+		fitness=[0,0]
+	
 	return fitness
 
 # tries to allocate a selected path with a given bw and reports if it was possible
@@ -278,133 +248,107 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 	# get start time for time out
 	time_start = time.time()
 
-
-	
-
-
-	'''
-	# determine all feasible paths
-	for i in range(len(d_list)):
-		#G_prune=copy.deepcopy(G)
-		G_prune=G.copy()
-		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
-		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
-		d_list[i].set_paths_pack(pathpack)
-	'''
-
-
-
-	
-
 	# create population
 	p=population(G, d_list, pop_size, clergy_size, clergy_children, nobility_size, nobility_children, non_prob, weight_ac)
 
-	# create initial generation by mutating all individuals
-	#p.mutall(1)
-
 	# For number of iterations:
 	cycles=0
+
 	# set initial mutation rate	
 	mutrate=int(start_mut*len(d_list)/100)
 	#mutrate=int(len(p.d_list)*0.7)
+
+	# initial iteration
 	p.evolute(mutrate)
 
-	print 'enter loop'
+	# EVOLUTION
 	while(True):
-		#print 'cycle '+str(cycles)
-		#mutrate=mutationrate[cycles]
-		#print 'mutrate '+str(mutrate)
-		#gf.write2file('GAGARATE', 'mutrate '+str(mutrate))
-		# get best fitness value
-		[selection, old_best_fitness]=p.best_genome()
+		# get old best genome
+		[old_best_genome, old_best_fitness]=p.best_genome()
+		old_best_acc=old_best_fitness[0]
 		old_fitness=p.fitness.copy()
-		#print 'dada'
-		#print old_fitness
-
 		
+		# ITERATION
 		p.evolute(mutrate)
 
-		# print p.ranking
-		[selection, fitness]=p.best_genome()
+		# get new best gnome
+		[new_best_genome, new_best_fitness]=p.best_genome()
+		gf.write2file('GAGARATE', 'ga_thread '+str(ga_thread)+'new best fitness: '+str(new_best_fitness))
+		new_best_acc=new_best_fitness[0]
 		new_fitness=p.fitness
-				
+		
+		# check hit
+		target_hit=False
+		if target_ratio-0.05<=new_best_acc:
+			target_hit=True
+		
+		# check timeout
+		GA_timeout=False
+		time_now = time.time()
+		calc_time = time_now - time_start
+		if calc_time>12:
+			GA_timeout=True
+
+		# handle hit, timeout or termination
+		if target_hit or GA_timeout:
+			result=[]
+			sel_paths={}
+			acc_ratio=0
+			# red out the allocated paths
+			for j in range(new_best_genome.size):
+				if new_best_genome.list[j]!=None:
+					result.append(new_best_genome.list[j])
+					sel_paths[j]=[new_best_genome.list[j],d_list[j].bw]
+				else:
+					pass
+			acc_ratio=float(len(result))/float(len(d_list))
+
+		if target_hit:
+			print 'GA hit target'
+			e.set()
+			return_ratio[0]=[new_best_acc]
+			return_paths[0]=[sel_paths]
+			break
+		if GA_timeout:
+			print 'GA timeout'
+			e.set()
+			return_ratio[0]=[new_best_acc]
+			return_paths[0]=[sel_paths]
+			break
+		if e.is_set():
+			print 'Another GA finished'
+			break
+
+		# PRODUCE MUT RATE
+		# constant mutation rate
+		if mut_method==0:
+			pass
+			# constant mutation rate
+
 		# adaptive mut rate 1/5 rule
 		if mut_method==1:
 			n_better_childern=0
 			for k in new_fitness:
 				if new_fitness[k][0]>old_fitness[k][0]:
 					n_better_childern+=1
-			#print 'n_better_childern: '+str(n_better_childern)
-			#print 'len(p.d_list)/5: '+str(len(p.d_list)/5)
-			if n_better_childern >= p.pop_size/5 and mutrate<len(p.d_list):
+			if n_better_childern > p.pop_size/5 and mutrate<len(p.d_list):
 				mutrate += 1
+			elif n_better_childern == p.pop_size/5:
+				pass
 			elif mutrate>1:
 				mutrate -=1
 		
 		if mut_method==2:
-			'''
 			# adaptive mut rate based on diff
-			diff=fitness[0]-old_best_fitness[0]
-			if diff<0.2:
-				if mutrate>1:
-				#if mutrate>1 and mutrate>int((1-fitness[0]+0.4)*len(p.d_list)*0.7): # len(p.d_list)*0.7
-					#as the maximum mut rate and (1-fitness[0]+0.4) the function going down over time
-					mutrate-=1
+			diff=new_best_acc-old_best_acc
 			if diff>0.2:
+				if mutrate>1: # mutrate>int((1-new_best_acc+0.2)*len(p.d_list)*0.7): #as the maximum mut rate going down over time
+					mutrate-=1
+			if diff<0.2:
 				if mutrate<len(p.d_list):
 					mutrate+=1
-			'''
 
-		# adaptive non_prob
-		#p.non_prob=int((1-fitness+0.3)*0.4*100)
-		#print 'p.non_prob '+str(p.non_prob)
-
-		#print 'best genome '+str(p.individuals[p.ranking[0]].list)+' with fitness '
-		#print 'alle genomes: '
-		#for kk in range(len(p.individuals)):
-		#	print p.individuals[kk].list
-		#print 'ranking '+str(p.ranking)
-		#print 'fitness '+str(p.fitness)
-
-		sel_paths={}
-		result=[]
-		acc_ratio=0
-		if fitness>0:
-			# only show the allocatable paths as a result
-			for j in range(len(selection.list)):
-				if selection.list[j]:
-					result.append(selection.list[j])
-					sel_paths[j]=[selection.list[j],d_list[j].bw]
-				else:
-					pass
-					#result.append(None)
-			acc_ratio=float(len(result))/float(len(d_list))
-
-		#print 'GA acc.ratio: '+str(acc_ratio)
-		gf.write2file('GAGARATE', 'ga_thread '+str(time.strftime("%H%M%S"))+str(ga_thread)+' ratio: '+str(round(acc_ratio,5))+' mut '+str(mutrate))
-		target_hit=False
-		if target_ratio-0.05<=acc_ratio:
-			target_hit=True
-
-		time_now = time.time()
-		calc_time = time_now - time_start
-		if target_hit:
-			#gf.write2file('targetcheck', '\n\nGA acc: '+str(acc_ratio)+'\ntarget: '+str(target_ratio)+' \ntarget_ratio<=acc_ratio '+str(target_ratio<=acc_ratio))
-			print 'GA hit target'
-			e.set()
-			return_ratio[0]=[acc_ratio]
-			return_paths[0]=[sel_paths]
-			break
-		if calc_time>120:
-			print 'GA timeout'
-			e.set()
-			return_ratio[0]=[acc_ratio]
-			return_paths[0]=[sel_paths]
-			break
-		if e.is_set():
-			print 'Another GA finished'
-			break
 		cycles+=1
 
-	return [result, sel_paths, acc_ratio, cycles]
+	return [result, sel_paths, new_best_acc, cycles]
 

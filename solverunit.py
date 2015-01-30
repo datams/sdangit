@@ -1,10 +1,13 @@
 import time
+import random
+import multiprocessing
+from multiprocessing import Manager
+
 import lpsolv as lp
 import greedy as gr
 import graphFunctions as gf
 import genetic2 as gen
-import multiprocessing
-from multiprocessing import Manager
+
 
 def linp(G, d_list):
 	print '\nRun LP Solver'
@@ -59,9 +62,6 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	print '\nRun multiple process Genetic Algorithm'
 	tic = time.time()
 	
-
-	#gf.write2file('GAGARATE', 'vor feasible paths')
-
 	print 'Determine all feasible paths'
 	for i in range(len(d_list)):
 		#G_prune=copy.deepcopy(G)
@@ -69,11 +69,12 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 		G_prune=gf.prune_bw(G_prune, d_list[i].get_bw())
 		pathpack=gf.shortest_p(G_prune,d_list[i].source,d_list[i].target,d_list[i].lat)
 		d_list[i].set_paths_pack(pathpack)
-		print 'added packs'
-	
+		print 'Found paths for demand '+str(i+1)
+	print 'All feasible paths found'
 
-	#gf.write2file('GAGARATE', 'nach feasible paths')
-	print 'Find all paths'
+	tac = time.time()
+
+	# create multiprocessing variables
 	e = multiprocessing.Event()
 	manager = Manager()
 	return_ratio = manager.dict()
@@ -84,6 +85,7 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	w3 = multiprocessing.Process(name='GA3', target=ga_coreelement, args=(G, d_list, gen_param, lp_ratio, e, return_ratio, return_paths, 3))
 	w4 = multiprocessing.Process(name='GA4', target=ga_coreelement, args=(G, d_list, gen_param, lp_ratio, e, return_ratio, return_paths, 4))
 
+	# run processes
 	print 'Start GA process 1'
     	w1.start()
 	print 'Start GA process 2'
@@ -103,7 +105,9 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 	gen_sel_paths=return_paths[0]
 
 	toc = time.time()
-	ga_multicore_time = toc - tic
+	ga_multicore_time=[]
+	ga_multicore_time.append(toc - tic)
+	ga_multicore_time.append(tac - tic)
 	
 	if gen_ratio>lp_ratio:
 		print 'gen acc ratio '+str(gen_ratio)
@@ -112,7 +116,6 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 		input(5)
 	
 	return [ga_multicore_time, gen_ratio, gen_sel_paths]
-
 
 def greed(G, d_list, n_LP):
 	G_updated=G.copy()
@@ -128,8 +131,10 @@ def greed(G, d_list, n_LP):
 	number_of_demands=0
 	tic = time.time()
 
-	for d in complete_d_list:
-		d_list.append(d)
+	indices = list(range(len(d_list)))
+	random.shuffle(indices)
+	for index in indices:
+		d_list.append(complete_d_list[index])
 		number_of_demands+=1
 		[G_updated, plot_pool, number_of_demands, number_of_rerouting_attempts, number_of_rerouting_success]=\
 		gr.finder(G, G_updated, d_list, number_of_demands, i, plot_pool, path_selection_criterion,\
