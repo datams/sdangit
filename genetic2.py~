@@ -273,7 +273,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 
 		# get new best gnome
 		[new_best_genome, new_best_fitness]=p.best_genome()
-		gf.write2file('GAGARATE', 'ga_thread '+str(ga_thread)+'new best fitness: '+str(new_best_fitness))
+		###gf.write2file('GAGARATE', 'ga_thread '+str(ga_thread)+'new best fitness: '+str(new_best_fitness))
 		new_best_acc=new_best_fitness[0]
 		new_fitness=p.fitness
 		
@@ -286,7 +286,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 		GA_timeout=False
 		time_now = time.time()
 		calc_time = time_now - time_start
-		if calc_time>220:
+		if calc_time>12:
 			GA_timeout=True
 
 		# handle hit, timeout or termination

@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib as mpl
 import time
 
-def plot(lpt, lp_ratio, gnt, gen_ratio, filename):
+def plot(lpt, avg_lpr, gnt, avg_gnr, gntf, grt, avg_grr, filename):
 	## agg backend is used to create plot as a .png file
 
 	mpl.use('agg')
@@ -18,10 +18,10 @@ def plot(lpt, lp_ratio, gnt, gen_ratio, filename):
 	#print gnt
 
 	## combine these different collections into a list    
-	data_to_plot = [lpt, gnt]
+	data_to_plot = [lpt, gnt, gntf, grt]
 
 	# Create a figure instance
-	fig = plt.figure(1, figsize=(9, 6))
+	fig = plt.figure(1, figsize=(14, 6))
 
 	# Create an axes instance
 	ax = fig.add_subplot(111)
@@ -66,14 +66,14 @@ def plot(lpt, lp_ratio, gnt, gen_ratio, filename):
 	    flier.set(marker='o', color='#e7298a', alpha=0.5)
 
 	## Custom x-axis labels
-	ax.set_xticklabels(['LP Gurobi '+str(round(lp_ratio,3)), 'Genetic Algorithm '+str(round(gen_ratio,3))], fontsize=20)
+	ax.set_xticklabels(['LP: '+str(round(avg_lpr,3)), 'GA: '+str(round(avg_gnr,3)), '(GA gene pool)', 'Greedy: '+str(round(avg_grr,3))], fontsize=18)
 
 	## Remove top axes and right axes ticks
 	ax.get_xaxis().tick_bottom()
 	ax.get_yaxis().tick_left()
 
 	ax.set_ylabel('time [s]', fontsize=20)
-	ax.set_ylabel('acc. ratio', fontsize=20)
+	ax.set_xlabel('acc. ratio', fontsize=20)
 
 	## Title
 	ax.set_title(filename, fontsize=20)

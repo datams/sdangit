@@ -7,6 +7,7 @@ import lpsolv as lp
 import greedy as gr
 import graphFunctions as gf
 import genetic2 as gen
+import copy
 
 
 def linp(G, d_list):
@@ -125,13 +126,13 @@ def greed(G, d_list, n_LP):
 	plot_pool.plot(G_updated, None, 1, plot_enable)
 	number_of_rerouting_attempts=0
 	number_of_rerouting_success=0
-	complete_d_list=d_list
+	complete_d_list=copy.deepcopy(d_list)
 	d_list=[]
 	i=0
 	number_of_demands=0
 	tic = time.time()
 
-	indices = list(range(len(d_list)))
+	indices = list(range(len(complete_d_list)))
 	random.shuffle(indices)
 	for index in indices:
 		d_list.append(complete_d_list[index])

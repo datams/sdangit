@@ -106,8 +106,8 @@ def ga_multicore(G, d_list, gen_param, lp_ratio):
 
 	toc = time.time()
 	ga_multicore_time=[]
-	ga_multicore_time[0] = toc - tic
-	ga_multicore_time[1] = tac - tic
+	ga_multicore_time.append(toc - tic)
+	ga_multicore_time.append(tac - tic)
 	
 	if gen_ratio>lp_ratio:
 		print 'gen acc ratio '+str(gen_ratio)

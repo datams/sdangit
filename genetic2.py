@@ -273,7 +273,7 @@ def paraevolution(G,d_list,pop_size,clergy_size,clergy_children,nobility_size,no
 
 		# get new best gnome
 		[new_best_genome, new_best_fitness]=p.best_genome()
-		gf.write2file('GAGARATE', 'ga_thread '+str(ga_thread)+'new best fitness: '+str(new_best_fitness))
+		###gf.write2file('GAGARATE', 'ga_thread '+str(ga_thread)+'new best fitness: '+str(new_best_fitness))
 		new_best_acc=new_best_fitness[0]
 		new_fitness=p.fitness
 		
