@@ -15,6 +15,7 @@ def make(name):
 		G.add_edge(3,5, bw=3, lat=1)
 		G.add_edge(4,6, bw=3, lat=1)
 		G.add_edge(5,6, bw=3, lat=1)
+		G = G.to_directed()
 		return G
 
 	elif name=='double_eight':
@@ -31,6 +32,7 @@ def make(name):
 		G.add_edge(5,6, bw=3, lat=1)
 		F= nx.disjoint_union(G,G)
 		F.add_edge(0,7, bw=3, lat=1)
+		F = F.to_directed()
 		return F
 
 	elif name=='deight':
@@ -46,6 +48,7 @@ def make(name):
 		G.add_edge(4,6, bw=4, lat=1)
 		G.add_edge(5,6, bw=4, lat=1)
 		G.add_edge(1,4, bw=4, lat=1)
+		G = G.to_directed()
 		return G
 
 	elif name=='diamond':
@@ -56,6 +59,7 @@ def make(name):
 		G.add_edge(0,2, bw=1, lat=1)
 		G.add_edge(2,3, bw=1, lat=1)
 		G.add_edge(1,3, bw=1, lat=1)
+		G = G.to_directed()
 		return G
 
 	elif name=='richer1':
@@ -83,6 +87,7 @@ def make(name):
 		G.add_edge(7, 5, bw=1, lat=7)
 		G.add_edge(7, 12, bw=1, lat=14)
 		G.add_edge(5, 3, bw=1, lat=5)
+		G = G.to_directed()
 		return G
 	
 	elif name=='srg':
@@ -118,6 +123,12 @@ def make(name):
 		G.add_edge(6,7, bw=5, lat=3.496)
 		G.add_edge(6,11, bw=5, lat=5.41)
 		G.add_edge(6,15, bw=5, lat=3.866)
+		G = G.to_directed()
+
+		node2city={1: 'Basel', 2: 'Zurich', 3: 'Bern', 4: 'Lausanne', 5: 'Genf', 6: 'Lugano',\
+		7: 'Chur', 8: 'Delemont', 9: 'Aarau', 10: 'Rapperswil', 11: 'St. Gallen', 12: 'Solothurn',\
+		 13: 'Biel', 14: 'Neuenburg', 15: 'Luzern', 16: 'Friburg', 17: 'Thun', 18: 'Martigny', 19: 'Sion', 20: 'Brig', 21: 'Locarno'}
+
 		return G
 
 	elif name=='srg_multiple':
@@ -183,6 +194,7 @@ def make(name):
 			new_nodes=list(set(all_nodes) - set(old_nodes))
 		for con in intercon:
 			G.add_edge(con[0], con[1], bw=100, lat=10)
+		G = G.to_directed()
 		return G
 
 
@@ -249,12 +261,74 @@ def make(name):
 			new_nodes=list(set(all_nodes) - set(old_nodes))
 		for con in intercon:
 			G.add_edge(con[0], con[1], bw=100, lat=10)
+		G = G.to_directed()
+		return G
+
+
+	elif name=='switch':
+		# import from gml
+		G=nx.read_gml('SwitchL3_40.gml')
+		# convert to directed
+		G = G.to_directed()
+		# set edge labels
+		G = setEdgeLabels(G)
+		return G
+
+	elif name=='redbest':
+		# import from gml
+		G=nx.read_gml('RedBestel80.gml')
+		# convert to directed
+		G = G.to_directed()
+		# set edge labels
+		G = setEdgeLabels(G)
+		return G
+		
+	elif name=='cogent':
+		# import from gml
+		G=nx.read_gml('Cogentco200.gml')
+		# convert to directed
+		G = G.to_directed()
+		# set edge labels
+		G = setEdgeLabels(G)
+		return G
+
+	elif name=='kdl':
+		# import from gml
+		G=nx.read_gml('Kdl750.gml')
+		# convert to directed
+		G = G.to_directed()
+		# set edge labels
+		G = setEdgeLabels(G)
 		return G
 
 	else:
 		print 'entered graph type unknown'
 
 
-node2city={1: 'Basel', 2: 'Zurich', 3: 'Bern', 4: 'Lausanne', 5: 'Genf', 6: 'Lugano', 7: 'Chur', 8: 'Delemont', 9: 'Aarau', 10: 'Rapperswil', 11: 'St. Gallen', 12: 'Solothurn', 13: 'Biel', 14: 'Neuenburg', 15: 'Luzern', 16: 'Friburg', 17: 'Thun', 18: 'Martigny', 19: 'Sion', 20: 'Brig', 21: 'Locarno'}
+# set default lat and bw
+def setEdgeLabels(G):
+
+	bw_variants=[5,10,15]
+	lat_variants=[5,10,15]
+
+	alreadySetList=[]
+	for (s,t) in G.edges():
+		if (s,t) not in alreadySetList:
+
+			setbw=random.choice(bw_variants)
+			setlat=random.choice(lat_variants)
+
+			G[s][t]={}
+			G[s][t]['bw'] = setbw
+			G[s][t]['lat'] = setlat
+			alreadySetList.append((s,t))
+
+			G[t][s]={}
+			G[t][s]['bw'] = setbw
+			G[t][s]['lat'] = setlat
+			alreadySetList.append((t,s))
+
+	return G
+
 
 

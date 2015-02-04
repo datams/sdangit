@@ -8,12 +8,12 @@ import graphFunctions as gf
 # demand class reflects a flow demand with source, target, bw and lat req.
 class demand:
     def __init__(self, nodi, bw_variants, lat_variants):
+	# source ID for a flow in the graph
 	self.source = None
-	# reflects the source ID for a flow in the graph
+	# target ID for a flow in the graph
 	self.target = None
-	# reflects the target ID for a flow in the graph
+	# graph's nodes (potential sources and targets)
 	self.nodes = nodi
-	# reflects the graph's nodes (potential sources and targets)
 	self.bw = None
 	self.lat = None
 	self.bw_variants = bw_variants

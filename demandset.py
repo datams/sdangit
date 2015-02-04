@@ -58,12 +58,12 @@ def build_d_params(number_of_demands, G, ratio, bw_lowest, bw_highest, lat_lowes
 
 ########################## build data ###############################
 
-'''
-for m in range(10):
+
+for m in range(1):
 	gf.write2file_pure('d_lists', "\n\n\nrun_build('srg', 14, m) for ratio: "+str(m))
 	print 'd_lists', "\n\n\nrun_build('srg', 14, m) for ratio: "+str(m)
 	run_build('srg', 14, m)
-'''
+
 
 '''
 for m in range(10):

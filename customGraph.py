@@ -124,6 +124,11 @@ def make(name):
 		G.add_edge(6,11, bw=5, lat=5.41)
 		G.add_edge(6,15, bw=5, lat=3.866)
 		G = G.to_directed()
+
+		node2city={1: 'Basel', 2: 'Zurich', 3: 'Bern', 4: 'Lausanne', 5: 'Genf', 6: 'Lugano',\
+		7: 'Chur', 8: 'Delemont', 9: 'Aarau', 10: 'Rapperswil', 11: 'St. Gallen', 12: 'Solothurn',\
+		 13: 'Biel', 14: 'Neuenburg', 15: 'Luzern', 16: 'Friburg', 17: 'Thun', 18: 'Martigny', 19: 'Sion', 20: 'Brig', 21: 'Locarno'}
+
 		return G
 
 	elif name=='srg_multiple':
@@ -259,10 +264,71 @@ def make(name):
 		G = G.to_directed()
 		return G
 
+
+	elif name=='switch':
+		# import from gml
+		G=nx.read_gml('SwitchL3_40.gml')
+		# convert to directed
+		G = G.to_directed()
+		# set edge labels
+		G = setEdgeLabels(G)
+		return G
+
+	elif name=='redbest':
+		# import from gml
+		G=nx.read_gml('RedBestel80.gml')
+		# convert to directed
+		G = G.to_directed()
+		# set edge labels
+		G = setEdgeLabels(G)
+		return G
+		
+	elif name=='cogent':
+		# import from gml
+		G=nx.read_gml('Cogentco200.gml')
+		# convert to directed
+		G = G.to_directed()
+		# set edge labels
+		G = setEdgeLabels(G)
+		return G
+
+	elif name=='kdl':
+		# import from gml
+		G=nx.read_gml('Kdl750.gml')
+		# convert to directed
+		G = G.to_directed()
+		# set edge labels
+		G = setEdgeLabels(G)
+		return G
+
 	else:
 		print 'entered graph type unknown'
 
 
-node2city={1: 'Basel', 2: 'Zurich', 3: 'Bern', 4: 'Lausanne', 5: 'Genf', 6: 'Lugano', 7: 'Chur', 8: 'Delemont', 9: 'Aarau', 10: 'Rapperswil', 11: 'St. Gallen', 12: 'Solothurn', 13: 'Biel', 14: 'Neuenburg', 15: 'Luzern', 16: 'Friburg', 17: 'Thun', 18: 'Martigny', 19: 'Sion', 20: 'Brig', 21: 'Locarno'}
+# set default lat and bw
+def setEdgeLabels(G):
+
+	bw_variants = [1, 5, 10]
+	lat_variants = [5, 20, 40]
+
+	alreadySetList=[]
+	for (s,t) in G.edges():
+		if (s,t) not in alreadySetList:
+
+			setbw=random.choice(bw_variants)
+			setlat=random.choice(lat_variants)
+
+			G[s][t]={}
+			G[s][t]['bw'] = setbw
+			G[s][t]['lat'] = setlat
+			alreadySetList.append((s,t))
+
+			G[t][s]={}
+			G[t][s]['bw'] = setbw
+			G[t][s]['lat'] = setlat
+			alreadySetList.append((t,s))
+
+	return G
+
 
 
