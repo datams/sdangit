@@ -1,0 +1,6 @@
+import graphFunctions as gf
+import custom
+
+G=cg.make('cogent')
+gf.plot_graphviz(G,None,1,1,'')
+

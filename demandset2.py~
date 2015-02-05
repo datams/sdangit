@@ -11,7 +11,7 @@ import networkx as nx
 ######################### functions ################################
 
 # runs build_d_params for graph_typ and n demands
-def run_build(graph_type, ratio):
+def run_build(graph_type):
 	
 	# produce graph
 	G = customGraph.make(graph_type)
@@ -30,18 +30,12 @@ def run_build(graph_type, ratio):
 	#lat_variants = [1 ,2 ,3]
 	lat_variants = lat_variants.tolist()
 
-	build_d_params(number_of_demands, G, ratio, bw_variants, lat_variants)
+	build_d_params(number_of_demands, G, bw_variants, lat_variants)
 
 # prints a list of random demands [source, target, bw, lat]
-def build_d_params(number_of_demands, G, ratio, bw_variants, lat_variants):
+def build_d_params(number_of_demands, G, bw_variants, lat_variants):
 	while(True):
 
-
-		bw_lowest		=	gf.minimum_bw(G)/10
-		bw_highest		=	gf.maximum_bw(G)
-		lat_lowest		=	gf.minimum_lat(G)*20
-		lat_highest		=	gf.maximum_lat(G)*20
-		
 		path_selection_criterion = 'hops'
 		d_list=[]
 		for k in range(number_of_demands):
@@ -51,25 +45,22 @@ def build_d_params(number_of_demands, G, ratio, bw_variants, lat_variants):
 				temp_dem = dem.demand(G.nodes(), bw_variants, lat_variants)
 				# make random choice
 				temp_dem.make_random_choice()
-				#temp_dem.make_total_random_choice(bw_lowest, bw_highest, lat_lowest, lat_highest)
 				# check feasibility
 				if gf.is_feasible2(G, temp_dem, path_selection_criterion):
 					d_list.append(temp_dem)
 					break
 
-		for (q,k) in G.edges():
-			print str((q,k))+' '+str(G[q][k])
+		#for (q,k) in G.edges():
+			#print str((q,k))+' '+str(G[q][k])
 
 
 		print 'Running LP'
 		[lp_time, lp_ratio, lp_sel_paths]=su.linp(G, d_list)
 		print 'lp_sel_paths '+str(lp_sel_paths)
 		print 'lp_ratio '+str(lp_ratio)
-		#input(5)
 		break
-		#if lp_ratio>ratio:
-			#break
 
+	
 	for d in d_list:
 		gf.write2file_pure('d_lists', '['+str(d.source)+','+str(d.target)+','+str(d.bw)+','+str(d.lat)+'],\\')
 	gf.write2file_pure('d_lists', 'lp_ratio: '+str(lp_ratio)+'\n\n')	
@@ -78,10 +69,18 @@ def build_d_params(number_of_demands, G, ratio, bw_variants, lat_variants):
 
 ########################## build data ###############################
 
-m=70
-gf.write2file_pure('d_lists', "\n\n\nrun_build('srg', 14, m) for ratio: "+str(m))
-print 'd_lists', "\n\n\nrun_build('srg', 14, m) for ratio: "+str(m)
-run_build('switch', m)
+gf.write2file_pure('d_lists', "\n\n\nrun_build('switch')")
+run_build('switch')
+'''
+gf.write2file_pure('d_lists', "\n\n\nrun_build('redbest')")
+run_build('redbest')
+
+gf.write2file_pure('d_lists', "\n\n\nrun_build('cogent')")
+run_build('cogent')
+
+gf.write2file_pure('d_lists', "\n\n\nrun_build('kdl')")
+run_build('kdl')
+'''
 
 
 

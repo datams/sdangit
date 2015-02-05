@@ -558,3 +558,5 @@ def write2file_pure(filename, var):
         f.write(str(var)+'\n')
 	f.close()
 
+def simplePlot(G):
+	 plot_graphviz(G,None,1,1, 'simpleplot')

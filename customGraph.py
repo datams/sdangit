@@ -266,43 +266,44 @@ def make(name):
 
 
 	elif name=='switch':
-		# import from gml
-		G=nx.read_gml('SwitchL3_40.gml')
-		# convert to directed
-		G = G.to_directed()
-		# set edge labels
-		G = setEdgeLabels(G)
+		G=gml2nx('SwitchL3_40.gml')
 		return G
 
 	elif name=='redbest':
-		# import from gml
-		G=nx.read_gml('RedBestel80.gml')
-		# convert to directed
-		G = G.to_directed()
-		# set edge labels
-		G = setEdgeLabels(G)
+		G=gml2nx('RedBestel80.gml')
 		return G
 		
 	elif name=='cogent':
-		# import from gml
-		G=nx.read_gml('Cogentco200.gml')
-		# convert to directed
-		G = G.to_directed()
-		# set edge labels
-		G = setEdgeLabels(G)
+		G=gml2nx('Cogentco200.gml')
 		return G
 
 	elif name=='kdl':
-		# import from gml
-		G=nx.read_gml('Kdl750.gml')
-		# convert to directed
-		G = G.to_directed()
-		# set edge labels
-		G = setEdgeLabels(G)
+		G=gml2nx('Kdl750.gml')
 		return G
 
 	else:
 		print 'entered graph type unknown'
+
+def gml2nx(filename):
+	# import edges
+	G=importEdges(filename)
+	# convert to directed
+	G = G.to_directed()
+	# set edge labels
+	G = setEdgeLabels(G)
+	return G
+	
+
+# import edges from GML and build graph
+def importEdges(graphtype):
+	# import from gml and read edges
+	GG=nx.read_gml(graphtype)
+	edges2do=GG.edges()
+	# build up from edges
+	G=nx.Graph()
+	for (u,i) in edges2do:
+		G.add_edge(u,i, bw=0, lat=99999999)
+	return G
 
 
 # set default lat and bw
@@ -318,16 +319,15 @@ def setEdgeLabels(G):
 			setbw=random.choice(bw_variants)
 			setlat=random.choice(lat_variants)
 
-			G[s][t]={}
+			#G[s][t]={}
 			G[s][t]['bw'] = setbw
 			G[s][t]['lat'] = setlat
 			alreadySetList.append((s,t))
 
-			G[t][s]={}
+			#G[t][s]={}
 			G[t][s]['bw'] = setbw
 			G[t][s]['lat'] = setlat
-			alreadySetList.append((t,s))
-
+			#alreadySetList.append((t,s))
 	return G
 
 
